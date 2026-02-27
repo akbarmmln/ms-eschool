@@ -23,7 +23,7 @@ class LoggerPino {
         },
         bindings() {
           return {
-            business_unit: 'DARUKU',
+            business_unit: 'ESCHOOL',
             programming_language: 'NODEJS',
             log_type: 'AppLog',
           };

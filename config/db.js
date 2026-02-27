@@ -64,10 +64,10 @@ const sequelize = new Sequelize(settings.dbname, settings.username, settings.pas
 
 sequelize.authenticate()
   .then(() => {
-    logger.infoWithContext('Connection has been established successfully.');
+    logger.infoWithContext('Connection successfully established.');
   })
   .catch(err => {
-    logger.errorWithContext({error: err, message: 'Unable to connect to the database:'})
+    logger.errorWithContext({error: err, message: 'Connection failed to establish.'})
   });
 
 module.exports = {

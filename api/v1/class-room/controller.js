@@ -1,0 +1,110 @@
+'use strict';
+
+const { v7: uuidv7 } = require('uuid');
+const moment = require('moment')
+const utils = require('../../../utils/utils');
+const logger = require('../../../config/logger');
+const rsMsg = require('../../../response/rs');
+const adrClassRoom = require('../../../model/adr_class_room');
+
+exports.getClassRoom = async function (req, res) {
+  try {
+    let count, data;
+    const search = req.params.search;
+    const page = parseInt(req.params.page);
+    const limit = 3;
+    const offset = limit * (page - 1);
+
+    if (search) {
+      count = await adrClassRoom.count({
+        raw: true,
+        where: {
+          [Op.and]: [
+            {
+              is_deleted: 0,
+            },
+            {
+              [Op.or]: [
+                { nama_kelas: { [Op.like]: `%${search}%` } },
+              ]
+            }
+          ]
+        }
+      });
+
+      data = await adrClassRoom.findAll({
+        limit: limit,
+        offset: offset,
+        raw: true,
+        where: {
+          [Op.and]: [
+            {
+              is_deleted: 0,
+            },
+            {
+              [Op.or]: [
+                { nama_kelas: { [Op.like]: `%${search}%` } },
+              ]
+            }
+          ]
+        },
+        order: [['created_dt', 'DESC']]
+      });
+    } else {
+      count = await adrClassRoom.count({
+        raw: true,
+        where: { is_deleted: 0 }
+      });
+      data = await adrClassRoom.findAll({
+        limit: limit,
+        offset: offset,
+        raw: true,
+        where: { is_deleted: 0 },
+        order: [['created_dt', 'DESC']]
+      });
+    }
+
+    if (data.length > 0) {
+      const newRs = {
+        rows: data,
+        currentPage: page,
+        totalPage: Math.ceil(count / limit),
+        totalData: count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/class-room/list...', e);
+  }
+}
+
+exports.createClassRoom  = async function (req, res) {
+  try {
+    const uuid = uuidv7();
+    const nama_kelas = req.body.nama_kelas;
+    const id_wakil_wali_kelas = req.body.id_wakil_wali_kelas;
+
+    await adrClassRoom.create({
+      id: uuid,
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: 'req.id',
+      modified_dt: null,
+      modified_by: null,
+      is_deleted: 0,
+      nama_kelas: nama_kelas,
+      id_wakil_wali_kelas: id_wakil_wali_kelas,
+    })
+
+    return res.status(200).json(rsMsg('000000'));
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-room/create...', e);
+  }
+}
