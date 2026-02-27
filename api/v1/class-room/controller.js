@@ -3,7 +3,7 @@
 const { v7: uuidv7 } = require('uuid');
 const moment = require('moment')
 const utils = require('../../../utils/utils');
-const logger = require('../../../config/logger');
+const formatter = require('../../../config/format');
 const rsMsg = require('../../../response/rs');
 const adrClassRoom = require('../../../model/adr_class_room');
 
@@ -88,7 +88,7 @@ exports.getClassRoom = async function (req, res) {
 
 exports.createClassRoom  = async function (req, res) {
   try {
-    const uuid = uuidv7();
+    const uuid = await formatter.runNanoID(10)
     const nama_kelas = req.body.nama_kelas;
     const id_wakil_wali_kelas = req.body.id_wakil_wali_kelas;
 
