@@ -4,6 +4,7 @@ const { v7: uuidv7 } = require('uuid');
 const moment = require('moment')
 const utils = require('../../../utils/utils');
 const formatter = require('../../../config/format');
+const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrClassRoom = require('../../../model/adr_class_room');
 
