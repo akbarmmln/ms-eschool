@@ -7,7 +7,10 @@ const logger = require('./config/logger');
 /* SET CORS HEADERS FOR API */
 router.all('/api/*', (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
     next();
 })
 
