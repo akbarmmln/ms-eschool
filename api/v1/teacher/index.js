@@ -9,5 +9,6 @@ router.get('/search/:search', controller.searchTeacher);
 router.post('/create', controller.createTeacher);
 
 router.get('/detail/:id', controller.detailTeacher);
+router.post('/update', controller.updateTeacher);
 
 module.exports = router;

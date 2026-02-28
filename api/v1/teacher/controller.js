@@ -154,3 +154,22 @@ exports.detailTeacher = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/teacher/detail...', e);
   }
 }
+
+exports.updateTeacher = async function (req, res) {
+  try {
+    const id = req.body.id;
+    const object_update = req.body.object_update;
+
+    await adrTeacher.update({
+      ...object_update
+    }, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/teacher/update...', e);
+  }
+}
