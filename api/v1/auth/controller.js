@@ -48,6 +48,7 @@ exports.login = async function (req, res) {
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const token = await utils.signin(hash);
 
+    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', token);
 
     return res.status(200).json(rsMsg('000000', {}));
