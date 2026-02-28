@@ -106,7 +106,7 @@ exports.createClassRoom  = async function (req, res) {
   try {
     const uuid = await formatter.runNanoID(10)
     const nama_kelas = req.body.nama_kelas;
-    const id_wakil_wali_kelas = req.body.id_wakil_wali_kelas;
+    const id_wali_kelas = req.body.id_wali_kelas;
 
     await adrClassRoom.create({
       id: uuid,
@@ -116,7 +116,7 @@ exports.createClassRoom  = async function (req, res) {
       modified_by: null,
       is_deleted: 0,
       nama_kelas: nama_kelas,
-      id_wakil_wali_kelas: id_wakil_wali_kelas,
+      id_wakil_wali_kelas: id_wali_kelas,
     })
 
     return res.status(200).json(rsMsg('000000'));
