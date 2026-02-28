@@ -20,6 +20,10 @@ exports.getClassRoom = async function (req, res) {
       'id',
       'nama_kelas',
       [
+        sequelize.literal(`(SELECT id FROM adr_teacher where id = adr_class_room.id_wakil_wali_kelas)`),
+        'id_wali_kelas',
+      ],
+      [
         sequelize.literal(`(SELECT nama FROM adr_teacher where id = adr_class_room.id_wakil_wali_kelas)`),
         'wali_kelas',
       ]
