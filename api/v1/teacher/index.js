@@ -11,4 +11,6 @@ router.post('/create', controller.createTeacher);
 router.get('/detail/:id', controller.detailTeacher);
 router.post('/update', controller.updateTeacher);
 
+router.post('/delete', controller.deleteTeacher);
+
 module.exports = router;

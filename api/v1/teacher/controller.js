@@ -7,6 +7,7 @@ const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrTeacher = require('../../../model/adr_teacher');
+const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
 
 exports.getTeacherList = async function (req, res) {
@@ -162,6 +163,28 @@ exports.updateTeacher = async function (req, res) {
 
     await adrTeacher.update({
       ...object_update
+    }, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/teacher/update...', e);
+  }
+}
+
+exports.deleteTeacher = async function (req, res) {
+  try {
+    const id = req.body.id;
+
+    if (formatter.isEmpty(id)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
+    }
+
+    await adrTeacher.update({
+      is_deleted: 1,
     }, {
       where: {
         id: id
