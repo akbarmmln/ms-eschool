@@ -50,7 +50,7 @@ exports.login = async function (req, res) {
 
     res.header('access-token', token);
 
-    return res.status(200).json(rsMsg('000000', {}));
+    return res.status(200).json(rsMsg('000000', token));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/login...', e);
   }

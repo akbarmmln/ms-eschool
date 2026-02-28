@@ -17,8 +17,7 @@ exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObje
 exports.enkrip = async function (payload) {
   try {
     const publickEncrypt = process.env.PUBLIC_KEY_GCM;
-    let secretKey = uuidv7();
-    secretKey = secretKey.replace(/-/g, "");
+    const secretKey = payload.sessionLogin;
 
     const bodyKey = JSON.stringify(payload);
     const bodyString = bodyKey.replace(/ /gi, '');
