@@ -7,6 +7,7 @@ const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrTeacher = require('../../../model/adr_teacher');
+const adrClassRoom = require('../../../model/adr_class_room');
 
 exports.getTeacherList = async function (req, res) {
   try {
@@ -122,5 +123,34 @@ exports.createTeacher = async function (req, res) {
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/teacher/create...', e);
+  }
+}
+
+exports.detailTeacher = async function (req, res) {
+  try {
+    const id = req.params.id;
+
+    const data = await adrTeacher.findOne({
+      raw: true,
+      where:{
+        id: id
+      }
+    })
+
+    const dataWali = await adrClassRoom.findAll({
+      raw: true,
+      attributes: ['id', 'nama_kelas', 'id_wakil_wali_kelas'],
+      where: {
+        id_wakil_wali_kelas: id
+      }
+    })
+
+    const hasil = {
+      ...data,
+      kelas: dataWali
+    }
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/teacher/detail...', e);
   }
 }
