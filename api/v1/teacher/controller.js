@@ -109,6 +109,7 @@ exports.searchTeacher = async function (req, res) {
 exports.createTeacher = async function (req, res) {
   try {
     const uuid = await formatter.runNanoID(10)
+    const niy = req.body.niy
     const nama = req.body.nama
     const email = req.body.email;
 
@@ -120,7 +121,8 @@ exports.createTeacher = async function (req, res) {
       modified_by: null,
       is_deleted: 0,
       nama: nama,
-      email: email
+      email: email,
+      niy: niy
     })
 
     return res.status(200).json(rsMsg('000000'))
