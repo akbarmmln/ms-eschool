@@ -7,6 +7,7 @@ const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const sequelize = require('sequelize');
 const rsMsg = require('../../../response/rs');
+const ApiErrorMsg = require('../../../error/apiErrorMsg')
 const adrClassRoom = require('../../../model/adr_class_room');
 
 exports.getClassRoom = async function (req, res) {
@@ -145,5 +146,27 @@ exports.updateClassRoom = async function (req, res) {
     return res.status(200).json(rsMsg('000000'));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-room/update...', e);
+  }
+}
+
+exports.deleteClassRoom = async function (req, res) {
+  try {
+    const id = req.body.id;
+
+    if (formatter.isEmpty(id)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
+    }
+
+    await adrClassRoom.update({
+      is_deleted: 1,
+    }, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-room/delete...', e);
   }
 }
