@@ -3,6 +3,7 @@ const errMsg = require('../error/resError');
 const BaseError = require('../error/baseError');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
+const { v7: uuidv7 } = require('uuid');
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -16,7 +17,7 @@ exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObje
 exports.enkrip = async function (payload) {
   try {
     const publickEncrypt = process.env.PUBLIC_KEY_GCM;
-    let secretKey = uuidv4();
+    let secretKey = uuidv7();
     secretKey = secretKey.replace(/-/g, "");
 
     const bodyKey = JSON.stringify(payload);
