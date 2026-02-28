@@ -11,6 +11,8 @@ const adrClassRoom = require('../../../model/adr_class_room');
 const adrUserLogin = require('../../../model/adr_user_login');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
+const bcrypt = require('bcryptjs');
+const saltRounds = 12;
 
 exports.login = async function (req, res) {
   try {
