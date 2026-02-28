@@ -14,6 +14,7 @@ const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
 const saltRounds = 12;
 const otpGenerator = require('otp-generator');
+const logger = require('../../../config/logger');
 const sequelize = require('../../../config/db').Sequelize;
 
 exports.getTeacherList = async function (req, res) {
@@ -156,8 +157,9 @@ exports.createTeacher = async function (req, res) {
       niy: niy
     }, { transaction: transaction })
 
+    logger.infoWithContext(`password nya ${pin}`)
     await transaction.commit();
-    return res.status(200).json(rsMsg('000000', cekEmail))
+    return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     if (transaction) {
       await transaction.rollback();
