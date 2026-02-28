@@ -7,7 +7,8 @@ const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const sequelize = require('sequelize');
 const rsMsg = require('../../../response/rs');
-const ApiErrorMsg = require('../../../error/apiErrorMsg')
+const ApiErrorMsg = require('../../../error/apiErrorMsg');
+const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
 
 exports.getClassRoom = async function (req, res) {
@@ -109,6 +110,10 @@ exports.createClassRoom  = async function (req, res) {
     const nama_kelas = req.body.nama_kelas;
     const id_wali_kelas = req.body.id_wali_kelas;
 
+    if (formatter.isEmpty(nama_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70002');
+    }
+
     await adrClassRoom.create({
       id: uuid,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -131,6 +136,13 @@ exports.updateClassRoom = async function (req, res) {
     const id_kelas = req.body.id_kelas;
     const nama_kelas = req.body.nama_kelas;
     const id_wali_kelas = req.body.id_wali_kelas;
+
+    if (formatter.isEmpty(nama_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70002');
+    }
+    if (formatter.isEmpty(id_wali_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70003');
+    }
 
     await adrClassRoom.update({
       nama_kelas: nama_kelas,
