@@ -110,6 +110,7 @@ exports.createTeacher = async function (req, res) {
   try {
     const uuid = await formatter.runNanoID(10)
     const nama = req.body.nama
+    const email = req.body.email;
 
     await adrTeacher.create({
       id: uuid,
@@ -118,7 +119,8 @@ exports.createTeacher = async function (req, res) {
       modified_dt: null,
       modified_by: null,
       is_deleted: 0,
-      nama: nama
+      nama: nama,
+      email: email
     })
 
     return res.status(200).json(rsMsg('000000'))
