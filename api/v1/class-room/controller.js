@@ -5,6 +5,7 @@ const moment = require('moment')
 const utils = require('../../../utils/utils');
 const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
+const sequelize = require('sequelize');
 const rsMsg = require('../../../response/rs');
 const adrClassRoom = require('../../../model/adr_class_room');
 
@@ -15,6 +16,14 @@ exports.getClassRoom = async function (req, res) {
     const page = parseInt(req.params.page);
     const limit = 3;
     const offset = limit * (page - 1);
+    const attributes = [
+      'id',
+      'nama_kelas',
+      [
+        sequelize.literal(`(SELECT nama FROM adr_teacher where id = adr_class_room.id_wakil_wali_kelas)`),
+        'wali_kelas',
+      ]
+    ];
 
     if (search) {
       count = await adrClassRoom.count({
@@ -37,6 +46,7 @@ exports.getClassRoom = async function (req, res) {
         limit: limit,
         offset: offset,
         raw: true,
+        attributes: attributes,
         where: {
           [Op.and]: [
             {
@@ -60,6 +70,7 @@ exports.getClassRoom = async function (req, res) {
         limit: limit,
         offset: offset,
         raw: true,
+        attributes: attributes,
         where: { is_deleted: 0 },
         order: [['created_dt', 'DESC']]
       });
