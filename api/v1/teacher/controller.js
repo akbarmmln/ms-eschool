@@ -7,8 +7,14 @@ const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrTeacher = require('../../../model/adr_teacher');
-const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
+const adrUserLogin = require('../../../model/adr_user_login');
+const ApiErrorMsg = require('../../../error/apiErrorMsg');
+const HttpStatusCode = require("../../../error/httpStatusCode");
+const bcrypt = require('bcryptjs');
+const saltRounds = 12;
+const otpGenerator = require('otp-generator');
+const sequelize = require('../../../config/db').Sequelize;
 
 exports.getTeacherList = async function (req, res) {
   try {
@@ -107,11 +113,36 @@ exports.searchTeacher = async function (req, res) {
 }
 
 exports.createTeacher = async function (req, res) {
+  const transaction = await sequelize.transaction();
   try {
     const uuid = await formatter.runNanoID(10)
     const niy = req.body.niy
     const nama = req.body.nama
     const email = req.body.email;
+    const pin = otpGenerator.generate(12, { digits: false, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+    const encryptPin = await bcrypt.hash(pin, saltRounds);
+
+    const cekEmail = await adrUserLogin.count({
+      where: {
+        email: email,
+        is_deleted: 0
+      }
+    })
+    if (cekEmail) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70004');
+    }
+
+    await adrUserLogin.create({
+      id: uuidv7(),
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: 'req.id',
+      is_deleted: 0,
+      id_account: uuid,
+      tipe_account: 'S01',
+      password: encryptPin,
+      role: 1,
+      email: email
+    }, { transaction: transaction })
 
     await adrTeacher.create({
       id: uuid,
@@ -123,10 +154,14 @@ exports.createTeacher = async function (req, res) {
       nama: nama,
       email: email,
       niy: niy
-    })
+    }, { transaction: transaction })
 
-    return res.status(200).json(rsMsg('000000'))
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', cekEmail))
   } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/teacher/create...', e);
   }
 }

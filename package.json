@@ -44,6 +44,7 @@
         "node-fetch": "^3.3.2",
         "nodemailer": "^6.9.7",
         "nodemon": "^3.1.14",
+        "otp-generator": "^4.0.1",
         "pino": "^9.3.2",
         "pino-http": "^10.2.0",
         "pug": "^3.0.2",
