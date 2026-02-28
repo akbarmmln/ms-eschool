@@ -124,3 +124,26 @@ exports.createClassRoom  = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-room/create...', e);
   }
 }
+
+exports.updateClassRoom = async function (req, res) {
+  try {
+    const id_kelas = req.body.id_kelas;
+    const nama_kelas = req.body.nama_kelas;
+    const id_wali_kelas = req.body.id_wali_kelas;
+
+    await adrClassRoom.update({
+      nama_kelas: nama_kelas,
+      id_wakil_wali_kelas: id_wali_kelas,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: 'req.id'
+    }, {
+      where: {
+        id: id_kelas
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'));
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-room/update...', e);
+  }
+}
