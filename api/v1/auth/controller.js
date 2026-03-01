@@ -87,3 +87,20 @@ exports.verifyToken = async function (req, res, next) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/verify-token...', e);
   }
 }
+
+exports.access = async function (req, res) {
+  try {
+    const token = req.body.authorization;
+
+    if (!token) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70006');
+    }
+
+    const verifyRes = await utils.verify(token);
+    const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
+
+    return res.status(200).json(rsMsg('000000', decrypt))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/access...', e);
+  }
+}
