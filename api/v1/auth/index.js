@@ -3,5 +3,6 @@ const router = express.Router();
 const controller = require('./controller');
 
 router.post('/login', controller.login);
+router.post('/verify-token', controller.verifyToken);
 
 module.exports = router;

@@ -139,7 +139,7 @@ exports.createTeacher = async function (req, res) {
       created_by: 'req.id',
       is_deleted: 0,
       id_account: uuid,
-      tipe_account: 'S01',
+      tipe_account: 'DS1',
       password: encryptPin,
       role: 1,
       email: email

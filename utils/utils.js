@@ -51,7 +51,7 @@ exports.signin = async function (hash) {
     const privateKey = process.env.PRIVATE_KEY_JWT;
 
     const options = {
-      issuer: 'daruku',
+      issuer: 'eschool',
       algorithm: 'RS256',
       expiresIn: 3600,
     };
@@ -63,6 +63,56 @@ exports.signin = async function (hash) {
     return token;
   } catch (e) {
     logger.errorWithContext({message: 'error function signin...', error: e});
+    throw e
+  }
+}
+
+exports.verify = async function (token) {
+  try {
+    const publicKey = process.env.PUBLIC_KEY_JWT;
+
+    const options = {
+      issuer: 'eschool',
+      algorithms: ['RS256']
+    };
+
+    const userToken = jwt.verify(
+      token,
+      publicKey.replace(/\\n/gm, '\n'),
+      options
+    );
+    return userToken;
+  } catch (e) {
+    logger.errorWithContext({ error: e, message: 'error while verify jwt rs256' })
+    throw e
+  }
+}
+
+exports.dekrip = async function (masterkey, data) {
+  try {
+    const privateDecrypt = process.env.PRIVATE_KEY_GCM;
+
+    let options = {
+      key: privateDecrypt.replace(/\\n/gm, '\n'),
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: "sha256"
+    };
+    let dcs = crypto.privateDecrypt(options, Buffer.from(masterkey, "base64"));
+    dcs = dcs.toString("utf8");
+
+    const bufferData = Buffer.from(data, 'base64');
+    const iv = Buffer.from(bufferData.slice(bufferData.length - 12, bufferData.length));
+    const tag = Buffer.from(bufferData.slice(bufferData.length - 28, bufferData.length - 12));
+    let cipherByte = Buffer.from(bufferData.slice(0, bufferData.length - 28));
+
+    const decipher = crypto.createDecipheriv('aes-256-gcm', dcs, iv);
+    decipher.setAuthTag(tag);
+
+    let result = Buffer.concat([decipher.update(cipherByte), decipher.final()]);
+    result = JSON.parse(result.toString())
+    return result
+  } catch (e) {
+    logger.errorWithContext({ error: e, message: 'error while dekrip' })
     throw e
   }
 }

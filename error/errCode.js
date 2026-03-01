@@ -5,6 +5,7 @@ const errCode = {
   '70003': 'id wali kelas empty',
   '70004': 'email login sudah terdaftar',
   '70005': 'username dan password salah',
+  '70006': 'access token tidak tervalidasi',
 };
 
 module.exports = errCode;
