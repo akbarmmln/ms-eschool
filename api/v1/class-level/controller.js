@@ -9,7 +9,7 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassLevel = require('../../../model/adr_class_level');
 
-exports.getClassRoom = async function (req, res) {
+exports.getClassLevel = async function (req, res) {
   try {
     let count, data;
     const search = req.params.search;
