@@ -1,6 +1,6 @@
 const errCode = {
   '10000': 'internal server error',
-  '70001': 'id kelas harus terisi',
+  '70001': 'id harus terisi',
   '70002': 'nama kelas harus terisi',
   '70003': 'id wali kelas harus terisi',
   '70004': 'email login sudah terdaftar',

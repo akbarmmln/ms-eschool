@@ -116,3 +116,25 @@ exports.createClassLevel = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/create...', e);
   }
 }
+
+exports.deleteClassLevel = async function (req, res) {
+  try {
+    const id = req.body.id;
+
+    if (formatter.isEmpty(id)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
+    }
+
+    await adrClassLevel.update({
+      is_deleted: 1,
+    }, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/delete...', e);
+  }
+}
