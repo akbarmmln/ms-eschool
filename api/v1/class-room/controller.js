@@ -117,7 +117,7 @@ exports.createClassRoom  = async function (req, res) {
     await adrClassRoom.create({
       id: uuid,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      created_by: 'req.id',
+      created_by: req.id,
       modified_dt: null,
       modified_by: null,
       is_deleted: 0,
@@ -148,7 +148,7 @@ exports.updateClassRoom = async function (req, res) {
       nama_kelas: nama_kelas,
       id_wakil_wali_kelas: id_wali_kelas,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      modified_by: 'req.id'
+      modified_by: req.id
     }, {
       where: {
         id: id_kelas

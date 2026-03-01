@@ -136,7 +136,7 @@ exports.createTeacher = async function (req, res) {
     await adrUserLogin.create({
       id: uuidv7(),
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      created_by: 'req.id',
+      created_by: req.id,
       is_deleted: 0,
       id_account: uuid,
       tipe_account: 'DS1',
@@ -148,7 +148,7 @@ exports.createTeacher = async function (req, res) {
     await adrTeacher.create({
       id: uuid,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      created_by: 'req.id',
+      created_by: req.id,
       modified_dt: null,
       modified_by: null,
       is_deleted: 0,
