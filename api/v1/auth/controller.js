@@ -82,7 +82,7 @@ exports.verifyToken = async function (req, res, next) {
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', new_token);
 
-    return res.status(200).json(rsMsg('000000', {}));
+    next();
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/verify-token...', e);
   }
