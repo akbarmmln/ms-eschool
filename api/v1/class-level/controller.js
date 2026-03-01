@@ -93,3 +93,26 @@ exports.getClassLevel = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/class-level/list...', e);
   }
 }
+
+exports.createClassLevel = async function (req, res) {
+  try {
+    const uuid = await formatter.runNanoID(10)
+    const nama = req.body.nama;
+
+    if (formatter.isEmpty(nama)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70007');
+    }
+
+    await adrClassLevel.create({
+      id: uuid,
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: req.id,
+      is_deleted: 0,
+      nama: nama
+    })
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/create...', e);
+  }
+}

@@ -5,5 +5,6 @@ const auth = require('../auth/controller');
 
 router.get('/list/:page', auth.verifyToken, controller.getClassLevel);
 router.get('/list/:page/:search', auth.verifyToken, controller.getClassLevel);
+router.post('/create', auth.verifyToken, controller.createClassLevel);
 
 module.exports = router;
