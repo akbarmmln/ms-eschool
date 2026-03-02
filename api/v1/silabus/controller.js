@@ -314,6 +314,7 @@ exports.deleteSilabus = async function (req, res) {
       is_deleted: 1,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       modified_by: req.id
+    }, {
       where: {
         id: id
       }, transaction
@@ -322,7 +323,8 @@ exports.deleteSilabus = async function (req, res) {
     await adrSilabusItems.update({
       is_deleted: 1,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      modified_by: req.id
+      modified_by: req.id,
+    }, {
       where: {
         kode_silabus: id
       }, transaction
