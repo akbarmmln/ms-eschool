@@ -204,7 +204,32 @@ exports.updateSilabus = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
     const id = req.body.id;
+    const judul = req.body.judul;
     const submittedItems = req.body.items;
+
+    const cek = await adrSilabus.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      },
+      transaction
+    })
+
+    if (!cek) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    await adrSilabus.update({
+      nama: item.name,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id,
+    }, {
+      where: {
+        id: id
+      },
+      transaction
+    })
 
     // Ambil semua item lama
     const existingItems = await adrSilabusItems.findAll({
@@ -218,7 +243,9 @@ exports.updateSilabus = async function (req, res) {
     for (const item of submittedItems) {
       if (item.id) {
         await adrSilabusItems.update({
-          nama: item.name
+          nama: item.name,
+          modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+          modified_by: req.id,
         }, {
           where: {
             id: item.id
