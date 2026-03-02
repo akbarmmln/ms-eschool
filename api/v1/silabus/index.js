@@ -3,6 +3,6 @@ const router = express.Router();
 const controller = require('./controller');
 const auth = require('../auth/controller');
 
-router.post('/create', controller.createSilabus);
+router.post('/create', auth.verifyToken, controller.createSilabus);
 
 module.exports = router;

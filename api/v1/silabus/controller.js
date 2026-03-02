@@ -23,10 +23,10 @@ exports.createSilabus = async function (req, res) {
       const element = {
         id: uuidv7(),
         created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-        created_by: 'req.id',
+        created_by: req.id,
         is_deleted: 0,
         kode_silabus: id,
-        nama: items[i].nama
+        nama: items[i]
       }
       dataItems.push(element)
     }
@@ -34,7 +34,7 @@ exports.createSilabus = async function (req, res) {
     await adrSilabus.create({
       id: id,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      created_by: 'req.id',
+      created_by: req.id,
       is_deleted: 0,
       nama: judul
     }, { transaction: transaction })
