@@ -203,7 +203,7 @@ exports.detailSilabus = async function (req, res) {
 exports.updateSilabus = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
-    const id = req.params.id;
+    const id = req.body.id;
     const submittedItems = req.body.items;
 
     // Ambil semua item lama
