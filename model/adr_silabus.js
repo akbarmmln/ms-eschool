@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const dbConnection = require('../config/db').Sequelize;
+const adrSilabusItems = require('./adr_silabus_items');
 
 const adrSilabus = dbConnection.define('adr_silabus', {
   id: {
@@ -17,5 +18,12 @@ const adrSilabus = dbConnection.define('adr_silabus', {
   timestamps: false,
   tableName: 'adr_silabus'
 });
+
+adrSilabus.hasMany(adrSilabusItems, {
+  as: 'items',
+  foreignKey: 'kode_silabus',
+  sourceKey: 'id'
+});
+
 
 module.exports = adrSilabus;
