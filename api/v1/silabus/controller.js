@@ -291,3 +291,48 @@ exports.updateSilabus = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/silabus/update...', e);
   }
 }
+
+exports.deleteSilabus = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id = req.body.id
+
+    const cek = await adrSilabus.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      },
+      transaction
+    })
+
+    if (!cek) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    await adrSilabus.update({
+      is_deleted: 1,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+      where: {
+        id: id
+      }, transaction
+    })
+
+    await adrSilabusItems.update({
+      is_deleted: 1,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+      where: {
+        kode_silabus: id
+      }, transaction
+    })
+
+    await transaction.commit();
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/silabus/delete...', e);
+  }
+}

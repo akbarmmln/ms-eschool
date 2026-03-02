@@ -10,4 +10,6 @@ router.post('/create', auth.verifyToken, controller.createSilabus);
 router.post('/update', auth.verifyToken, controller.updateSilabus);
 router.get('/detail/:id', auth.verifyToken, controller.detailSilabus);
 
+router.post('/delete/', auth.verifyToken, controller.deleteSilabus);
+
 module.exports = router;
