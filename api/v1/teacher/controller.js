@@ -203,7 +203,9 @@ exports.updateTeacher = async function (req, res) {
     const object_update = req.body.object_update;
 
     await adrTeacher.update({
-      ...object_update
+      ...object_update,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
     }, {
       where: {
         id: id
@@ -226,6 +228,8 @@ exports.deleteTeacher = async function (req, res) {
 
     await adrTeacher.update({
       is_deleted: 1,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
     }, {
       where: {
         id: id

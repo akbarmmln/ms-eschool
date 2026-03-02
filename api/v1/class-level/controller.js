@@ -127,6 +127,8 @@ exports.deleteClassLevel = async function (req, res) {
 
     await adrClassLevel.update({
       is_deleted: 1,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
     }, {
       where: {
         id: id
