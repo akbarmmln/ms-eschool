@@ -232,6 +232,7 @@ exports.updateSilabus = async function (req, res) {
             id: uuidv7(),
             created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
             created_by: req.id,
+            is_deleted: 0,
             nama: item.name,
             kode_silabus: id
           }, { transaction: transaction });
