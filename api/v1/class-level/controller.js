@@ -1,3 +1,5 @@
+'use strict';
+
 const { v7: uuidv7 } = require('uuid');
 const moment = require('moment')
 const utils = require('../../../utils/utils');
