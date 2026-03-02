@@ -221,7 +221,7 @@ exports.updateSilabus = async function (req, res) {
     }
 
     await adrSilabus.update({
-      nama: item.name,
+      nama: judul,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       modified_by: req.id,
     }, {
