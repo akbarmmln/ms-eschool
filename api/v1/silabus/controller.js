@@ -17,7 +17,7 @@ exports.getSilabus = async function (req, res) {
     let count, data;
     const search = req.params.search;
     const page = parseInt(req.params.page);
-    const limit = 2;
+    const limit = 5;
     const offset = limit * (page - 1);
 
     if (search) {
