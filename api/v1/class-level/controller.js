@@ -146,7 +146,7 @@ exports.updateClassLevel = async function (req, res) {
     const id = req.body.id;
     const nama = req.body.nama;
 
-    if (formatter.isEmpty(id_kelas)) {
+    if (formatter.isEmpty(id)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
     }
     if (formatter.isEmpty(nama)) {
