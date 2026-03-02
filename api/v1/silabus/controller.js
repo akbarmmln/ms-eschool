@@ -4,8 +4,8 @@ const { v7: uuidv7 } = require('uuid');
 
 const moment = require('moment')
 const utils = require('../../../utils/utils');
-const sequelize = require('../../../config/db').Sequelize;
 const Op = require('sequelize').Op;
+const sequelize = require('../../../config/db').Sequelize;
 const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
@@ -14,62 +14,103 @@ const adrSilabusItems = require('../../../model/adr_silabus_items');
 
 exports.getSilabus = async function (req, res) {
   try {
-    const search = req.params.search || '';
-    const page = parseInt(req.params.page) || 1;
-    const limit = 1
-    const offset = (page - 1) * limit;
-    
-    adrSilabusItems.belongsTo(adrSilabus, {
-      foreignKey: 'kode_silabus',
-      targetKey: 'id'
-    });
+    let count, data;
+    const search = req.params.search;
+    const page = parseInt(req.params.page);
+    const limit = 2;
+    const offset = limit * (page - 1);
 
-    let whereCondition = {
-      is_deleted: 0
-    };
     if (search) {
-      whereCondition = {
-        is_deleted: 0,
-        [Op.or]: [
-          { nama: { [Op.like]: `%${search}%` } },
-          { '$items.nama$': { [Op.like]: `%${search}%` } }
-        ]
-      };
+      count = await adrSilabus.count({
+        raw: true,
+        where: {
+          [Op.and]: [
+            {
+              is_deleted: 0,
+            },
+            {
+              [Op.or]: [
+                { nama: { [Op.like]: `%${search}%` } },
+              ]
+            }
+          ]
+        }
+      });
+      data = await adrSilabus.findAll({
+        limit: limit,
+        offset: offset,
+        raw: true,
+        where: {
+          [Op.and]: [
+            {
+              is_deleted: 0,
+            },
+            {
+              [Op.or]: [
+                { nama: { [Op.like]: `%${search}%` } },
+              ]
+            }
+          ]
+        },
+        order: [['created_dt', 'DESC']]
+      });
+    } else {
+      count = await adrSilabus.count({
+        raw: true,
+        where: { is_deleted: 0 }
+      });
+      data = await adrSilabus.findAll({
+        limit: limit,
+        offset: offset,
+        raw: true,
+        where: { is_deleted: 0 },
+        order: [['created_dt', 'DESC']]
+      });
     }
 
-    const { count, rows } = await adrSilabus.findAndCountAll({
-      subQuery: false, // 🔥 INI KUNCINYA
-      distinct: true, // penting supaya count tidak duplicate
-      col: 'id',
-      limit,
-      offset,
-      order: [['created_dt', 'DESC']],
-      where: whereCondition,
-      include: [
-        {
-          model: adrSilabusItems,
-          as: 'items', // pastikan relasi pakai alias ini
-          where: { is_deleted: 0 },
-          required: false
+    if (data.length > 0) {
+      let tempData = []
+      for (let i=0; i< data.length; i++) {
+        const kode_silabus = data[i].id;
+        const title = data[i].nama;
+        tempData.push({
+          id: kode_silabus,
+          title: title,
+          items: []
+        })
+        
+        const items_silabus = await adrSilabusItems.findAll({
+          raw: true,
+          where: {
+            is_deleted: 0,
+            kode_silabus: kode_silabus
+          }
+        })
+
+        for (let j=0; j<items_silabus.length; j++) {
+          tempData[i].items.push({
+            id: items_silabus[j].id,
+            name: items_silabus[j].nama
+          })
         }
-      ]
-    });
+      }
 
-    const formattedData = rows.map(silabus => ({
-      id: silabus.id,
-      title: silabus.nama,
-      items: silabus.items.map(item => ({
-        id: item.id,
-        name: item.nama
-      }))
-    }));
-
-    return res.status(200).json(rsMsg('000000', {
-      rows: formattedData,
-      currentPage: page,
-      totalPage: Math.ceil(count / limit),
-      totalData: count
-    }));
+      const newRs = {
+        rows: tempData,
+        currentPage: page,
+        totalPage: Math.ceil(count / limit),
+        totalData: count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/silabus/list...', e);
   }
