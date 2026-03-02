@@ -157,3 +157,45 @@ exports.createSilabus = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/silabus/create...', e);
   }
 }
+
+exports.detailSilabus = async function (req, res) {
+  try {
+    const id = req.params.id;
+
+    const data = await adrSilabus.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        id: id
+      }
+    })
+
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    let hasil = {
+      id: id,
+      title: data.nama,
+      items: []
+    }
+
+    const details = await adrSilabusItems.findAll({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        kode_silabus: id
+      }
+    })
+    for (let i=0; i<details.length; i++) {
+      hasil.items.push({
+        id: details[i].id,
+        name: details[i].nama
+      })
+    }
+
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/silabus/detail...', e);
+  }
+}
