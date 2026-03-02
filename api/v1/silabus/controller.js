@@ -295,7 +295,7 @@ exports.updateSilabus = async function (req, res) {
 exports.deleteSilabus = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
-    const id = req.body.id
+    const id = req.body.id;
 
     const cek = await adrSilabus.findOne({
       raw: true,
