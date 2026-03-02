@@ -199,3 +199,65 @@ exports.detailSilabus = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/silabus/detail...', e);
   }
 }
+
+exports.updateSilabus = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id = req.params.id;
+    const submittedItems = req.body.items;
+
+    // Ambil semua item lama
+    const existingItems = await adrSilabusItems.findAll({
+      where: { is_deleted: 0, kode_silabus: id },
+      transaction
+    });
+
+    const existingIds = existingItems.map(item => item.id);
+    const submittedIds = [];
+
+    for (const item of submittedItems) {
+      if (item.id) {
+        await adrSilabusItems.update({
+          nama: item.name
+        }, {
+          where: {
+            id: item.id
+          },
+          transaction
+        })
+
+        submittedIds.push(item.id);
+      } else {
+        const newItem = await adrSilabusItems.create({
+            id: uuidv7(),
+            created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+            created_by: req.id,
+            nama: item.name,
+            kode_silabus: id
+          }, { transaction: transaction });
+
+        submittedIds.push(newItem.id);
+      }
+    }
+
+    const idsToDelete = existingIds.filter(id => !submittedIds.includes(id));
+    if (idsToDelete.length > 0) {
+      await adrSilabusItems.update({
+        is_deleted: 1,
+      }, {
+        where: {
+          id: idsToDelete
+        },
+        transaction
+      })
+    }
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/silabus/update...', e);
+  }
+}

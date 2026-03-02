@@ -7,6 +7,7 @@ router.get('/list/:page', controller.getSilabus);
 router.get('/list/:page/:search', controller.getSilabus);
 
 router.post('/create', auth.verifyToken, controller.createSilabus);
+router.post('/update', auth.verifyToken, controller.updateSilabus);
 router.get('/detail/:id', auth.verifyToken, controller.detailSilabus);
 
 module.exports = router;
