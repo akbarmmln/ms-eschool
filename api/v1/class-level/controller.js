@@ -140,3 +140,31 @@ exports.deleteClassLevel = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/delete...', e);
   }
 }
+
+exports.updateClassLevel = async function (req, res) {
+  try {
+    const id = req.body.id;
+    const nama = req.body.nama;
+
+    if (formatter.isEmpty(id_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
+    }
+    if (formatter.isEmpty(nama)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70002');
+    }
+
+    await adrClassLevel.update({
+      nama: nama,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+    }, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', {}));
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/update...', e);
+  }
+}

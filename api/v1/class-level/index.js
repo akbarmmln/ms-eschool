@@ -7,5 +7,6 @@ router.get('/list/:page', auth.verifyToken, controller.getClassLevel);
 router.get('/list/:page/:search', auth.verifyToken, controller.getClassLevel);
 router.post('/create', auth.verifyToken, controller.createClassLevel);
 router.post('/delete', auth.verifyToken, controller.deleteClassLevel);
+router.post('/update', auth.verifyToken, controller.updateClassLevel);
 
 module.exports = router;
