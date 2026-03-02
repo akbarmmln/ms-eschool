@@ -272,6 +272,8 @@ exports.updateSilabus = async function (req, res) {
     if (idsToDelete.length > 0) {
       await adrSilabusItems.update({
         is_deleted: 1,
+        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        modified_by: req.id,
       }, {
         where: {
           id: idsToDelete
