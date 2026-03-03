@@ -4,6 +4,8 @@ const BaseError = require('../error/baseError');
 const crypto = require('node:crypto');
 const jwt = require('jsonwebtoken');
 const { v7: uuidv7 } = require('uuid');
+const ApiErrorMsg = require('../error/apiErrorMsg');
+const HttpStatusCode = require("../error/httpStatusCode");
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -84,7 +86,7 @@ exports.verify = async function (token) {
     return userToken;
   } catch (e) {
     logger.errorWithContext({ error: e, message: 'error while verify jwt rs256' })
-    throw e
+    throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70006');
   }
 }
 
