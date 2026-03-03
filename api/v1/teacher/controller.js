@@ -219,6 +219,7 @@ exports.updateTeacher = async function (req, res) {
 }
 
 exports.deleteTeacher = async function (req, res) {
+  const transaction = await sequelize.transaction();
   try {
     const id = req.body.id;
 
@@ -233,11 +234,23 @@ exports.deleteTeacher = async function (req, res) {
     }, {
       where: {
         id: id
-      }
+      }, transaction
     })
 
+    await adrUserLogin.update({
+      is_deleted: 1,
+    }, {
+      where: {
+        id_account: id
+      }, transaction
+    })
+
+    await transaction.commit();
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/teacher/update...', e);
   }
 }
