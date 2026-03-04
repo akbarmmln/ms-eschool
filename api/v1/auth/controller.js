@@ -100,6 +100,18 @@ exports.access = async function (req, res) {
     const verifyRes = await utils.verify(token);
     const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
 
+    const payloadEnkripsiLogin = {
+      id_account: decrypt.id_account,
+      role: decrypt.role,
+      tipe_account: decrypt.tipe_account,
+      sessionLogin: sessionLogin
+    }
+    const hash = await utils.enkrip(payloadEnkripsiLogin);        
+    const new_token = await utils.signin(hash);
+
+    res.setHeader('Access-Control-Expose-Headers', 'Authorization');
+    res.header('Authorization', new_token);
+
     return res.status(200).json(rsMsg('000000', decrypt))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/access...', e);
