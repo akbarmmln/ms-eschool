@@ -146,7 +146,7 @@ exports.createSiswa = async function (req, res) {
       is_deleted: 0,
       nama: nama_lengkap,
       jenis_kelamin: jenis_kelamin,
-      tanggal_lahir: moment(tanggal_lahir).format('YYYY-MM-DD 00:00:00'),
+      tanggal_lahir: moment(tanggal_lahir, 'MM-DD-YYYY').format('YYYY-MM-DD 00:00:00'),
       nik: nik,
       alamat: alamat,
       rt: rt,
