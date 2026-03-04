@@ -13,7 +13,7 @@ const adrParents = dbConnection.define('adr_parents', {
   is_deleted: Sequelize.INTEGER,
   nama_ayah: Sequelize.STRING,
   nama_ibu: Sequelize.STRING,
-  email: Sequelize.DATE,
+  email: Sequelize.STRING,
   pekerjaan_ayah: Sequelize.STRING,
   pekerjaan_ibu: Sequelize.STRING
 }, {
