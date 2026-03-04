@@ -158,7 +158,7 @@ exports.createSiswa = async function (req, res) {
       image: image
     }, {transaction: transaction})
 
-    await transaction.commit()
+    await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     if (transaction) {
