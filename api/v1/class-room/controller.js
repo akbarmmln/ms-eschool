@@ -192,7 +192,7 @@ exports.searchClassRoom = async function (req, res) {
     const data = await adrClassRoom.findAll({
       raw: true,
       where: {
-        nama: { [Op.like]: `%${keysearch}%` }
+        nama_kelas: { [Op.like]: `%${keysearch}%` }
       }
     })
 
