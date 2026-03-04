@@ -36,6 +36,8 @@ exports.getTeacherList = async function (req, res) {
             {
               [Op.or]: [
                 { nama: { [Op.like]: `%${search}%` } },
+                { niy: { [Op.like]: `%${search}%` } },
+                { email: { [Op.like]: `%${search}%` } },
               ]
             }
           ]
@@ -54,6 +56,8 @@ exports.getTeacherList = async function (req, res) {
             {
               [Op.or]: [
                 { nama: { [Op.like]: `%${search}%` } },
+                { niy: { [Op.like]: `%${search}%` } },
+                { email: { [Op.like]: `%${search}%` } },
               ]
             }
           ]

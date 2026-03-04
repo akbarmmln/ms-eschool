@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const dbConnection = require('../config/db').Sequelize;
 
-const adrTeacher = dbConnection.define('adr_teacher', {
+const adrSiswa = dbConnection.define('adr_siswa', {
   id: {
     type: Sequelize.STRING,
     primaryKey: true
@@ -12,21 +12,18 @@ const adrTeacher = dbConnection.define('adr_teacher', {
   modified_by: Sequelize.STRING,
   is_deleted: Sequelize.INTEGER,
   nama: Sequelize.STRING,
-  tanggal_lahir: Sequelize.DATE,
-  alamat: Sequelize.STRING,
-  pendidikan: Sequelize.STRING,
   jenis_kelamin: Sequelize.STRING,
-  niy: Sequelize.STRING,
-  email: Sequelize.STRING,
-  nomor_handphone: Sequelize.STRING,
+  tanggal_lahir: Sequelize.DATE,
+  nik: Sequelize.STRING,
+  alamat: Sequelize.STRING,
   rt: Sequelize.STRING,
   rw: Sequelize.STRING,
   kelurahan: Sequelize.STRING,
-  kecamatan: Sequelize.STRING
+  kecamatan: Sequelize.STRING  
 }, {
   freezeTableName: true,
   timestamps: false,
-  tableName: 'adr_teacher'
+  tableName: 'adr_siswa'
 });
 
-module.exports = adrTeacher;
+module.exports = adrSiswa;
