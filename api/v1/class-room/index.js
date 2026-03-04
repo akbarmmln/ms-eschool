@@ -9,4 +9,6 @@ router.post('/create', auth.verifyToken, controller.createClassRoom);
 router.post('/update', auth.verifyToken, controller.updateClassRoom);
 router.post('/delete', auth.verifyToken, controller.deleteClassRoom);
 
+router.get('/search/:search', auth.verifyToken, controller.searchClassRoom);
+
 module.exports = router;
