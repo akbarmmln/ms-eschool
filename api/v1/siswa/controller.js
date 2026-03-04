@@ -12,7 +12,6 @@ const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
 const adrParents = require('../../../model/adr_parents');
 const { email } = require('../../../setting');
-const sequelize = require('../../../config/db').Sequelize;
 
 exports.getSiswa = async function (req, res) {
   try {
