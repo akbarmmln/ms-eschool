@@ -11,72 +11,56 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
 const adrParents = require('../../../model/adr_parents');
-const { email } = require('../../../setting');
 
 exports.getSiswa = async function (req, res) {
   try {
     let count, data;
     const search = req.params.search;
     const page = parseInt(req.params.page);
-    const limit = 5;
+    const limit = 10;
     const offset = limit * (page - 1);
 
     if (search) {
-      count = await adrSiswa.count({
-        raw: true,
-        where: {
-          [Op.and]: [
-            {
-              is_deleted: 0,
-            },
-            {
-              [Op.or]: [
-                { nama: { [Op.like]: `%${search}%` } },
-                { nik: { [Op.like]: `%${search}%` } },
-              ]
-            }
-          ]
-        }
-      });
-      data = await adrSiswa.findAll({
-        limit: limit,
-        offset: offset,
-        raw: true,
-        where: {
-          [Op.and]: [
-            {
-              is_deleted: 0,
-            },
-            {
-              [Op.or]: [
-                { nama: { [Op.like]: `%${search}%` } },
-                { nik: { [Op.like]: `%${search}%` } },
-              ]
-            }
-          ]
-        },
-        order: [['created_dt', 'DESC']]
-      });
-    } else {
-      count = await adrSiswa.count({
-        raw: true,
-        where: { is_deleted: 0 }
-      });
-      data = await adrSiswa.findAll({
-        limit: limit,
-        offset: offset,
-        raw: true,
-        where: { is_deleted: 0 },
-        order: [['created_dt', 'DESC']]
-      });
-    }
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
+        LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
+        adr_siswa.nama LIKE :nama_ or adr_class_room.nama_kelas LIKE :nama_kelas_`,
+        { replacements: { nama_: `%${search}%`, nama_kelas_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
 
+      data = await sequelize.query(`SELECT adr_siswa.id, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
+        adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
+        LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
+        adr_siswa.nama LIKE :nama_ or adr_class_room.nama_kelas LIKE :nama_kelas_ LIMIT ${offset}, ${limit}`,
+        { replacements: { nama_: `%${search}%`, nama_kelas_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+    } else {
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
+        LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id`,
+        { type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+      data = await sequelize.query(`SELECT adr_siswa.id, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
+        adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
+        LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id LIMIT ${offset}, ${limit}`,
+        { type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+    }
+    
     if (data.length > 0) {
       const newRs = {
         rows: data,
         currentPage: page,
-        totalPage: Math.ceil(count / limit),
-        totalData: count,
+        totalPage: Math.ceil(count[0].count / limit),
+        totalData: count[0].count,
       };
       return res.status(200).json(rsMsg('000000', newRs));
     } else {
@@ -92,7 +76,6 @@ exports.getSiswa = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/list...', e);
   }
 }
-
 exports.createSiswa = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
