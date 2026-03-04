@@ -90,3 +90,17 @@ exports.getSiswa = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/list...', e);
   }
 }
+
+exports.createSiswa = async function (req, res) {
+  try {
+    const nik = req.body.nik;
+
+    await adrSiswa.create({
+      nik: nik
+    })
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/create...', e);
+  }
+}

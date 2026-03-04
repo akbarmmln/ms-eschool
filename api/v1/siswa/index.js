@@ -6,5 +6,6 @@ const auth = require('../auth/controller');
 router.get('/list/:page', controller.getSiswa);
 router.get('/list/:page/:search', controller.getSiswa);
 
+router.get('/create', controller.createSiswa);
 
 module.exports = router;
