@@ -96,6 +96,7 @@ exports.createSiswa = async function (req, res) {
     const nik = req.body.nik;
 
     await adrSiswa.create({
+      id: uuidv7(),
       nik: nik
     })
 
