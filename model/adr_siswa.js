@@ -19,7 +19,10 @@ const adrSiswa = dbConnection.define('adr_siswa', {
   rt: Sequelize.STRING,
   rw: Sequelize.STRING,
   kelurahan: Sequelize.STRING,
-  kecamatan: Sequelize.STRING  
+  kecamatan: Sequelize.STRING,
+  id_kelas: Sequelize.STRING,
+  id_parent: Sequelize.STRING,
+  image: Sequelize.STRING
 }, {
   freezeTableName: true,
   timestamps: false,

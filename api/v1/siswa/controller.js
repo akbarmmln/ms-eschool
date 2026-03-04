@@ -10,6 +10,9 @@ const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
+const adrParents = require('../../../model/adr_parents');
+const { email } = require('../../../setting');
+const sequelize = require('../../../config/db').Sequelize;
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -92,16 +95,75 @@ exports.getSiswa = async function (req, res) {
 }
 
 exports.createSiswa = async function (req, res) {
+  const transaction = await sequelize.transaction();
   try {
+    let idParent;
+    const idSiswa = uuidv7();
     const nik = req.body.nik;
+    const nama_lengkap = req.body.nama_lengkap;
+    const jenis_kelamin = req.body.jenis_kelamin;
+    const tanggal_lahir = req.body.tanggal_lahir;
+    const alamat = req.body.alamat;
+    const no_rt = req.body.no_rt;
+    const no_rw = req.body.no_rw;
+    const kelurahan = req.body.kelurahan;
+    const kecamatan = req.body.nik;
+    const id_kelas = req.body.id_kelas;
+    const nama_ayah = req.body.nama_ayah;
+    const nama_ibu = req.body.nama_ibu;
+    const email_aktif = req.body.email_aktif;
+    const ocup_ayah = req.body.ocup_ayah;
+    const ocup_ibu = req.body.ocup_ibu;
+    const image = req.body.image;
+
+    const dataParent = await adrParents.findOne({
+      raw: true,
+      where: {
+        email: email_aktif
+      }
+    })
+    if (dataParent) {
+      idParent = dataParent.id
+    } else {
+      idParent = uuidv7();
+      await adrParents.create({
+        id: idParent,
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        nama_ayah: nama_ayah,
+        nama_ibu: nama_ibu,
+        email: email_aktif,
+        pekerjaan_ayah: ocup_ayah,
+        pekerjaan_ibu: ocup_ibu
+      }, { transaction: transaction })
+    }
 
     await adrSiswa.create({
-      id: uuidv7(),
-      nik: nik
-    })
+      id: idSiswa,
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: req.id,
+      is_deleted: 0,
+      nama: nama_lengkap,
+      jenis_kelamin: jenis_kelamin,
+      tanggal_lahir: moment(tanggal_lahir).format('YYYY-MM-DD 00:00:00'),
+      nik: nik,
+      alamat: alamat,
+      rt: rt,
+      rw: rw,
+      kelurahan: kelurahan,
+      kecamatan: kecamatan,
+      id_kelas: id_kelas,
+      id_parent: idParent,
+      image: image
+    }, {transaction: transaction})
 
+    await transaction.commit()
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
+    if (transaction) {
+      await transaction.rollback()
+    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/create...', e);
   }
 }
