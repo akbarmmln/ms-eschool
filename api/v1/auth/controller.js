@@ -92,6 +92,8 @@ exports.verifyToken = async function (req, res, next) {
 exports.access = async function (req, res) {
   try {
     const token = req.body.authorization;
+    let sessionLogin = uuidv7();
+    sessionLogin = sessionLogin.replace(/-/g, "");
 
     if (!token) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70006');
