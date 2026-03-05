@@ -55,7 +55,8 @@ exports.signin = async function (hash) {
     const options = {
       issuer: 'eschool',
       algorithm: 'RS256',
-      expiresIn: 3600,
+      // expiresIn: 3600,
+      expiresIn: 30,
     };
     const token = jwt.sign(
       hash,
