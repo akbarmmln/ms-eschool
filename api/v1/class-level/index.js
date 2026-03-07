@@ -9,6 +9,6 @@ router.post('/create', auth.verifyToken, controller.createClassLevel);
 router.post('/delete', auth.verifyToken, controller.deleteClassLevel);
 router.post('/update', auth.verifyToken, controller.updateClassLevel);
 
-router.post('/level', auth.verifyToken, controller.getLevelClass);
+router.get('/level', auth.verifyToken, controller.getLevelClass);
 
 module.exports = router;
