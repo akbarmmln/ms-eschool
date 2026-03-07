@@ -214,8 +214,22 @@ exports.getDetailLevelClass = async function (req, res) {
         is_deleted: 0
       }
     })
+
+    const attributes_class_room = [
+      'id',
+      'nama_kelas',
+      [
+        sequelize.literal(`(SELECT id FROM adr_teacher where id = adr_class_room.id_wakil_wali_kelas)`),
+        'id_wali_kelas',
+      ],
+      [
+        sequelize.literal(`(SELECT nama FROM adr_teacher where id = adr_class_room.id_wakil_wali_kelas)`),
+        'wali_kelas',
+      ]
+    ];
     const allClassRoom = await adrClassRoom.findAll({
       raw: true,
+      attributes: attributes_class_room,
       where: {
         id_tingkat_kelas: data.id,
         is_deleted: 0
