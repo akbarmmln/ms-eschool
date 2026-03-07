@@ -10,6 +10,8 @@ const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
+const adrTeacher = require('../../../model/adr_teacher');
+const adrClassLevel = require('../../../model/adr_class_level');
 
 exports.getClassRoom = async function (req, res) {
   try {
@@ -217,5 +219,55 @@ exports.searchClassRoom = async function (req, res) {
     return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/class-room/search...', e);
+  }
+}
+
+exports.detailClassRoom = async function (req, res) {
+  try {
+    const id = req.params.id
+
+    const countData = await adrClassRoom.count({
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+
+    if (!countData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    const data = await adrClassRoom.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+
+    const detailWaliKelas = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        id: data.id_wakil_wali_kelas,
+        is_deleted: 0
+      }
+    })
+    const detailTingkatKelas = await adrClassLevel.findOne({
+      raw: true,
+      where: {
+        id: data.id_tingkat_kelas,
+        is_deleted: 0
+      }
+    })
+
+    const hasil = {
+      ruang_kelas: data,
+      wali_kelas: detailWaliKelas,
+      tingkat_kelas: detailTingkatKelas
+    }
+
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/class-room/detail...', e);
   }
 }
