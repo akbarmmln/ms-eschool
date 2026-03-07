@@ -176,7 +176,7 @@ exports.getLevelClass = async function (req, res) {
     const data = await adrClassLevel.findAll({
       raw: true,
       where: {
-        is_deletedL 0
+        is_deleted: 0
       }
     })
 
