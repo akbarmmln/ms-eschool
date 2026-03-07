@@ -149,6 +149,7 @@ exports.updateClassRoom = async function (req, res) {
     const id_kelas = req.body.id_kelas;
     const nama_kelas = req.body.nama_kelas;
     const id_wali_kelas = req.body.id_wali_kelas;
+    const id_tingkatan_kelas = req.body.id_tingkatan_kelas;
 
     if (formatter.isEmpty(nama_kelas)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70002');
@@ -156,12 +157,16 @@ exports.updateClassRoom = async function (req, res) {
     if (formatter.isEmpty(id_wali_kelas)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70003');
     }
+    if (formatter.isEmpty(id_tingkatan_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70009');
+    }
 
     await adrClassRoom.update({
       nama_kelas: nama_kelas,
       id_wakil_wali_kelas: id_wali_kelas,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      modified_by: req.id
+      modified_by: req.id,
+      id_tingkat_kelas: id_tingkatan_kelas
     }, {
       where: {
         id: id_kelas
