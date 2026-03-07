@@ -123,7 +123,7 @@ exports.createTeacher = async function (req, res) {
     const uuid = await formatter.runNanoID(10)
     const niy = req.body.niy
     const nama = req.body.nama
-    const email = req.body.email;
+    const email = req.body?.email?.toLowerCase();
     const pin = otpGenerator.generate(12, { digits: false, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
     const encryptPin = await bcrypt.hash(pin, saltRounds);
 
