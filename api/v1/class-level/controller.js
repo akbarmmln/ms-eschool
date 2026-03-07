@@ -170,3 +170,18 @@ exports.updateClassLevel = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/update...', e);
   }
 }
+
+exports.getLevelClass = async function (req, res) {
+  try {
+    const data = await adrClassLevel.findAll({
+      raw: true,
+      where: {
+        is_deletedL 0
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', data))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/class-level/level...', e);
+  }
+}

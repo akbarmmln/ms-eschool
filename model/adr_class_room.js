@@ -12,7 +12,8 @@ const adrClassRoom = dbConnection.define('adr_class_room', {
   modified_by: Sequelize.STRING,
   is_deleted: Sequelize.INTEGER,
   nama_kelas: Sequelize.STRING,
-  id_wakil_wali_kelas: Sequelize.STRING
+  id_wakil_wali_kelas: Sequelize.STRING,
+  id_tingkat_kelas: Sequelize.STRING,
 }, {
   freezeTableName: true,
   timestamps: false,
