@@ -10,6 +10,6 @@ router.post('/update', auth.verifyToken, controller.updateClassRoom);
 router.post('/delete', auth.verifyToken, controller.deleteClassRoom);
 
 router.get('/search/:search', auth.verifyToken, controller.searchClassRoom);
-router.get('/detail/:id', controller.detailClassRoom);
+router.get('/detail/:id', auth.verifyToken, controller.detailClassRoom);
 
 module.exports = router;

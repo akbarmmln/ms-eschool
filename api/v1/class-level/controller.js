@@ -10,6 +10,7 @@ const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassLevel = require('../../../model/adr_class_level');
+const adrClassRoom = require('../../../model/adr_class_room');
 
 exports.getClassLevel = async function (req, res) {
   try {
@@ -21,6 +22,7 @@ exports.getClassLevel = async function (req, res) {
     const attributes = [
       'id',
       'nama',
+      'deskripsi'
     ];
 
     if (search) {
@@ -100,6 +102,7 @@ exports.createClassLevel = async function (req, res) {
   try {
     const uuid = await formatter.runNanoID(10)
     const nama = req.body.nama;
+    const deskripsi = req.body.deskripsi;
 
     if (formatter.isEmpty(nama)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70007');
@@ -110,7 +113,8 @@ exports.createClassLevel = async function (req, res) {
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       created_by: req.id,
       is_deleted: 0,
-      nama: nama
+      nama: nama,
+      deskripsi: deskripsi
     })
 
     return res.status(200).json(rsMsg('000000', {}))
@@ -147,6 +151,7 @@ exports.updateClassLevel = async function (req, res) {
   try {
     const id = req.body.id;
     const nama = req.body.nama;
+    const deskripsi = req.body.deskripsi;
 
     if (formatter.isEmpty(id)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70001');
@@ -157,6 +162,7 @@ exports.updateClassLevel = async function (req, res) {
 
     await adrClassLevel.update({
       nama: nama,
+      deskripsi: deskripsi,
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       modified_by: req.id
     }, {
@@ -183,5 +189,46 @@ exports.getLevelClass = async function (req, res) {
     return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/class-level/level...', e);
+  }
+}
+
+exports.getDetailLevelClass = async function (req, res) {
+  try {
+    const id = req.params.id;
+
+    const countData = await adrClassLevel.count({
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+
+    if (!countData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    const data = await adrClassLevel.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+    const allClassRoom = await adrClassRoom.findAll({
+      raw: true,
+      where: {
+        id_tingkat_kelas: data.id,
+        is_deleted: 0
+      }
+    })
+
+    const hasil = {
+      ...data,
+      class_room: allClassRoom
+    }
+
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/class-level/detail...', e);
   }
 }

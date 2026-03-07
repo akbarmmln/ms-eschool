@@ -176,6 +176,17 @@ exports.detailTeacher = async function (req, res) {
   try {
     const id = req.params.id;
 
+    const countData = await adrTeacher.count({
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+
+    if (!countData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
     const data = await adrTeacher.findOne({
       raw: true,
       where:{
@@ -187,7 +198,7 @@ exports.detailTeacher = async function (req, res) {
       raw: true,
       attributes: ['id', 'nama_kelas', 'id_wakil_wali_kelas'],
       where: {
-        id_wakil_wali_kelas: id
+        id_wakil_wali_kelas: data.id
       }
     })
 

@@ -11,7 +11,8 @@ const adrClassLevel = dbConnection.define('adr_class_level', {
   modified_dt: Sequelize.DATE(6),
   modified_by: Sequelize.STRING,
   is_deleted: Sequelize.INTEGER,
-  nama: Sequelize.STRING
+  nama: Sequelize.STRING,
+  deskripsi: Sequelize.STRING
 }, {
   freezeTableName: true,
   timestamps: false,
