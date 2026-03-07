@@ -117,9 +117,13 @@ exports.createClassRoom  = async function (req, res) {
     const uuid = await formatter.runNanoID(10)
     const nama_kelas = req.body.nama_kelas;
     const id_wali_kelas = req.body.id_wali_kelas;
+    const id_tingkatan_kelas = req.body.id_tingkatan_kelas;
 
     if (formatter.isEmpty(nama_kelas)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70002');
+    }
+    if (formatter.isEmpty(id_tingkatan_kelas)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70009');
     }
 
     await adrClassRoom.create({
@@ -131,6 +135,7 @@ exports.createClassRoom  = async function (req, res) {
       is_deleted: 0,
       nama_kelas: nama_kelas,
       id_wakil_wali_kelas: id_wali_kelas,
+      id_tingkat_kelas: id_tingkatan_kelas
     })
 
     return res.status(200).json(rsMsg('000000'));
