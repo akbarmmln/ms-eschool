@@ -11,7 +11,6 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSilabus = require('../../../model/adr_silabus');
 const adrSilabusItems = require('../../../model/adr_silabus_items');
-const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 
 exports.getSilabus = async function (req, res) {
   try {
@@ -338,54 +337,5 @@ exports.deleteSilabus = async function (req, res) {
       await transaction.rollback();
     }
     return utils.returnErrorFunction(res, 'error POST /api/v1/silabus/delete...', e);
-  }
-}
-
-exports.getSilabusRelasi = async function (req, res) {
-  try {
-    const id = req.params.id;
-
-    const data = await adrClassLevelSilabus.findAll({
-      raw: true,
-      where: {
-        id_tingkat_kelas: id,
-        is_deleted: 0
-      }
-    })
-
-    if (data.length == 0) {
-      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
-    }
-
-    let pushSilabus = [];
-    for (let i=0; i<data.length; i++) {
-      const silabus = await sequelize.query(`SELECT adr_silabus.id, adr_silabus.nama, 
-        adr_silabus_items.id as item_id, adr_silabus_items.nama as nama_item
-        FROM adr_silabus LEFT JOIN adr_silabus_items
-        ON adr_silabus.id = adr_silabus_items.kode_silabus
-        where adr_silabus.id = :id_ AND adr_silabus.is_deleted = '0'`,
-        { replacements: { id_: `${data[i].id_silabus}` }, type: sequelize.QueryTypes.SELECT },
-        {
-          raw: true
-        });
-      
-      if (silabus.length) {
-        const result = {
-          id: silabus[0]?.id,
-          title: silabus[0]?.nama,
-          items: silabus
-            .filter(item => item.nama_item !== null)
-            .map(item => ({
-              id: item?.item_id,
-              nama_item: item?.nama_item
-            }))
-        };
-        pushSilabus.push(result)
-      }
-    }
-
-    return res.status(200).json(rsMsg('000000', pushSilabus))
-  } catch (e) {
-    return utils.returnErrorFunction(res, 'error GET /api/v1/silabus/relasi...', e);
   }
 }

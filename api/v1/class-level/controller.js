@@ -5,12 +5,13 @@ const moment = require('moment')
 const utils = require('../../../utils/utils');
 const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
-const sequelize = require('sequelize');
+const sequelize = require('../../../config/db').Sequelize;
 const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassLevel = require('../../../model/adr_class_level');
 const adrClassRoom = require('../../../model/adr_class_room');
+const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 
 exports.getClassLevel = async function (req, res) {
   try {
@@ -236,9 +237,47 @@ exports.getDetailLevelClass = async function (req, res) {
       }
     })
 
+    const levelSilabus = await adrClassLevelSilabus.findAll({
+      raw: true,
+      where: {
+        id_tingkat_kelas: id,
+        is_deleted: 0
+      }
+    })
+    
+    let pushSilabus = [];
+    if (levelSilabus.length > 0) {
+      for (let i = 0; i < levelSilabus.length; i++) {
+        const silabus = await sequelize.query(`SELECT adr_silabus.id, adr_silabus.nama, 
+        adr_silabus_items.id as item_id, adr_silabus_items.nama as nama_item
+        FROM adr_silabus LEFT JOIN adr_silabus_items
+        ON adr_silabus.id = adr_silabus_items.kode_silabus
+        where adr_silabus.id = :id_ AND adr_silabus.is_deleted = '0'`,
+          { replacements: { id_: `${levelSilabus[i].id_silabus}` }, type: sequelize.QueryTypes.SELECT },
+          {
+            raw: true
+          });
+
+        if (silabus.length) {
+          const result = {
+            id: silabus[0]?.id,
+            title: silabus[0]?.nama,
+            items: silabus
+              .filter(item => item.nama_item !== null)
+              .map(item => ({
+                id: item?.item_id,
+                nama_item: item?.nama_item
+              }))
+          };
+          pushSilabus.push(result)
+        }
+      }
+    }
+
     const hasil = {
       ...data,
-      class_room: allClassRoom
+      class_room: allClassRoom,
+      silabus: pushSilabus
     }
 
     return res.status(200).json(rsMsg('000000', hasil))

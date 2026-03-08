@@ -12,6 +12,4 @@ router.get('/detail/:id', auth.verifyToken, controller.detailSilabus);
 
 router.post('/delete/', auth.verifyToken, controller.deleteSilabus);
 
-router.get('/relasi/:id', auth.verifyToken, controller.getSilabusRelasi);
-
 module.exports = router;
