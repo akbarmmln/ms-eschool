@@ -310,7 +310,7 @@ exports.updateRelasiSilabus = async function (req, res) {
         await adrClassLevelSilabus.create({
           id: uuidv7(),
           created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-          created_by: 'req.id',
+          created_by: req.id,
           is_deleted: 0,
           id_tingkat_kelas: id,
           id_silabus: toAdd[i]
@@ -331,7 +331,7 @@ exports.updateRelasiSilabus = async function (req, res) {
         if (dataWillDeleted) {
           await adrClassLevelSilabus.update({
             modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-            modified_by: 'req.id',
+            modified_by: req.id,
             is_deleted: 1
           }, {
             where: {
