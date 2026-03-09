@@ -12,4 +12,6 @@ router.post('/update', auth.verifyToken, controller.updateClassLevel);
 router.get('/level', auth.verifyToken, controller.getLevelClass);
 router.get('/detail/:id', auth.verifyToken, controller.getDetailLevelClass);
 
+router.post('/update/relasi-silabus', controller.updateRelasiSilabus);
+
 module.exports = router;

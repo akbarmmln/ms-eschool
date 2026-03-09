@@ -285,3 +285,69 @@ exports.getDetailLevelClass = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/class-level/detail...', e);
   }
 }
+
+exports.updateRelasiSilabus = async function (req, res) {
+  try {
+    const id = req.body.id;
+    const items = req.body.items;
+
+    const existingItems = await adrClassLevelSilabus.findAll({
+      raw: true,
+      where: {
+        id_tingkat_kelas: id,
+        is_deleted: 0
+      }
+    })
+    const existingIds = existingItems.map(item => item.id_silabus);
+    const existingSet = new Set(existingIds);
+    const itemsSet = new Set(items);
+
+    const toAdd = [...itemsSet].filter(id => !existingSet.has(id));
+    const toDelete = [...existingSet].filter(id => !itemsSet.has(id));
+
+    if (toAdd.length > 0) {
+      for (let i=0; i<toAdd.length; i++) {
+        await adrClassLevelSilabus.create({
+          id: uuidv7(),
+          created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+          created_by: 'req.id',
+          is_deleted: 0,
+          id_tingkat_kelas: id,
+          id_silabus: toAdd[i]
+        })
+      }
+    }
+
+    if (toDelete.length > 0) {
+      for (let i=0; i<toDelete.length; i++) {
+        const dataWillDeleted = await adrClassLevelSilabus.findOne({
+          raw: true,
+          where: {
+            id_tingkat_kelas: id,
+            id_silabus: toDelete[i],
+            is_deleted: 0
+          }
+        })
+        if (dataWillDeleted) {
+          await adrClassLevelSilabus.update({
+            modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+            modified_by: 'req.id',
+            is_deleted: 1
+          }, {
+            where: {
+              id: dataWillDeleted.id
+            }
+          })
+        }
+      }
+    }
+
+    return res.status(200).json(rsMsg('000000', {
+      existingIds,
+      toAdd,
+      toDelete
+    }))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/update/relasi-silabus...', e);
+  }
+}
