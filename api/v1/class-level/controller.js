@@ -346,7 +346,7 @@ exports.updateRelasiSilabus = async function (req, res) {
       existingIds,
       toAdd,
       toDelete
-    }))
+    }));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/class-level/update/relasi-silabus...', e);
   }
