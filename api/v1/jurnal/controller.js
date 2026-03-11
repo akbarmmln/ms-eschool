@@ -114,9 +114,9 @@ exports.getDetailJurnalMengajar = async function (req, res) {
 
     const hasil = {
       jurnal: data,
-      jurnal_details: detail
+      siswa: detail
     }
-    
+
     return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/detail...', e);
