@@ -12,4 +12,6 @@ router.post('/delete', auth.verifyToken, controller.deleteClassRoom);
 router.get('/search/:search', auth.verifyToken, controller.searchClassRoom);
 router.get('/detail/:id', auth.verifyToken, controller.detailClassRoom);
 
+router.get('/class', auth.verifyToken, controller.getClass);
+
 module.exports = router;

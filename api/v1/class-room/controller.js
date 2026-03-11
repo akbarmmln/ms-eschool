@@ -309,3 +309,18 @@ exports.detailClassRoom = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/class-room/detail...', e);
   }
 }
+
+exports.getClass = async function (req, res) {
+  try {
+    const data = await adrClassRoom.findAll({
+      raw: true,
+      where: {
+        is_deleted: 0
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', data))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/class-room/class...', e);
+  }
+}
