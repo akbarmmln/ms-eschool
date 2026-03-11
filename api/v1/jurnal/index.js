@@ -4,5 +4,6 @@ const controller = require('./controller');
 const auth = require('../auth/controller');
 
 router.post('/create', auth.verifyToken, controller.createJurnalMengajar);
+router.get('/detail/:id', auth.verifyToken, controller.getDetailJurnalMengajar);
 
 module.exports = router;

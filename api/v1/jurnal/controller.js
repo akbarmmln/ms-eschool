@@ -86,3 +86,39 @@ exports.createJurnalMengajar = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/create...', e);
   }
 }
+
+exports.getDetailJurnalMengajar = async function (req, res) {
+  try {
+    const id = req.params.id;
+    
+    if (formatter.isEmpty(id)) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70001');
+    }
+
+    const data = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70008');
+    }
+    const detail = await adrJurnalMengajarDetailSiswa.findAll({
+      raw: true,
+      where: {
+        id_jurnal: data?.id
+      }
+    })
+
+    const hasil = {
+      jurnal: data,
+      jurnal_details: detail
+    }
+    
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/detail...', e);
+  }
+}
