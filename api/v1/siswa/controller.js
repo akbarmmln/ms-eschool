@@ -165,7 +165,11 @@ exports.searchSiswa = async function (req, res) {
       {
         raw: true
       });
-
+    
+    if (data.length == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+    
     return res.status(200).json(rsMsg('000000', data.length ? data[0] : {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/search...', e);
