@@ -9,6 +9,7 @@ const errCode = {
   '70007': 'nama tingkatan kelas harus terisi',
   '70008': 'data tidak ditemukan',
   '70009': 'tingkatan kelas harus terisi',
+  '70010': 'gagal membuat jurnal mengajar',
 };
 
 module.exports = errCode;
