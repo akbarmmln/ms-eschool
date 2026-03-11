@@ -18,6 +18,8 @@ const adrJurnalMengajar = dbConnection.define('adr_jurnal_mengajar', {
   refleksi: Sequelize.STRING,
   id_kelas: Sequelize.STRING,
   nama_kelas: Sequelize.STRING,
+  id_guru: Sequelize.STRING,
+  nama_guru: Sequelize.STRING,
   status_absensi: Sequelize.STRING,
 }, {
   freezeTableName: true,

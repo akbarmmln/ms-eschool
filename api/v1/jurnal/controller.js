@@ -13,6 +13,7 @@ const adrJurnalMengajar = require('../../../model/adr_jurnal_mengajar');
 const adrSiswa = require('../../../model/adr_siswa');
 const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar_detail_siswa');
 const adrClassRoom = require('../../../model/adr_class_room');
+const adrTeacher = require('../../../model/adr_teacher');
 
 exports.createJurnalMengajar = async function (req, res) {
   const transaction = await sequelize.transaction();
@@ -24,14 +25,8 @@ exports.createJurnalMengajar = async function (req, res) {
     const materi = req.body.materi;
     const refleksi = req.body.refleksi;
     const kelas = req.body.kelas;
+    const guru = req.body.guru;
 
-    const dataSiswa = await adrSiswa.findAll({
-      raw: true,
-      where: {
-        id_kelas: kelas,
-        is_deleted: 0
-      }
-    })
     const dataKelas = await adrClassRoom.findOne({
       raw: true,
       where: {
@@ -43,6 +38,24 @@ exports.createJurnalMengajar = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70010');
     }
 
+    const dataGuru = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        id: guru,
+        is_deleted: 0
+      }
+    })
+    if (!dataGuru) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70010');
+    }
+
+    const dataSiswa = await adrSiswa.findAll({
+      raw: true,
+      where: {
+        id_kelas: kelas,
+        is_deleted: 0
+      }
+    })
     const result = dataSiswa.map(item => ({
       id: uuidv7(),
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -53,7 +66,6 @@ exports.createJurnalMengajar = async function (req, res) {
       nama_siswa: item.nama,
       absensi: null
     }));
-
     if (result.length == 0) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70010');
     }
@@ -70,6 +82,9 @@ exports.createJurnalMengajar = async function (req, res) {
       refleksi: refleksi,
       id_kelas: dataKelas?.id,
       nama_kelas: dataKelas?.nama_kelas,
+      id_guru: dataGuru?.id,
+      nama_guru: dataGuru?.nama,
+
       status_absensi: 0
     }, {transaction})
 
