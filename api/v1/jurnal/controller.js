@@ -159,7 +159,7 @@ exports.getDetailJurnalMengajar = async function (req, res) {
 exports.updateAbsensi = async function (req, res) {
   try {
     const absensi = req.body.absensi;
-    if (typeof payload !== 'object') {
+    if (typeof absensi !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
     }
 
