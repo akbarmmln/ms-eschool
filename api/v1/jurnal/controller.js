@@ -155,3 +155,29 @@ exports.getDetailJurnalMengajar = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/detail...', e);
   }
 }
+
+exports.updateAbsensi = async function (req, res) {
+  try {
+    const absensi = req.body.absensi;
+    if (typeof payload !== 'object') {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
+    }
+
+    await Promise.all(
+      absensi.map(item => {
+        return adrJurnalMengajarDetailSiswa.update(
+          { absensi: item.status },
+          {
+            where: {
+              id: item.id_detail_diajar
+            }
+          }
+        );
+      })
+    );
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-absensi...', e);
+  }
+}

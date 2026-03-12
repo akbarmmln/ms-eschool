@@ -10,6 +10,7 @@ const errCode = {
   '70008': 'data tidak ditemukan',
   '70009': 'tingkatan kelas harus terisi',
   '70010': 'gagal membuat jurnal mengajar',
+  '70011': 'payload tidak sesuai',
 };
 
 module.exports = errCode;
