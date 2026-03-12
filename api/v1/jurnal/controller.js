@@ -206,7 +206,7 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       silabus: grouped
     }
 
-    return res.status(200).json(rsMsg('000000', grouped))
+    return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/detail...', e);
   }
