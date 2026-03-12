@@ -193,8 +193,8 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       }
     })
     const grouped = Object.values(
-      detailSilabus.reduce((a, { id_silabus, item_silabus }) => {
-        (a[id_silabus] ??= { id: id_silabus, items: [] })
+      detailSilabus.reduce((a, { id_silabus, title_silabus, item_silabus }) => {
+        (a[id_silabus] ??= { id: id_silabus, title: title_silabus, items: [] })
           .items.push({ nama_item: item_silabus });
         return a;
       }, {})
