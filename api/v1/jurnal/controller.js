@@ -163,6 +163,9 @@ exports.updateAbsensi = async function (req, res) {
     if (typeof absensi !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
     }
+    if (absensi.length == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70012');
+    }
 
     await Promise.all(
       absensi.map(item => {

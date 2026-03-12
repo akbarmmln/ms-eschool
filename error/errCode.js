@@ -11,6 +11,7 @@ const errCode = {
   '70009': 'tingkatan kelas harus terisi',
   '70010': 'gagal membuat jurnal mengajar',
   '70011': 'payload tidak sesuai',
+  '70012': 'minimal 1 data absensi dilakukan',
 };
 
 module.exports = errCode;
