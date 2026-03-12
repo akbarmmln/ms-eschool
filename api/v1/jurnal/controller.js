@@ -193,9 +193,9 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       }
     })
     const grouped = Object.values(
-      detailSilabus.reduce((a, { id_silabus, title_silabus, item_silabus }) => {
+      detailSilabus.reduce((a, { id, id_silabus, title_silabus, item_silabus, penilaian, keterangan }) => {
         (a[id_silabus] ??= { id: id_silabus, title: title_silabus, items: [] })
-          .items.push({ nama_item: item_silabus });
+          .items.push({ id: id, nama_item: item_silabus, penilaian: penilaian, keterangan: keterangan });
         return a;
       }, {})
     );
@@ -206,7 +206,7 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       silabus: grouped
     }
 
-    return res.status(200).json(rsMsg('000000', hasil))
+    return res.status(200).json(rsMsg('000000', grouped))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/detail...', e);
   }
