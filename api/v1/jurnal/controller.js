@@ -158,6 +158,7 @@ exports.getDetailJurnalMengajar = async function (req, res) {
 
 exports.updateAbsensi = async function (req, res) {
   try {
+    const id = req.body.id;
     const absensi = req.body.absensi;
     if (typeof absensi !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
@@ -175,6 +176,14 @@ exports.updateAbsensi = async function (req, res) {
         );
       })
     );
+
+    await adrJurnalMengajar.update({
+      initiate_nilai: 1
+    }, {
+      where: {
+        id: id
+      }
+    })
 
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
