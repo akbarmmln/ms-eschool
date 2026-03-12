@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const dbConnection = require('../config/db').Sequelize;
-const adrSilabus = require('./adr_silabus');
 
 const adrSilabusItems = dbConnection.define('adr_silabus_items', {
   id: {

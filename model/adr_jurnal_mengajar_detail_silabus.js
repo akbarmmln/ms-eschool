@@ -13,6 +13,7 @@ const adrJurnalMengajarDetailSilabus = dbConnection.define('adr_jurnal_mengajar_
   is_deleted: Sequelize.INTEGER,
   id_jurnal: Sequelize.STRING,
   id_silabus: Sequelize.STRING,
+  title_silabus: Sequelize.STRING,
   item_silabus: Sequelize.STRING,
   penilaian: Sequelize.STRING,
 }, {

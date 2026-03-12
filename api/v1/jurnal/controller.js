@@ -16,6 +16,7 @@ const adrTeacher = require('../../../model/adr_teacher');
 const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar_detail_siswa');
 const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
+const adrSilabus = require('../../../model/adr_silabus');
 
 exports.createJurnalMengajar = async function (req, res) {
   const transaction = await sequelize.transaction();
@@ -76,7 +77,10 @@ exports.createJurnalMengajar = async function (req, res) {
     }
 
     const levelSilabus = await adrClassLevelSilabus.findAll({
-      raw: true,
+      include: [{
+        model: adrSilabus,
+        required: true
+      }],
       where: {
         id_tingkat_kelas: idTingkatKelas,
         is_deleted: 0,
@@ -108,6 +112,7 @@ exports.createJurnalMengajar = async function (req, res) {
               is_deleted: 0,
               id_jurnal: id_jurnal,
               id_silabus: levelSilabus[i].id_silabus,
+              title_silabus: levelSilabus[i].adr_silabus.nama,
               id_item_silabus: silabus[j].item_id,
               item_silabus: silabus[j].nama_item,
               penilaian: null
@@ -157,7 +162,6 @@ exports.createJurnalMengajar = async function (req, res) {
 
 exports.getDetailJurnalMengajar = async function (req, res) {
   try {
-    let pushSilabus = [];
     const id = req.params.id;
     
     if (formatter.isEmpty(id)) {
@@ -182,9 +186,24 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       }
     })
     
+    const detailSilabus = await adrJurnalMengajarDetailSilabus.findAll({
+      raw: true,
+      where: {
+        id_jurnal: data?.id
+      }
+    })
+    const grouped = Object.values(
+      detailSilabus.reduce((a, { id_silabus, item_silabus }) => {
+        (a[id_silabus] ??= { id: id_silabus, items: [] })
+          .items.push({ nama_item: item_silabus });
+        return a;
+      }, {})
+    );
+
     const hasil = {
       jurnal: data,
-      siswa: detail
+      siswa: detail,
+      silabus: grouped
     }
 
     return res.status(200).json(rsMsg('000000', hasil))

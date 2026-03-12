@@ -25,5 +25,4 @@ adrSilabus.hasMany(adrSilabusItems, {
   sourceKey: 'id'
 });
 
-
 module.exports = adrSilabus;

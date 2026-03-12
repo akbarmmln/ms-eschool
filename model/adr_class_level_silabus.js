@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const dbConnection = require('../config/db').Sequelize;
+const adrSilabus = require('./adr_silabus');
 
 const adrClassLevelSilabus = dbConnection.define('adr_class_level_silabus', {
   id: {
@@ -18,5 +19,7 @@ const adrClassLevelSilabus = dbConnection.define('adr_class_level_silabus', {
   timestamps: false,
   tableName: 'adr_class_level_silabus'
 });
+
+adrClassLevelSilabus.belongsTo(adrSilabus, { foreignKey: 'id_silabus' })
 
 module.exports = adrClassLevelSilabus;
