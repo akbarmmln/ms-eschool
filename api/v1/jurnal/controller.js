@@ -203,24 +203,9 @@ exports.getDetailJurnalMengajar = async function (req, res) {
       }
     })
 
-    const detailSilabus = await adrJurnalMengajarDetailSilabus.findAll({
-      raw: true,
-      where: {
-        id_jurnal: data?.id
-      }
-    })
-    const grouped = Object.values(
-      detailSilabus.reduce((a, { id, id_silabus, title_silabus, item_silabus, penilaian, keterangan }) => {
-        (a[id_silabus] ??= { id: id_silabus, title: title_silabus, items: [] })
-          .items.push({ id: id, nama_item: item_silabus, penilaian: penilaian, keterangan: keterangan });
-        return a;
-      }, {})
-    );
-
     const hasil = {
       jurnal: data,
-      siswa: detail,
-      silabus: grouped
+      siswa: detail
     }
 
     return res.status(200).json(rsMsg('000000', hasil))
