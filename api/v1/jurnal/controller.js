@@ -41,6 +41,7 @@ exports.createJurnalMengajar = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
     }
 
+    const idTingkatKelas = dataKelas?.id_tingkat_kelas;
     const dataGuru = await adrTeacher.findOne({
       raw: true,
       where: {
@@ -73,6 +74,74 @@ exports.createJurnalMengajar = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
     }
 
+    const levelSilabus = await adrClassLevelSilabus.findAll({
+      include: [{
+        model: adrSilabus,
+        required: true
+      }],
+      where: {
+        id_tingkat_kelas: idTingkatKelas,
+        is_deleted: 0,
+      }
+    })
+    if (levelSilabus.length == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
+    }
+
+    const pushSilabusItems = []
+    if (levelSilabus.length > 0) {
+      for (let i = 0; i < levelSilabus.length; i++) {
+        const silabus = await sequelize.query(`SELECT adr_silabus.id, adr_silabus.nama, 
+        adr_silabus_items.id as item_id, adr_silabus_items.nama as nama_item
+        FROM adr_silabus LEFT JOIN adr_silabus_items
+        ON adr_silabus.id = adr_silabus_items.kode_silabus
+        where adr_silabus.id = :id_ AND adr_silabus.is_deleted = '0'`,
+          { replacements: { id_: `${levelSilabus[i].id_silabus}` }, type: sequelize.QueryTypes.SELECT },
+          {
+            raw: true
+          });
+
+        if (silabus.length) {
+          const result = {
+            id: silabus[0]?.id,
+            title: silabus[0]?.nama,
+            items: silabus
+              .filter(item => item.nama_item !== null)
+              .map(item => ({
+                id: item?.item_id,
+                nama_item: item?.nama_item
+              }))
+          };
+          pushSilabusItems.push(result)
+        }
+      }
+    }
+
+    if (pushSilabusItems.length == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
+    }
+
+    const queryForInsert = [];
+    result.forEach(s => {
+      pushSilabusItems.forEach(subject => {
+        subject.items.forEach(item => {
+          queryForInsert.push({
+            id: uuidv7(),
+            created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+            created_by: req.id,
+            is_deleted: 0,
+            id_jurnal: id_jurnal,
+            id_silabus: subject.id,
+            id_detail_diajar: s.id,
+            title_silabus: subject.title,
+            item_silabus: item.nama_item,
+            nilai: null,
+            keterangan: null
+          });
+        })
+      })
+    })
+
     await adrJurnalMengajar.create({
       id: id_jurnal,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -93,6 +162,10 @@ exports.createJurnalMengajar = async function (req, res) {
     await adrJurnalMengajarDetailSiswa.bulkCreate(result, {
       transaction
     });
+
+    await adrJurnalMengajarDetailSilabus.bulkCreate(queryForInsert, {
+      transaction
+    })
 
     await transaction.commit();
     return res.status(200).json(rsMsg('000000', {
