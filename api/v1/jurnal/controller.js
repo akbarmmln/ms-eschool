@@ -251,3 +251,31 @@ exports.updateAbsensi = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-absensi...', e);
   }
 }
+
+exports.inisiasiPenilaian = async function (req, res) {
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const id_diajar = req.body.id_diajar;
+
+    const detailSilabus = await adrJurnalMengajarDetailSilabus.findAll({
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal,
+        id_detail_diajar: id_diajar,
+        is_deleted: 0
+      }
+    })
+
+    const grouped = Object.values(
+      detailSilabus.reduce((a, { id, id_silabus, title_silabus, item_silabus, nilai, keterangan }) => {
+        (a[id_silabus] ??= { id: id_silabus, title: title_silabus, items: [] })
+          .items.push({ id: id, nama_item: item_silabus, nilai: nilai, keterangan: keterangan });
+        return a;
+      }, {})
+    );
+
+    return res.status(200).json(rsMsg('000000', grouped))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/inisiasi-penilaian...', e);
+  }
+}
