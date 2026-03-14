@@ -23,8 +23,8 @@ exports.getSiswa = async function (req, res) {
     if (search) {
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
-        adr_siswa.nik LIKE :nik_ or adr_siswa.nama LIKE :nama_ or adr_class_room.nama_kelas LIKE :nama_kelas_`,
-        { replacements: { nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
+        adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_`,
+        { replacements: { nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%`, nama_guru_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
@@ -32,8 +32,8 @@ exports.getSiswa = async function (req, res) {
       data = await sequelize.query(`SELECT adr_siswa.id, adr_siswa.nik, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
         adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
-        adr_siswa.nik LIKE :nik_ or adr_siswa.nama LIKE :nama_ or adr_class_room.nama_kelas LIKE :nama_kelas_ LIMIT ${offset}, ${limit}`,
-        { replacements: { nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
+        adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_ LIMIT ${offset}, ${limit}`,
+        { replacements: { nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%`, nama_guru_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
