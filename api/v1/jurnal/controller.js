@@ -279,3 +279,30 @@ exports.inisiasiPenilaian = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/inisiasi-penilaian...', e);
   }
 }
+
+exports.updatePenilaian = async function (req, res) {
+  try {
+    const data = req.body.data;
+    if (typeof data !== 'object') {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
+    }
+
+    await Promise.all(
+      data.map(item =>
+        adrJurnalMengajarDetailSilabus.update(
+          {
+            nilai: item.status,
+            keterangan: item.keterangan
+          },
+          {
+            where: { id: item.id_mengajar }
+          }
+        )
+      )
+    );
+    
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-penilaian...', e);
+  }
+}
