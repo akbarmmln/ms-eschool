@@ -283,7 +283,7 @@ exports.inisiasiPenilaian = async function (req, res) {
 exports.updatePenilaian = async function (req, res) {
   try {
     const data = req.body.data;
-    if (typeof data !== 'object') {
+    if (formatter.isEmpty(data) || typeof data !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
     }
 
