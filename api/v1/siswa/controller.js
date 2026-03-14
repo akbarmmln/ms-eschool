@@ -157,7 +157,7 @@ exports.searchSiswa = async function (req, res) {
 
     const data = await sequelize.query(`SELECT adr_siswa.id, adr_siswa.nik, adr_siswa.nama as nama_siswa, 
         adr_siswa.jenis_kelamin, adr_siswa.tanggal_lahir, adr_siswa.alamat, adr_siswa.rt, adr_siswa.rw, 
-        adr_siswa.kelurahan, adr_siswa.kecamatan, adr_class_room.nama_kelas, adr_teacher.nama as nama_guru 
+        adr_siswa.kelurahan, adr_siswa.kecamatan, adr_siswa.image, adr_class_room.nama_kelas, adr_teacher.nama as nama_guru 
         FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
         adr_siswa.id = :id_`,
