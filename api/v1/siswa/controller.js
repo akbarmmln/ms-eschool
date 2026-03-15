@@ -144,7 +144,7 @@ exports.createSiswa = async function (req, res) {
     }, {transaction: transaction})
 
     await transaction.commit();
-    return res.status(200).json(rsMsg('000000', {}))
+    return res.status(200).json(rsMsg('000000', {}));
   } catch (e) {
     if (transaction) {
       await transaction.rollback()
