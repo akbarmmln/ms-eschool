@@ -18,6 +18,54 @@ const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar
 const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
 const adrSilabus = require('../../../model/adr_silabus');
 
+exports.getListJurnal = async function (req, res) {
+  try {
+    let count, data;
+    const search = req.params.search;
+    const page = parseInt(req.params.page);
+    const limit = 10;
+    const offset = limit * (page - 1);
+
+    if (search) {
+
+    } else {
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room ON adr_jurnal_mengajar.id_kelas = adr_class_room.id`,
+        { type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+        LIMIT ${offset}, ${limit}`,
+        { type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+    }
+    
+    if (data.length > 0) {
+      const newRs = {
+        rows: data,
+        currentPage: page,
+        totalPage: Math.ceil(count[0].count / limit),
+        totalData: count[0].count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/list...', e);
+  }
+}
+
 exports.createJurnalMengajar = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
@@ -300,7 +348,7 @@ exports.updatePenilaian = async function (req, res) {
         )
       )
     );
-    
+
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-penilaian...', e);
