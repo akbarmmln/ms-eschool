@@ -5,6 +5,7 @@ const { v7: uuidv7 } = require('uuid');
 const moment = require('moment')
 const utils = require('../../../utils/utils');
 const Op = require('sequelize').Op;
+const logger = require('../../../config/logger')
 const sequelize = require('../../../config/db').Sequelize;
 const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
@@ -99,6 +100,7 @@ exports.createSiswa = async function (req, res) {
     const ocup_ibu = req.body.ocup_ibu;
     const image = req.body.image;
 
+    logger.infoWithContext(`payload receiver for createSiswa ${JSON.stringify(req.body)}`)
     const dataParent = await adrParents.findOne({
       raw: true,
       where: {
