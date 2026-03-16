@@ -21,7 +21,7 @@ exports.uploadFileSingle = async function (req, res) {
     let file = req.body.file;
     let key = req.body.key;
     let buf = Buffer.from(file, 'base64')
-    let filetype = await checkFiletipe(buf);
+    let filetype = await utils.checkFiletipe(buf);
     let ext = filetype.ext;
     let mime = filetype.mime;
 
@@ -39,15 +39,3 @@ exports.uploadFileSingle = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/upload/file-single...', e);
   }
 };
-
-async function checkFiletipe(buffer) {
-  try {
-    const { fileTypeFromBuffer } = await import('file-type');
-
-    const type = await fileTypeFromBuffer(buffer);
-
-    return type
-  } catch (e) {
-    return null
-  }
-}

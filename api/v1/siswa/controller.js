@@ -13,7 +13,6 @@ const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
 const adrParents = require('../../../model/adr_parents');
 const s3 = require('../../../config/oss').client;
-const utils = require('../../../utils/utils');
 
 exports.getSiswa = async function (req, res) {
   try {
