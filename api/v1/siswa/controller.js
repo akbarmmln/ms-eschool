@@ -12,6 +12,8 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
 const adrParents = require('../../../model/adr_parents');
+const s3 = require('../../../config/oss').client;
+const utils = require('../../../utils/utils');
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -99,8 +101,7 @@ exports.createSiswa = async function (req, res) {
     const ocup_ayah = req.body.ocup_ayah;
     const ocup_ibu = req.body.ocup_ibu;
     const image = req.body.image;
-
-    logger.infoWithContext(`payload receiver for createSiswa ${JSON.stringify(req.body)}`)
+    
     const dataParent = await adrParents.findOne({
       raw: true,
       where: {
@@ -124,6 +125,20 @@ exports.createSiswa = async function (req, res) {
       }, { transaction: transaction })
     }
 
+    let buf = Buffer.from(image, 'base64')
+    let filetype = await utils.checkFiletipe(buf);
+    let ext = filetype.ext;
+    let mime = filetype.mime;
+
+    const upload = await s3.upload({
+      ACL: 'public-read',
+      Bucket: 'bucket-sit',
+      Key: `profile-picture/${uuidv7()}.${ext}`,
+      Body: buf,
+      ContentEncoding: 'base64',
+      ContentType: mime,
+    }).promise();
+
     await adrSiswa.create({
       id: idSiswa,
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -140,7 +155,7 @@ exports.createSiswa = async function (req, res) {
       kecamatan: kecamatan,
       id_kelas: id_kelas,
       id_parent: idParent,
-      image: image
+      image: upload?.Location ?? null
     }, {transaction: transaction})
 
     await transaction.commit();

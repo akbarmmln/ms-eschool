@@ -118,3 +118,17 @@ exports.dekrip = async function (masterkey, data) {
     throw e
   }
 }
+
+exports.checkFiletipe = async function (buffer) {
+  try {
+    const { fileTypeFromBuffer } = await import('file-type');
+    const type = await fileTypeFromBuffer(buffer);
+
+    return type
+  } catch (e) {
+    return {
+      ext: null,
+      mime: null
+    }
+  }
+}
