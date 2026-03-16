@@ -28,11 +28,8 @@ exports.getListJurnal = async function (req, res) {
     const offset = limit * (page - 1);
 
     if (dari && sampai) {
-      const dateDari = new Date(dari);
-      const dateSampai = new Date(sampai);
-      if (isNaN(dateDari) || isNaN(dateSampai)) {
-        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70013');
-      }
+      const dateDari = moment(dari).format('YYYY-MM-DD');
+      const dateSampai = moment(sampai).format('YYYY-MM-DD');
 
       if (dateDari > dateSampai) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
