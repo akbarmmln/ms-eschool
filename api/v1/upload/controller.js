@@ -36,7 +36,7 @@ exports.uploadFileSingle = async function (req, res) {
     
     return res.status(200).json(rsMsg('000000', upload))
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/upload/upload-file-single...', e);
+    return utils.returnErrorFunction(res, 'error POST /api/v1/upload/file-single...', e);
   }
 };
 
