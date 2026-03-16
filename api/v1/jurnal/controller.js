@@ -21,6 +21,7 @@ const adrSilabus = require('../../../model/adr_silabus');
 exports.getListJurnal = async function (req, res) {
   try {
     let count, data;
+    const id_guru = req.id;
     const dari = req.params.dari
     const sampai = req.params.sampai;
     const page = parseInt(req.params.page);
@@ -37,30 +38,34 @@ exports.getListJurnal = async function (req, res) {
 
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room 
         ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
-        WHERE tanggal_jurnal BETWEEN :dari_ AND :sampai_`,
-        { replacements: { dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_`,
+        { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
 
       data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room 
         ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
-        WHERE tanggal_jurnal BETWEEN :dari_ AND :sampai_
+        WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_
         LIMIT ${offset}, ${limit}`,
-        { replacements: { dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
     } else {
-      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room ON adr_jurnal_mengajar.id_kelas = adr_class_room.id`,
-        { type: sequelize.QueryTypes.SELECT },
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room 
+        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+        WHERE id_guru = :id_guru_`,
+        { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
 
-      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room 
+        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+        WHERE id_guru = :id_guru_
         LIMIT ${offset}, ${limit}`,
-        { type: sequelize.QueryTypes.SELECT },
+        { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
