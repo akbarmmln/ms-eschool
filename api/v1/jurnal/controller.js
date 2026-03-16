@@ -21,13 +21,39 @@ const adrSilabus = require('../../../model/adr_silabus');
 exports.getListJurnal = async function (req, res) {
   try {
     let count, data;
-    const search = req.params.search;
+    const dari = req.params.dari
+    const sampai = req.params.sampai;
     const page = parseInt(req.params.page);
     const limit = 10;
     const offset = limit * (page - 1);
 
-    if (search) {
+    if (dari && sampai) {
+      const dateDari = new Date(dari);
+      const dateSampai = new Date(sampai);
+      if (isNaN(dateDari) || isNaN(dateSampai)) {
+        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70013');
+      }
 
+      if (dateDari > dateSampai) {
+        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
+      }
+
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room 
+        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+        WHERE tanggal_jurnal BETWEEN :dari_ AND :sampai_`,
+        { replacements: { dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room 
+        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+        WHERE tanggal_jurnal BETWEEN :dari_ AND :sampai_
+        LIMIT ${offset}, ${limit}`,
+        { replacements: { dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
     } else {
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room ON adr_jurnal_mengajar.id_kelas = adr_class_room.id`,
         { type: sequelize.QueryTypes.SELECT },
@@ -41,9 +67,8 @@ exports.getListJurnal = async function (req, res) {
         {
           raw: true
         });
-
     }
-    
+
     if (data.length > 0) {
       const newRs = {
         rows: data,

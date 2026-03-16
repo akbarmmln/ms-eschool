@@ -4,7 +4,7 @@ const controller = require('./controller');
 const auth = require('../auth/controller');
 
 router.get('/list/:page', auth.verifyToken, controller.getListJurnal);
-router.get('/list/:page/:search', auth.verifyToken, controller.getListJurnal);
+router.get('/list/:page/:dari/:sampai', auth.verifyToken, controller.getListJurnal);
 
 router.post('/create', auth.verifyToken, controller.createJurnalMengajar);
 router.post('/update-absensi', auth.verifyToken, controller.updateAbsensi);
