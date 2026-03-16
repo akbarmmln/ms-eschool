@@ -36,35 +36,36 @@ exports.getListJurnal = async function (req, res) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
       }
 
-      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room 
-        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
         WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
 
-      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room 
-        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
-        WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_
+      data = await sequelize.query(`SELECT adr_jurnal_mengajar.id, adr_jurnal_mengajar.tanggal_jurnal,
+        adr_jurnal_mengajar.jam_mulai, adr_jurnal_mengajar.jam_selesai, adr_jurnal_mengajar.materi,
+        adr_jurnal_mengajar.refleksi, adr_jurnal_mengajar.id_kelas, adr_jurnal_mengajar.nama_kelas,
+        adr_jurnal_mengajar.id_guru, adr_jurnal_mengajar.nama_guru, adr_jurnal_mengajar.initiate_nilai
+        FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_
         LIMIT ${offset}, ${limit}`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
     } else {
-      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar JOIN adr_class_room 
-        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
+      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
         WHERE id_guru = :id_guru_`,
         { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
 
-      data = await sequelize.query(`SELECT * FROM adr_jurnal_mengajar JOIN adr_class_room 
-        ON adr_jurnal_mengajar.id_kelas = adr_class_room.id
-        WHERE id_guru = :id_guru_
-        LIMIT ${offset}, ${limit}`,
+      data = await sequelize.query(`SELECT adr_jurnal_mengajar.id, adr_jurnal_mengajar.tanggal_jurnal,
+        adr_jurnal_mengajar.jam_mulai, adr_jurnal_mengajar.jam_selesai, adr_jurnal_mengajar.materi,
+        adr_jurnal_mengajar.refleksi, adr_jurnal_mengajar.id_kelas, adr_jurnal_mengajar.nama_kelas,
+        adr_jurnal_mengajar.id_guru, adr_jurnal_mengajar.nama_guru, adr_jurnal_mengajar.initiate_nilai
+        FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ LIMIT ${offset}, ${limit}`,
         { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
