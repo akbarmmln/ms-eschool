@@ -5,185 +5,195 @@ const format = require('../../../config/format');
 const moment = require('moment');
 
 exports.htmlSinglePenilaianHarian = async function (data) {
-  return `
-    <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    font-size: 12px;
-                }
+    return `
+        <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        font-size: 12px;
+                    }
 
-                h2 {
-                    margin-bottom: 10px;
-                }
+                    h2 {
+                        margin-bottom: 10px;
+                    }
 
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    page-break-inside: avoid;
-                }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        page-break-inside: avoid;
+                    }
 
-                th, td {
-                    border: 1px solid #000;
-                    padding: 6px;
-                    text-align: center;
-                }
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 6px;
+                        text-align: center;
+                    }
 
-                th {
-                    background: #f2f2f2;
-                }
+                    th {
+                        background: #f2f2f2;
+                    }
 
-                .text-left {
-                    text-align: left;
-                }
+                    .text-left {
+                        text-align: left;
+                    }
 
-                .check {
-                    font-weight: bold;
-                    font-size: 14px;
-                }
+                    .check {
+                        font-weight: bold;
+                        font-size: 14px;
+                    }
 
-                .page {
-                    page-break-after: always;
-                }
+                    .page {
+                        page-break-after: always;
+                    }
 
-                tr {
-                    page-break-inside: avoid;
-                }
+                    tr {
+                        page-break-inside: avoid;
+                    }
 
-                .header {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 10px;
-                }
-                    
-                .header-left, .header-right {
-                    width: 48%;
-                }
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    }
+                        
+                    .header-left, .header-right {
+                        width: 48%;
+                    }
 
-                .header p {
-                    margin: 2px 0;
-                }
+                    .header p {
+                        margin: 2px 0;
+                    }
 
-                .footer {
-                    margin-top: 20px;
-                }
+                    .footer {
+                        margin-top: 20px;
+                    }
 
-                .small {
-                    font-size: 11px;
-                }
+                    .small {
+                        font-size: 11px;
+                    }
 
-                .ttd-wrapper {
-                    margin-top: 40px;
-                    page-break-inside: avoid;
-                }
+                    .ttd-wrapper {
+                        margin-top: 40px;
+                        page-break-inside: avoid;
+                    }
 
-                .ttd-row {
-                    display: flex;
-                    justify-content: space-between;
-                }
+                    .ttd-row {
+                        display: flex;
+                        justify-content: space-between;
+                    }
 
-                .ttd-col {
-                    width: 45%;
-                }
+                    .ttd-col {
+                        width: 45%;
+                    }
 
-                .center {
-                    text-align: center;
-                }
+                    .center {
+                        text-align: center;
+                    }
 
-                .ttd-bottom {
-                    margin-top: 50px;
-                    text-align: center;
-                }
-            </style>
-        </head>
+                    .ttd-bottom {
+                        margin-top: 50px;
+                        text-align: center;
+                    }
+                </style>
+            </head>
 
-        <body>
-            ${data.map((siswa) => `
-            <div class='page'>
-                <div class='header'>
-                <div class='header-left'>
-                    <p><b>Nama</b> : ${siswa.nama_siswa}</p>
-                    <p><b>Tanggal</b> : ${siswa.tanggal}</p>
-                </div>
-                <div class='header-right'>
-                    <p><b>Materi</b> : ${siswa.materi}</p>
-                    <p><b>Refleksi</b> : ${siswa.refleksi}</p>
-                </div>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                        <th rowspan='2'>No</th>
-                        <th rowspan='2'>Aktifitas</th>
-                        <th colspan='4'>Hasil</th>
-                        <th rowspan='2'>Keterangan</th>
-                        </tr>
-                        <tr>
-                        <th>BSB</th>
-                        <th>BSH</th>
-                        <th>MB</th>
-                        <th>BB</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        ${siswa.items.map((item, i) => `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td class='text-left'>${item.item_silabus}</td>
-                            
-                            <td class='check'>${item.nilai == "1" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
-                            <td class='check'>${item.nilai == "2" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
-                            <td class='check'>${item.nilai == "3" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
-                            <td class='check'>${item.nilai == "4" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
-
-                            <td class=text-left>${item.keterangan || ''}</td>
-                        </tr>
-                        `).join("")}
-                    </tbody>
-                </table>
-
-                <!-- KETERANGAN -->
-                <div class='footer small'>
-                    <p>
-                        Ket :
-                        BSB = Berkembang Sangat Baik &nbsp;&nbsp;
-                        BSH = Berkembang Sesuai Harapan &nbsp;&nbsp;
-                        MB = Mulai Berkembang &nbsp;&nbsp;
-                        BB = Belum Berkembang
-                    </p>
-                </div>
-
-                <div class='ttd-wrapper'>
-                    <!-- BARIS ATAS -->
-                    <div class='ttd-row'>
-                        <div class='ttd-col center'>
-                            <p>Class Teacher</p>
-                            <br><br><br><br>
-                            <b>Saevi Maelina Zen, S.Pd.</b><br>
-                            NIY : 01072024017
-                        </div>
-
-                        <div class='ttd-col center'>
-                            <p>Parents,</p>
-                            <br><br><br><br>
-                            -------------------------
-                        </div>
+            <body>
+                ${data.map((siswa) => `
+                <div class='page'>
+                    <div class='header'>
+                    <div class='header-left'>
+                        <p><b>Nama</b> : ${siswa.nama_siswa}</p>
+                        <p><b>Tanggal</b> : ${hariTanggalIndo(siswa.tanggal)}</p>
+                    </div>
+                    <div class='header-right'>
+                        <p><b>Materi</b> : ${siswa.materi}</p>
+                        <p><b>Refleksi</b> : ${siswa.refleksi}</p>
+                    </div>
                     </div>
 
-                    <!-- BARIS BAWAH -->
-                    <div class='ttd-bottom center'>
-                        <p>Kinder Principal</p>
-                        <br><br><br><br>
-                        <b>Eliza Nurhayati, S.Pd.</b><br>
-                        NIY : 01022016002
+                    <table>
+                        <thead>
+                            <tr>
+                            <th rowspan='2'>No</th>
+                            <th rowspan='2'>Aktifitas</th>
+                            <th colspan='4'>Hasil</th>
+                            <th rowspan='2'>Keterangan</th>
+                            </tr>
+                            <tr>
+                            <th>BSB</th>
+                            <th>BSH</th>
+                            <th>MB</th>
+                            <th>BB</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${siswa.items.map((item, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td class='text-left'>${item.item_silabus}</td>
+                                
+                                <td class='check'>${item.nilai == "1" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
+                                <td class='check'>${item.nilai == "2" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
+                                <td class='check'>${item.nilai == "3" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
+                                <td class='check'>${item.nilai == "4" ? `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor' class='icon icon-tabler icons-tabler-filled icon-tabler-check'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5 -5a1 1 0 0 1 1.414 -1.414l4.293 4.293l9.293 -9.293a1 1 0 0 1 1.414 0' /></svg>` : ''}</td>
+
+                                <td class=text-left>${item.keterangan || ''}</td>
+                            </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+
+                    <!-- KETERANGAN -->
+                    <div class='footer small'>
+                        <p>
+                            Ket :
+                            BSB = Berkembang Sangat Baik &nbsp;&nbsp;
+                            BSH = Berkembang Sesuai Harapan &nbsp;&nbsp;
+                            MB = Mulai Berkembang &nbsp;&nbsp;
+                            BB = Belum Berkembang
+                        </p>
+                    </div>
+
+                    <div class='ttd-wrapper'>
+                        <!-- BARIS ATAS -->
+                        <div class='ttd-row'>
+                            <div class='ttd-col center'>
+                                <p>Class Teacher</p>
+                                <br><br><br><br>
+                                <b>Saevi Maelina Zen, S.Pd.</b><br>
+                                NIY : 01072024017
+                            </div>
+
+                            <div class='ttd-col center'>
+                                <p>Parents,</p>
+                                <br><br><br><br>
+                                -------------------------
+                            </div>
+                        </div>
+
+                        <!-- BARIS BAWAH -->
+                        <div class='ttd-bottom center'>
+                            <p>Kinder Principal</p>
+                            <br><br><br><br>
+                            <b>Eliza Nurhayati, S.Pd.</b><br>
+                            NIY : 01022016002
+                        </div>
                     </div>
                 </div>
-            </div>
-            `).join("")}
-        </body>
-    </html>
+                `).join("")}
+            </body>
+        </html>
     `;
+}
+
+function hariTanggalIndo(tanggal) {
+    const formatted = new Intl.DateTimeFormat('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(tanggal);
+    return formatted
 }
