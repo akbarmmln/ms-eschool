@@ -500,3 +500,53 @@ exports.updatePenilaian = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-penilaian...', e);
   }
 }
+
+exports.submitItemPenilaian = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const id_diajar = req.body.id_diajar;
+    const judul = req.body.judul;
+    const item_penilaian = req.body.item_penilaian;
+
+    const insertData = generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, req.id);
+    await adrJurnalMengajarDetailSilabus.bulkCreate(insertData, { transaction })
+    await adrJurnalMengajar.update({
+      initiate_nilai: '2'
+    }, {
+      where : {
+        id: id_jurnal
+      },
+      transaction
+    })
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', insertData))
+  } catch (e) {
+    if (transaction) await transaction.rollback();
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/submit-item-penilaian...', e);
+  }
+}
+
+function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_id) {
+  const rows = [];
+  const id_silabus = uuidv7();
+  for (const idDiajar of id_diajar) {
+    for (const itemPenilaian of item_penilaian) {
+      rows.push({
+        id: uuidv7(),
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: account_id,
+        is_deleted: 0,
+        id_jurnal: id_jurnal,
+        id_detail_diajar: idDiajar,
+        id_silabus: id_silabus,
+        title_silabus: judul,
+        item_silabus: itemPenilaian,
+        nilai: null,
+        keterangan: null,
+      });
+    }
+  }
+  return rows;
+}
