@@ -22,7 +22,8 @@ const adrTeacher = dbConnection.define('adr_teacher', {
   rt: Sequelize.STRING,
   rw: Sequelize.STRING,
   kelurahan: Sequelize.STRING,
-  kecamatan: Sequelize.STRING
+  kecamatan: Sequelize.STRING,
+  jabatan: Sequelize.STRING,
 }, {
   freezeTableName: true,
   timestamps: false,

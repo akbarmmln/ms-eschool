@@ -31,7 +31,7 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                     }
 
                     th {
-                        background: #8db5ef;
+                        background: #a5c5f5;
                     }
 
                     .text-left {
