@@ -419,6 +419,17 @@ exports.updateAbsensi = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70012');
     }
 
+    const data = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
     await Promise.all(
       absensi.map(item => {
         return adrJurnalMengajarDetailSiswa.update(
@@ -432,13 +443,15 @@ exports.updateAbsensi = async function (req, res) {
       })
     );
 
-    await adrJurnalMengajar.update({
-      initiate_nilai: 1
-    }, {
-      where: {
-        id: id
-      }
-    })
+    if (data?.initiate_nilai != 2) {
+      await adrJurnalMengajar.update({
+        initiate_nilai: 1
+      }, {
+        where: {
+          id: id
+        }
+      })
+    }
 
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
@@ -512,7 +525,7 @@ exports.submitItemPenilaian = async function (req, res) {
     const insertData = generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, req.id);
     await adrJurnalMengajarDetailSilabus.bulkCreate(insertData, { transaction })
     await adrJurnalMengajar.update({
-      initiate_nilai: '2'
+      initiate_nilai: 2
     }, {
       where : {
         id: id_jurnal
