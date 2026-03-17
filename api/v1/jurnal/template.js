@@ -95,6 +95,11 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                         margin-top: 50px;
                         text-align: center;
                     }
+
+                    .underline-text {
+                        text-decoration: underline;
+                        text-underline-offset: 3px;
+                    }
                 </style>
             </head>
 
@@ -162,7 +167,7 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                             <div class='ttd-col center'>
                                 <p>Class Teacher</p>
                                 <br><br><br><br>
-                                <b>${siswa.nama_guru ?? ''}</b><br>
+                                <b class="underline-text">${siswa.nama_guru ?? ''}</b><br>
                                 NIY : ${siswa.niy_guru ?? '-'}
                             </div>
 
