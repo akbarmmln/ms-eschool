@@ -73,8 +73,39 @@ exports.getListJurnal = async function (req, res) {
     }
 
     if (data.length > 0) {
+      const grouped = Object.values(
+        data.reduce((acc, row) => {
+
+          if (!acc[row.id]) {
+            acc[row.id] = {
+              id: row.id,
+              tanggal_jurnal: row.tanggal_jurnal,
+              jam_mulai: row.jam_mulai,
+              jam_selesai: row.jam_selesai,
+              materi: row.materi,
+              refleksi: row.refleksi,
+              id_kelas: row.id_kelas,
+              nama_kelas: row.nama_kelas,
+              id_guru: row.id_guru,
+              nama_guru: row.nama_guru,
+              initiate_nilai: row.initiate_nilai,
+              detail_siswa: []
+            };
+          }
+
+          acc[row.id].detail_siswa.push({
+            id_diajar: row.id_diajar,
+            nama_siswa: row.nama_siswa,
+            absensi: row.absensi
+          });
+
+          return acc;
+
+        }, {})
+      );
+      
       const newRs = {
-        rows: data,
+        rows: grouped,
         currentPage: page,
         totalPage: Math.ceil(count[0].count / limit),
         totalData: count[0].count,
