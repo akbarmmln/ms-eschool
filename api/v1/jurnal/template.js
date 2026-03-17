@@ -10,8 +10,8 @@ exports.htmlSinglePenilaianHarian = async function (data) {
             <head>
                 <style>
                     body {
-                        font-family: Arial, sans-serif;
-                        font-size: 12px;
+                        font-family: "Times New Roman", Times, serif;
+                        font-size: 14px;
                     }
 
                     h2 {
