@@ -546,8 +546,11 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
     const id_jurnal = req.body.id_jurnal;
     const id_detail_diajar = req.body.id_detail_diajar;
     const nama_siswa = req.body.nama_siswa;
+
     const hasil = [{
       tanggal: null,
+      niy_guru: null,
+      nama_guru: null,
       nama_siswa: nama_siswa,
       materi: null,
       refleksi: null,
@@ -560,6 +563,15 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
         id: id_jurnal
       }
     })
+    const dataGuru = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        id: data.id_guru
+      }
+    })
+    hasil[0].niy_guru = dataGuru?.niy
+    hasil[0].nama_guru = dataGuru?.nama
+
     const items = await adrJurnalMengajarDetailSilabus.findAll({
       raw: true,
       attributes: ['item_silabus', 'nilai', 'keterangan'],

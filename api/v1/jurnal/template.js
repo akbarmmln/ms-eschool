@@ -162,8 +162,8 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                             <div class='ttd-col center'>
                                 <p>Class Teacher</p>
                                 <br><br><br><br>
-                                <b>Saevi Maelina Zen, S.Pd.</b><br>
-                                NIY : 01072024017
+                                <b>${siswa.nama_guru ?? ''}</b><br>
+                                NIY : ${siswa.niy_guru ?? '-'}
                             </div>
 
                             <div class='ttd-col center'>
