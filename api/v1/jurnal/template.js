@@ -182,7 +182,7 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                         <div class='ttd-bottom center'>
                             <p>Kinder Principal</p>
                             <br><br><br><br>
-                            <b class="underline-text">Eliza Nurhayati, S.Pd.</b><br
+                            <b class="underline-text">Eliza Nurhayati, S.Pd.</b><br>
                             <b>NIY : 01022016002</b>
                         </div>
                     </div>
