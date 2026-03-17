@@ -31,7 +31,7 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                     }
 
                     th {
-                        background: #f2f2f2;
+                        background: #8db5ef;
                     }
 
                     .text-left {
@@ -70,7 +70,7 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                     }
 
                     .small {
-                        font-size: 11px;
+                        font-size: 12px;
                     }
 
                     .ttd-wrapper {
@@ -120,16 +120,16 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                     <table>
                         <thead>
                             <tr>
-                            <th rowspan='2'>No</th>
-                            <th rowspan='2'>Aktifitas</th>
-                            <th colspan='4'>Hasil</th>
-                            <th rowspan='2'>Keterangan</th>
+                                <th rowspan='2'>No</th>
+                                <th rowspan='2'>Aktifitas</th>
+                                <th colspan='4'>Hasil</th>
+                                <th rowspan='2'>Keterangan</th>
                             </tr>
                             <tr>
-                            <th>BSB</th>
-                            <th>BSH</th>
-                            <th>MB</th>
-                            <th>BB</th>
+                                <th>BSB</th>
+                                <th>BSH</th>
+                                <th>MB</th>
+                                <th>BB</th>
                             </tr>
                         </thead>
 
