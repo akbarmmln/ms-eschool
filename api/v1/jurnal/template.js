@@ -41,6 +41,8 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                 .check {
                     font-weight: bold;
                     font-size: 14px;
+                    background-color: black !important;
+                    -webkit-print-color-adjust: exact;
                 }
 
                 .page {
