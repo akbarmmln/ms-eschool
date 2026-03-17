@@ -189,11 +189,12 @@ exports.htmlSinglePenilaianHarian = async function (data) {
 }
 
 function hariTanggalIndo(tanggal) {
-    const formatted = new Intl.DateTimeFormat('id-ID', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(tanggal);
-    return formatted
+    const d = new Date(tanggal);
+
+    return d.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    });
 }
