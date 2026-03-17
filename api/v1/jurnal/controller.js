@@ -17,6 +17,8 @@ const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar_detail_siswa');
 const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
 const adrSilabus = require('../../../model/adr_silabus');
+const templateHtml = require('./template')
+const puppeteer = require("puppeteer");
 
 exports.getListJurnal = async function (req, res) {
   try {
@@ -525,7 +527,7 @@ exports.submitItemPenilaian = async function (req, res) {
     await adrJurnalMengajar.update({
       initiate_nilai: 1
     }, {
-      where : {
+      where: {
         id: id_jurnal
       },
       transaction
@@ -536,6 +538,70 @@ exports.submitItemPenilaian = async function (req, res) {
   } catch (e) {
     if (transaction) await transaction.rollback();
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/submit-item-penilaian...', e);
+  }
+}
+
+exports.downloadSinglePenilaianHarian = async function (req, res) {
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const id_detail_diajar = req.body.id_detail_diajar;
+    const nama_siswa = req.body.nama_siswa;
+    const hasil = [{
+      tanggal: null,
+      nama_siswa: nama_siswa,
+      materi: null,
+      refleksi: null,
+      items: null
+    }];
+
+    const data = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id_jurnal
+      }
+    })
+    const items = await adrJurnalMengajarDetailSilabus.findAll({
+      raw: true,
+      attributes: ['item_silabus', 'nilai', 'keterangan'],
+      where: {
+        id_jurnal: id_jurnal,
+        id_detail_diajar: id_detail_diajar,
+        is_deleted: 0
+      }
+    })
+
+    hasil[0].tanggal = data.tanggal_jurnal;
+    hasil[0].materi = data.materi;
+    hasil[0].refleksi = data.refleksi;
+    hasil[0].items = items;
+
+    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
+    const page = await browser.newPage();
+    await page.setContent(htmlRender, {
+      waitUntil: "networkidle0"
+    });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      margin: {
+        top: "10mm",
+        bottom: "10mm",
+        left: "10mm",
+        right: "10mm"
+      },
+      landscape: false,
+      printBackground: true
+    });
+    await browser.close();
+    let buf = Buffer.from(pdfBuffer, 'base64');
+    const base64 = buf.toString("base64")
+
+    return res.status(200).json(rsMsg('000000', base64))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-single-penilaian-harian...', e);
   }
 }
 
