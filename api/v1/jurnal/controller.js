@@ -103,7 +103,7 @@ exports.getListJurnal = async function (req, res) {
 
         }, {})
       );
-      
+
       const newRs = {
         rows: grouped,
         currentPage: page,
@@ -281,6 +281,93 @@ exports.createJurnalMengajar = async function (req, res) {
   } catch (e) {
     if (transaction) await transaction.rollback();
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/create...', e);
+  }
+}
+
+exports.createNewJurnalMengajar = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id_jurnal = uuidv7();
+    const tanggal = req.body.tanggal;
+    const mulai = req.body.mulai;
+    const selesai = req.body.selesai;
+    const materi = req.body.materi;
+    const refleksi = req.body.refleksi;
+    const kelas = req.body.kelas;
+    const guru = req.body.guru;
+
+    const dataKelas = await adrClassRoom.findOne({
+      raw: true,
+      where: {
+        id: kelas,
+        is_deleted: 0
+      }
+    })
+    if (!dataKelas || !dataKelas?.id_tingkat_kelas) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
+    }
+
+    const idTingkatKelas = dataKelas?.id_tingkat_kelas;
+    const dataGuru = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        id: guru,
+        is_deleted: 0
+      }
+    })
+    if (!dataGuru) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
+    }
+
+    const dataSiswa = await adrSiswa.findAll({
+      raw: true,
+      where: {
+        id_kelas: kelas,
+        is_deleted: 0
+      }
+    })
+    const result = dataSiswa.map(item => ({
+      id: uuidv7(),
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: req.id,
+      is_deleted: 0,
+      id_jurnal: id_jurnal,
+      id_siswa: item.id,
+      nama_siswa: item.nama,
+      absensi: null
+    }));
+    if (result.length == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70010');
+    }
+
+    await adrJurnalMengajar.create({
+      id: id_jurnal,
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: req.id,
+      is_deleted: 0,
+      tanggal_jurnal: moment(tanggal, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+      jam_mulai: mulai,
+      jam_selesai: selesai,
+      materi: materi,
+      refleksi: refleksi,
+      id_kelas: dataKelas?.id,
+      nama_kelas: dataKelas?.nama_kelas,
+      id_guru: dataGuru?.id,
+      nama_guru: dataGuru?.nama,
+      initiate_nilai: 0
+    }, { transaction })
+
+    await adrJurnalMengajarDetailSiswa.bulkCreate(result, {
+      transaction
+    });
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', {
+      id: id_jurnal
+    }))
+  } catch (e) {
+    if (transaction) await transaction.rollback();
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/create-new...', e);
   }
 }
 
