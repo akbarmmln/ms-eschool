@@ -13,6 +13,7 @@ const adrClassRoom = require('../../../model/adr_class_room');
 const adrTeacher = require('../../../model/adr_teacher');
 const adrClassLevel = require('../../../model/adr_class_level');
 const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
+const adrSiswa = require('../../../model/adr_siswa');
 
 exports.getClassRoom = async function (req, res) {
   try {
@@ -261,6 +262,14 @@ exports.detailClassRoom = async function (req, res) {
       }
     })
 
+    const dataSiswa = await adrSiswa.findAll({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        id_kelas: id
+      }
+    })
+
     const levelSilabus = await adrClassLevelSilabus.findAll({
       raw: true,
       where: {
@@ -301,7 +310,8 @@ exports.detailClassRoom = async function (req, res) {
       ruang_kelas: data,
       wali_kelas: detailWaliKelas,
       tingkat_kelas: detailTingkatKelas,
-      silabus: pushSilabus
+      silabus: pushSilabus,
+      dataSiswa: dataSiswa
     }
 
     return res.status(200).json(rsMsg('000000', hasil))
