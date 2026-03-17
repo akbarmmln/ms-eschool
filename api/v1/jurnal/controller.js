@@ -420,6 +420,17 @@ exports.updateAbsensi = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70012');
     }
 
+    const data = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id,
+        is_deleted: 0
+      }
+    })
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
     await Promise.all(
       absensi.map(item => {
         return adrJurnalMengajarDetailSiswa.update(
@@ -440,7 +451,7 @@ exports.updateAbsensi = async function (req, res) {
         id: id
       }
     })
-    return res.status(200).json(rsMsg('000000', {}))
+    return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-absensi...', e);
   }
