@@ -12,6 +12,7 @@ const adrUserLogin = require('../../../model/adr_user_login');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
+const adrSettings = require('../../../model/adr_settings');
 
 exports.login = async function (req, res) {
   try {
@@ -38,6 +39,13 @@ exports.login = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70005');
     }
 
+    const settings = await adrSettings.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0
+      }
+    })
+
     const payloadEnkripsiLogin = {
       id_account: data.id_account,
       role: data.role,
@@ -50,7 +58,7 @@ exports.login = async function (req, res) {
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', token);
 
-    return res.status(200).json(rsMsg('000000', {}));
+    return res.status(200).json(rsMsg('000000', settings));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/login...', e);
   }
