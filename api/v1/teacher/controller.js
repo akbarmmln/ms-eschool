@@ -159,7 +159,7 @@ exports.createTeacher = async function (req, res) {
       nama: nama,
       email: email,
       niy: niy,
-      jabatan: 'guru'
+      jabatan: 'teacher'
     }, { transaction: transaction })
 
     logger.infoWithContext(`password nya ${pin}`)
