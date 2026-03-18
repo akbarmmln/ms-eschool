@@ -14,7 +14,7 @@ const adrSettings = dbConnection.define('adr_settings', {
   nama_yayasan: Sequelize.STRING,
   nomor_telepon: Sequelize.STRING,
   alamat_email: Sequelize.STRING,
-  webiste: Sequelize.STRING,
+  website: Sequelize.STRING,
   alamat: Sequelize.STRING,
   negara: Sequelize.STRING,
   provinsi: Sequelize.STRING,
