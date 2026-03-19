@@ -7,6 +7,7 @@ router.get('/list/:page', auth.verifyToken, controller.getSiswa);
 router.get('/list/:page/:search', auth.verifyToken, controller.getSiswa);
 
 router.post('/create', auth.verifyToken, controller.createSiswa);
+router.post('/update', auth.verifyToken, controller.updateSiswa);
 router.get('/detail/:id', auth.verifyToken, controller.searchSiswa);
 
 module.exports = router;

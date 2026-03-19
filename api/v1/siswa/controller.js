@@ -174,6 +174,96 @@ exports.createSiswa = async function (req, res) {
   }
 }
 
+exports.updateSiswa = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id_siswa = req.body.id_siswa;
+    const nik = req.body.nik;
+    const nama_lengkap = req.body.nama_lengkap;
+    const jenis_kelamin = req.body.jenis_kelamin;
+    const tanggal_lahir = req.body.tanggal_lahir;
+    const alamat = req.body.alamat;
+    const no_rt = req.body.no_rt;
+    const no_rw = req.body.no_rw;
+    const kelurahan = req.body.kelurahan;
+    const kecamatan = req.body.kecamatan;
+    const id_kelas = req.body.id_kelas;
+    const id_parent = req.body.id_parent;
+    const nama_ayah = req.body.nama_ayah;
+    const nama_ibu = req.body.nama_ibu;
+    const email_aktif = req.body.email_aktif;
+    const ocup_ayah = req.body.ocup_ayah;
+    const ocup_ibu = req.body.ocup_ibu;
+    const image = req.body.image;
+    const change_image = req.body.change_image;
+
+    const paylaodOrtuWillUpdate = {
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id,
+      nama_ayah: nama_ayah,
+      nama_ibu: nama_ibu,
+      email: email_aktif,
+      pekerjaan_ayah: ocup_ayah,
+      pekerjaan_ibu: ocup_ibu
+    }
+
+    let paylaodSiswaWillUpdate = {
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id,
+      nama: nama_lengkap,
+      jenis_kelamin: jenis_kelamin,
+      tanggal_lahir: moment(tanggal_lahir, 'DD-MM-YYYY').format('YYYY-MM-DD 00:00:00'),
+      nik: nik,
+      alamat: alamat,
+      rt: no_rt,
+      rw: no_rw,
+      kelurahan: kelurahan,
+      kecamatan: kecamatan,
+      id_kelas: id_kelas
+    }
+    if (change_image && isEmpty(image)) {
+      paylaodSiswaWillUpdate.image = null;
+    } else if (change_image && !isEmpty(image)) {
+      const buf = Buffer.from(image, 'base64')
+      const filetype = await utils.checkFiletipe(buf);
+      const ext = filetype.ext;
+      const mime = filetype.mime;
+
+      const upload = await s3.upload({
+        ACL: 'public-read',
+        Bucket: 'bucket-sit',
+        Key: `profile-picture/${uuidv7()}.${ext}`,
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: mime,
+      }).promise();
+
+      const urlImage = upload?.Location ?? null
+      paylaodSiswaWillUpdate.image = urlImage;
+    }
+
+    await adrSiswa.update(paylaodSiswaWillUpdate, {
+      where: {
+        id: id_siswa
+      }, transaction
+    })
+
+    await adrParents.update(paylaodOrtuWillUpdate, {
+      where: {
+        id: id_parent
+      }, transaction
+    })
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/update...', e);
+  }
+}
+
 exports.searchSiswa = async function (req, res) {
   try {
     const id = req.params.id;
