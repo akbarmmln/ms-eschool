@@ -578,9 +578,9 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
         is_deleted: 0
       }
     })
-    hasil[0].niy_guru = dataPengajar?.niy ?? ''
+    hasil[0].niy_guru = dataPengajar?.niy ?? '-'
     hasil[0].nama_guru = dataPengajar?.nama ?? ''
-    hasil[0].niy_principal = dataPrincipal?.niy ?? ''
+    hasil[0].niy_principal = dataPrincipal?.niy ?? '-'
     hasil[0].nama_principal = dataPrincipal?.nama ?? ''
 
     const items = await adrJurnalMengajarDetailSilabus.findAll({
@@ -631,20 +631,83 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
 exports.downloadBulkPenilaianHarian = async function (req, res) {
   try {
     const id_jurnal = req.body.id_jurnal;
-    const data = await adrJurnalMengajar.findOne({
+    const dataJurnal = await adrJurnalMengajar.findOne({
       raw: true,
       where: {
         id: id_jurnal
       }
     })
+    const jurnalDetail = await adrJurnalMengajarDetailSiswa.findAll({
+      raw: true,
+      where: {
+        id_jurnal: dataJurnal.id
+      }
+    })
     const dataGuru = await adrTeacher.findOne({
       raw: true,
       where: {
-        id: data.id_guru
+        id: dataJurnal.id_guru
+      }
+    })
+    const dataPrincipal = await adrTeacher.findOne({
+      raw: true,
+      where : {
+        jabatan: 'principal',
+        is_deleted: 0
       }
     })
 
-    return res.status(200).json(rsMsg('000000', {}))
+    let hasil = [];
+    for (let i=0; i<jurnalDetail.length; i++) {
+      const id_diajar = jurnalDetail[i].id
+      const data = {
+        tanggal: dataJurnal.tanggal_jurnal,
+        niy_guru: dataGuru.niy ?? '-',
+        nama_guru: dataGuru.nama,
+        nama_siswa: jurnalDetail[i].nama_siswa,
+        niy_principal: dataPrincipal.niy ?? '-',
+        nama_principal: dataPrincipal.nama,
+        materi: dataJurnal.materi,
+        refleksi: dataJurnal.refleksi,
+        items: null
+      }
+      const items = await adrJurnalMengajarDetailSilabus.findAll({
+        raw: true,
+        attributes: ['item_silabus', 'nilai', 'keterangan'],
+        where: {
+          id_detail_diajar: id_diajar,
+          is_deleted: 0
+        }
+      })
+      data.items = items
+      hasil.push(data)
+    }
+
+    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
+    const page = await browser.newPage();
+    await page.setContent(htmlRender, {
+      waitUntil: "networkidle0"
+    });
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      margin: {
+        top: "10mm",
+        bottom: "10mm",
+        left: "10mm",
+        right: "10mm"
+      },
+      landscape: false,
+      printBackground: true
+    });
+    await browser.close();
+    let buf = Buffer.from(pdfBuffer, 'base64');
+    const base64 = buf.toString("base64")
+    
+    return res.status(200).json(rsMsg('000000', base64))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-bulk-penilaian-harian...', e);
   }
