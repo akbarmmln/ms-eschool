@@ -552,6 +552,8 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
       niy_guru: null,
       nama_guru: null,
       nama_siswa: nama_siswa,
+      niy_principal: null,
+      nama_principal: null,
       materi: null,
       refleksi: null,
       items: null
@@ -563,14 +565,23 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
         id: id_jurnal
       }
     })
-    const dataGuru = await adrTeacher.findOne({
+    const dataPengajar = await adrTeacher.findOne({
       raw: true,
       where: {
         id: data.id_guru
       }
     })
-    hasil[0].niy_guru = dataGuru?.niy
-    hasil[0].nama_guru = dataGuru?.nama
+    const dataPrincipal = await adrTeacher.findOne({
+      raw: true,
+      where : {
+        jabatan: 'principal',
+        is_deleted: 0
+      }
+    })
+    hasil[0].niy_guru = dataPengajar?.niy ?? ''
+    hasil[0].nama_guru = dataPengajar?.nama ?? ''
+    hasil[0].niy_principal = dataPrincipal?.niy ?? ''
+    hasil[0].nama_principal = dataPrincipal?.nama ?? ''
 
     const items = await adrJurnalMengajarDetailSilabus.findAll({
       raw: true,
@@ -614,6 +625,28 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
     return res.status(200).json(rsMsg('000000', base64))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-single-penilaian-harian...', e);
+  }
+}
+
+exports.downloadBulkPenilaianHarian = async function (req, res) {
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const data = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id_jurnal
+      }
+    })
+    const dataGuru = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        id: data.id_guru
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-bulk-penilaian-harian...', e);
   }
 }
 

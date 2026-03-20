@@ -14,5 +14,6 @@ router.post('/inisiasi-penilaian', auth.verifyToken, controller.inisiasiPenilaia
 router.post('/update-penilaian', auth.verifyToken, controller.updatePenilaian);
 router.post('/submit-item-penilaian', auth.verifyToken, controller.submitItemPenilaian);
 router.post('/download-single-penilaian-harian', auth.verifyToken, controller.downloadSinglePenilaianHarian);
+router.post('/download-bulk-penilaian-harian', auth.verifyToken, controller.downloadBulkPenilaianHarian);
 
 module.exports = router;

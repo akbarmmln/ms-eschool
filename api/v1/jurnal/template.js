@@ -182,8 +182,8 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                         <div class='ttd-bottom center'>
                             <p>Kinder Principal</p>
                             <br><br><br><br>
-                            <b class="underline-text">Eliza Nurhayati, S.Pd.</b><br>
-                            <b>NIY : 01022016002</b>
+                            <b class="underline-text">${siswa.niy_principal}</b><br>
+                            <b>NIY : ${siswa.nama_principal}</b>
                         </div>
                     </div>
                 </div>
