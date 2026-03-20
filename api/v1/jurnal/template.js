@@ -182,8 +182,8 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                         <div class='ttd-bottom center'>
                             <p>Kinder Principal</p>
                             <br><br><br><br>
-                            <b class="underline-text">${siswa.niy_principal}</b><br>
-                            <b>NIY : ${siswa.nama_principal}</b>
+                            <b class="underline-text">${siswa.nama_principal}</b><br>
+                            <b>NIY : ${siswa.niy_principal}</b>
                         </div>
                     </div>
                 </div>
