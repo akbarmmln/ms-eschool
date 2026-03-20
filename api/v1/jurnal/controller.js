@@ -675,6 +675,7 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
         raw: true,
         attributes: ['item_silabus', 'nilai', 'keterangan'],
         where: {
+          id_jurnal: dataJurnal.id,
           id_detail_diajar: id_diajar,
           is_deleted: 0
         }
