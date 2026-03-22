@@ -87,6 +87,8 @@ exports.verifyToken = async function (req, res, next) {
     const new_token = await utils.signin(hash);
 
     req.id = payloadEnkripsiLogin.id_account
+    req.role = payloadEnkripsiLogin.role
+    req.tipe_account = payloadEnkripsiLogin.tipe_account
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', new_token);
