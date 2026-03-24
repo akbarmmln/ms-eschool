@@ -11,8 +11,6 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
 const adrTeacher = require('../../../model/adr_teacher');
-const adrClassLevel = require('../../../model/adr_class_level');
-const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 
 exports.profile = async function (req, res) {
   try {
@@ -40,5 +38,25 @@ exports.profile = async function (req, res) {
     return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/profile...', e);
+  }
+}
+
+exports.updatePersonal = async function (req, res) {
+  try {
+    const id = req.id;
+    const object_update = req.body.object_update;
+
+    await adrTeacher.update({
+      ...object_update,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+    }, {
+      where: {
+        id: id
+      }
+    })
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/update-personal...', e);
   }
 }
