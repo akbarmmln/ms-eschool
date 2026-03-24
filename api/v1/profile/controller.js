@@ -11,6 +11,8 @@ const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
 const adrTeacher = require('../../../model/adr_teacher');
+const bcrypt = require('bcryptjs');
+const adrUserLogin = require('../../../model/adr_user_login');
 
 exports.profile = async function (req, res) {
   try {
@@ -58,5 +60,35 @@ exports.updatePersonal = async function (req, res) {
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/profile/update-personal...', e);
+  }
+}
+
+exports.ubahPassword = async function (req, res) {
+  try {
+    const id = req.id;
+
+    const password_lama = req.body.password_lama;
+    const password_baru = req.body.password_baru;
+
+    const data = await adrUserLogin.findOne({
+      raw: true,
+      where: {
+        id_account: id
+      }
+    })
+
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70008');
+    }
+
+    const passwordRegistered = data.password
+    const checkPin = await bcrypt.compare(password_lama, passwordRegistered);
+    if (!checkPin) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70015');
+    }
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/change/password...', e);
   }
 }

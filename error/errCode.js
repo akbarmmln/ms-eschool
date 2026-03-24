@@ -13,7 +13,8 @@ const errCode = {
   '70011': 'payload tidak sesuai',
   '70012': 'minimal 1 data absensi dilakukan',
   '70013': 'tanggal pencarian harus terisi semua',
-  '70014': `Tanggal 'dari' tidak boleh lebih besar dari tanggal 'sampai'`
+  '70014': `Tanggal 'dari' tidak boleh lebih besar dari tanggal 'sampai'`,
+  '70015': `password lama anda tidak sesuai`
 };
 
 module.exports = errCode;
