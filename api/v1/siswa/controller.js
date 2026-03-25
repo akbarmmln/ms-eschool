@@ -293,3 +293,35 @@ exports.searchSiswa = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/search...', e);
   }
 }
+
+exports.getAbsensi = async function (req, res) {
+  try {
+    const id_siswa = req.body.id_siswa;
+    const dari = req.body.dari;
+    const sampai = req.body.sampai;
+    let data;
+
+    if (dari && sampai) {
+      const dateDari = moment(dari, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const dateSampai = moment(sampai, 'DD-MM-YYYY').format('YYYY-MM-DD');
+
+      if (dateDari > dateSampai) {
+        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
+      }
+    } else {
+      data = await sequelize.query(`SELECT ajm.id as id_jurnal, ajmds.id as id_details, ajmds.id_siswa,
+        ajm.tanggal_jurnal, ajm.materi, ajm.refleksi,
+        ajmds.nama_siswa, ajmds.absensi
+        FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
+        ON ajm.id = ajmds.id_jurnal
+        WHERE ajmds.id_siswa = :id_siswa_ ORDER BY ajm.tanggal_jurnal ASC`,
+        { replacements: { id_siswa_: id_siswa }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+    }
+    return res.status(200).json(rsMsg('000000', data));
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/absensi...', e);
+  }
+}
