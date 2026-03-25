@@ -67,7 +67,8 @@ exports.getListJurnal = async function (req, res) {
         jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
         d.id as id_diajar, d.nama_siswa, d.absensi
         FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ LIMIT ${offset}, ${limit} ) jm
-        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`,
+        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal
+        ORDER BY tanggal_jurnal ASC`,
         { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
