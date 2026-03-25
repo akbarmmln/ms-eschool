@@ -315,7 +315,7 @@ exports.getAbsensi = async function (req, res) {
         FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
         ON ajm.id = ajmds.id_jurnal
         WHERE ajmds.id_siswa = :id_siswa_ ORDER BY ajm.tanggal_jurnal ASC`,
-        { replacements: { id_siswa_: id_siswa }, type: sequelize.QueryTypes.SELECT },
+        { replacements: { id_siswa_: `${id_siswa}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
