@@ -89,6 +89,8 @@ exports.ubahPassword = async function (req, res) {
 
     const encryptNewPin = await bcrypt.hash(password_baru, saltRounds);
     await adrUserLogin.update({
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: id,
       password: encryptNewPin
     }, {
       where: {
