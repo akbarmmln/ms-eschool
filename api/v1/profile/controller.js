@@ -13,6 +13,7 @@ const adrClassRoom = require('../../../model/adr_class_room');
 const adrTeacher = require('../../../model/adr_teacher');
 const bcrypt = require('bcryptjs');
 const adrUserLogin = require('../../../model/adr_user_login');
+const saltRounds = 12;
 
 exports.profile = async function (req, res) {
   try {
@@ -66,7 +67,6 @@ exports.updatePersonal = async function (req, res) {
 exports.ubahPassword = async function (req, res) {
   try {
     const id = req.id;
-
     const password_lama = req.body.password_lama;
     const password_baru = req.body.password_baru;
 
@@ -86,6 +86,15 @@ exports.ubahPassword = async function (req, res) {
     if (!checkPin) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70015');
     }
+
+    const encryptNewPin = await bcrypt.hash(password_baru, saltRounds);
+    await adrUserLogin.update({
+      password: encryptNewPin
+    }, {
+      where: {
+        id: id
+      }
+    })
 
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
