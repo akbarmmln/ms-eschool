@@ -94,7 +94,7 @@ exports.ubahPassword = async function (req, res) {
       password: encryptNewPin
     }, {
       where: {
-        id: id
+        id_account: id
       }
     })
 
