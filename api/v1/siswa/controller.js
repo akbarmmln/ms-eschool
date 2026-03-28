@@ -314,7 +314,7 @@ exports.getAbsensi = async function (req, res) {
         ajmds.nama_siswa, ajmds.absensi
         FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
         ON ajm.id = ajmds.id_jurnal
-        WHERE ajmds.id_siswa = :id_siswa_ AND DATE(ajm.tanggal_jurnal) :dari_ AND :sampai_
+        WHERE ajmds.id_siswa = :id_siswa_ AND DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_
         ORDER BY ajm.tanggal_jurnal ASC`,
         { replacements: { id_siswa_: `${id_siswa}`, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
