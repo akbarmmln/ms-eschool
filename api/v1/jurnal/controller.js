@@ -39,7 +39,7 @@ exports.getListJurnal = async function (req, res) {
       }
 
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
-        WHERE id_guru = :id_guru_ AND tanggal_jurnal BETWEEN :dari_ AND :sampai_`,
+        WHERE id_guru = :id_guru_ AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
