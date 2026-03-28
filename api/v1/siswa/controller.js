@@ -308,17 +308,20 @@ exports.getAbsensi = async function (req, res) {
       if (dateDari > dateSampai) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
       }
-    } else {
+
       data = await sequelize.query(`SELECT ajm.id as id_jurnal, ajmds.id as id_details, ajmds.id_siswa,
         ajm.tanggal_jurnal, ajm.materi, ajm.refleksi,
         ajmds.nama_siswa, ajmds.absensi
         FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
         ON ajm.id = ajmds.id_jurnal
-        WHERE ajmds.id_siswa = :id_siswa_ ORDER BY ajm.tanggal_jurnal ASC`,
-        { replacements: { id_siswa_: `${id_siswa}` }, type: sequelize.QueryTypes.SELECT },
+        WHERE ajmds.id_siswa = :id_siswa_ AND DATE(ajm.tanggal_jurnal) :dari_ AND :sampai_
+        ORDER BY ajm.tanggal_jurnal ASC`,
+        { replacements: { id_siswa_: `${id_siswa}`, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
+    } else {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70013');
     }
     return res.status(200).json(rsMsg('000000', data));
   } catch (e) {
