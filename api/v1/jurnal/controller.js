@@ -49,7 +49,7 @@ exports.getListJurnal = async function (req, res) {
         jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
         d.id as id_diajar, d.nama_siswa, d.absensi
         FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ 
-        AND tanggal_jurnal BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
+        AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
         LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
