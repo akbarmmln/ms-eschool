@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { v7: uuidv7 } = require('uuid');
 const ApiErrorMsg = require('../error/apiErrorMsg');
 const HttpStatusCode = require("../error/httpStatusCode");
+const nodemailer = require('nodemailer');
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -130,5 +131,38 @@ exports.checkFiletipe = async function (buffer) {
       ext: null,
       mime: null
     }
+  }
+}
+
+exports.sendGridMailer = async function (from, to, subject, body, attachments, bodyType = 'html') {
+
+  try {
+    let transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD
+      }
+    });
+    let sendProps = {
+      from: from,
+      to: to,
+      subject: subject
+    };
+
+    if (bodyType !== 'html') {
+      sendProps.text = body;
+    } else {
+      sendProps.html = body;
+    }
+    if (attachments) {
+      sendProps.attachments = attachments
+    }
+    let info = await transporter.sendMail(sendProps);
+    return info;
+  } catch (e) {
+    throw e;
   }
 }

@@ -12,6 +12,7 @@ const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrClassRoom = require('../../../model/adr_class_room');
 const adrSettings = require('../../../model/adr_settings');
 const adrTeacher = require('../../../model/adr_teacher');
+const mailer = require('../../../config/mailer');
 
 exports.getSetings = async function (req, res) {
   try {    
@@ -34,6 +35,22 @@ exports.getSetings = async function (req, res) {
         teacher
     }))
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error GET /api/v1/profile...', e);
+    return utils.returnErrorFunction(res, 'error GET /api/v1/settings...', e);
+  }
+}
+
+exports.sendMail = async function (req, res) {
+  try {
+    const mailObject = {
+      from: process.env.FROM_EMAIL,
+      to: 'taufikfirman763@gmail.com',
+      subject: `Test Email`,
+      html: `<b>Hello dari Nodemailer + Brevo 🚀</b>`
+    };
+    await mailer.sendMailer(mailObject);
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/settings/send-email...', e);
   }
 }

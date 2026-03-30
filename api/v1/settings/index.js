@@ -4,5 +4,6 @@ const controller = require('./controller');
 const auth = require('../auth/controller');
 
 router.get('/', auth.verifyToken, controller.getSetings);
+router.post('/send-mail', controller.sendMail);
 
 module.exports = router;
