@@ -46,13 +46,13 @@ const sequelize = new Sequelize(settings.dbname, settings.username, settings.pas
   host: settings.hostname,
   port: settings.port,
   dialect: 'mysql',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: true,
-      ca: privateKey.replace(/\\n/gm, '\n')
-    },
-  },
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true,
+  //     rejectUnauthorized: true,
+  //     ca: privateKey.replace(/\\n/gm, '\n')
+  //   },
+  // },
   pool: {
     max: 5,
     min: 0,
