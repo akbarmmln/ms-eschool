@@ -665,10 +665,12 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
     
-    // const pdf = await utils.pdfPupeeter(htmlRender);
-    const pdf = await utils.pdfWkhtml(htmlRender);
+    const pdf = await utils.pdfPupeeter(htmlRender);
+    // const pdf = await utils.pdfWkhtml(htmlRender);
+    const buf = Buffer.from(pdf, 'base64');
+    const base64 = buf.toString("base64")
 
-    return res.status(200).json(rsMsg('000000', pdf))
+    return res.status(200).json(rsMsg('000000', base64))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-bulk-penilaian-harian...', e);
   }
