@@ -7,6 +7,7 @@ const { v7: uuidv7 } = require('uuid');
 const ApiErrorMsg = require('../error/apiErrorMsg');
 const HttpStatusCode = require("../error/httpStatusCode");
 const nodemailer = require('nodemailer');
+const puppeteer = require("puppeteer");
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -165,4 +166,32 @@ exports.sendGridMailer = async function (from, to, subject, body, attachments, b
   } catch (e) {
     throw e;
   }
+}
+
+exports.pdfPupeeter = async function (htmlRender) {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  });
+
+  const page = await browser.newPage();
+  await page.setContent(htmlRender, {
+    waitUntil: "networkidle0"
+  });
+
+  const pdfBuffer = await page.pdf({
+    format: "A4",
+    margin: {
+      top: "10mm",
+      bottom: "10mm",
+      left: "10mm",
+      right: "10mm"
+    },
+    landscape: false,
+    printBackground: true
+  });
+  await browser.close();
+  const buf = Buffer.from(pdfBuffer, 'base64');
+  const base64 = buf.toString("base64")
+  return base64;
 }

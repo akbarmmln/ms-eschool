@@ -18,7 +18,6 @@ const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar
 const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
 const adrSilabus = require('../../../model/adr_silabus');
 const templateHtml = require('./template')
-const puppeteer = require("puppeteer");
 
 exports.getListJurnal = async function (req, res) {
   try {
@@ -600,30 +599,9 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
     hasil[0].items = items;
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
-    });
-    const page = await browser.newPage();
-    await page.setContent(htmlRender, {
-      waitUntil: "networkidle0"
-    });
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      margin: {
-        top: "10mm",
-        bottom: "10mm",
-        left: "10mm",
-        right: "10mm"
-      },
-      landscape: false,
-      printBackground: true
-    });
-    await browser.close();
-    let buf = Buffer.from(pdfBuffer, 'base64');
-    const base64 = buf.toString("base64")
+    const pdf = await utils.pdfPupeeter(htmlRender);
 
-    return res.status(200).json(rsMsg('000000', base64))
+    return res.status(200).json(rsMsg('000000', pdf))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-single-penilaian-harian...', e);
   }
@@ -686,30 +664,9 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
     }
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
-    const page = await browser.newPage();
-    await page.setContent(htmlRender, {
-      waitUntil: "networkidle0"
-    });
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      margin: {
-        top: "10mm",
-        bottom: "10mm",
-        left: "10mm",
-        right: "10mm"
-      },
-      landscape: false,
-      printBackground: true
-    });
-    await browser.close();
-    let buf = Buffer.from(pdfBuffer, 'base64');
-    const base64 = buf.toString("base64")
+    const pdf = await utils.pdfPupeeter(htmlRender);
 
-    return res.status(200).json(rsMsg('000000', base64))
+    return res.status(200).json(rsMsg('000000', pdf))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/download-bulk-penilaian-harian...', e);
   }
