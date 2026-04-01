@@ -193,9 +193,6 @@ exports.pdfPupeeter = async function (htmlRender) {
   });
   await browser.close();
   return pdfBuffer;
-  // const buf = Buffer.from(pdfBuffer, 'base64');
-  // const base64 = buf.toString("base64")
-  // return base64;
 }
 
 exports.pdfWkhtml = (html) => {
