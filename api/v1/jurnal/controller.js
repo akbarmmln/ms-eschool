@@ -602,7 +602,7 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
     const browser = await puppeteer.launch({
       headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
     });
     const page = await browser.newPage();
     await page.setContent(htmlRender, {
