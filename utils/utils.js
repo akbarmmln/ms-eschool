@@ -172,7 +172,7 @@ exports.sendGridMailer = async function (from, to, subject, body, attachments, b
 exports.pdfPupeeter = async function (htmlRender) {
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    args: ['--no-sandbox', '--headless', '--disable-gpu', '--disable-dev-shm-usage', 'chromium-browser', 'google-chrome']
   });
 
   const page = await browser.newPage();
