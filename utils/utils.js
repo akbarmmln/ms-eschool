@@ -177,7 +177,8 @@ exports.pdfPupeeter = async function (htmlRender) {
 
   const page = await browser.newPage();
   await page.setContent(htmlRender, {
-    waitUntil: "networkidle0"
+    waitUntil: "networkidle0",
+    timeout: 60000
   });
 
   const pdfBuffer = await page.pdf({
