@@ -664,7 +664,9 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
     }
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
-    const pdf = await utils.pdfPupeeter(htmlRender);
+    
+    // const pdf = await utils.pdfPupeeter(htmlRender);
+    const pdf = await utils.pdfWkhtml(htmlRender);
 
     return res.status(200).json(rsMsg('000000', pdf))
   } catch (e) {

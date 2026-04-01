@@ -8,6 +8,7 @@ const ApiErrorMsg = require('../error/apiErrorMsg');
 const HttpStatusCode = require("../error/httpStatusCode");
 const nodemailer = require('nodemailer');
 const puppeteer = require("puppeteer");
+const wkhtmltopdf = require('wkhtmltopdf');
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -195,3 +196,24 @@ exports.pdfPupeeter = async function (htmlRender) {
   const base64 = buf.toString("base64")
   return base64;
 }
+
+exports.pdfWkhtml = (html) => {
+  const options = {
+    disableSmartShrinking: true,
+    dpi: 96,
+    zoom: 1.0,
+    pageSize: 'A4',
+    marginTop: '10mm',
+    marginRight: '10mm',
+    marginLeft: '10mm',
+    marginBottom: '10mm',
+  };
+
+  return new Promise((resolve, reject) => {
+    const pdfStream = wkhtmltopdf(html, options);
+    const pdfBuffer = [];
+    pdfStream.on('data', chunk => pdfBuffer.push(chunk));
+    pdfStream.on('end', () => resolve(Buffer.concat(pdfBuffer)));
+    pdfStream.on('error', err => reject(err));
+  });
+};

@@ -53,6 +53,7 @@
         "string-template": "^1.0.0",
         "utf8": "^3.0.0",
         "uuid": "^11.0.0",
+        "wkhtmltopdf": "^0.4.0",
         "yarn": "^1.22.21"
     }
 }
