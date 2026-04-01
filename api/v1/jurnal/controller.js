@@ -665,8 +665,8 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
     
-    const pdf = await utils.pdfPupeeter(htmlRender);
-    // const pdf = await utils.pdfWkhtml(htmlRender);
+    // const pdf = await utils.pdfPupeeter(htmlRender);
+    const pdf = await utils.pdfWkhtml(htmlRender);
     const buf = Buffer.from(pdf, 'base64');
     const base64 = buf.toString("base64")
 
