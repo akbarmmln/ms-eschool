@@ -384,6 +384,22 @@ exports.ortuRemoveAccess = async function (req, res) {
       transaction
     })
 
+    await adrSiswa.update({
+      id_parent: null
+    }, {
+      where: {
+        id:id_siswa
+      },
+      transaction
+    })
+    
+    await adrParents.destroy({
+      where: {
+        id: id_access
+      },
+      transaction
+    })
+
     await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
