@@ -355,7 +355,6 @@ exports.getAbsensi = async function (req, res) {
 }
 
 exports.ortuRemoveAccess = async function (req, res) {
-  const transaction = await sequelize.transaction();
   try {
     const id_siswa = req.body.id_siswa;
     const id_access = req.body.id_access;
@@ -387,25 +386,11 @@ exports.ortuRemoveAccess = async function (req, res) {
       where: {
         id_account: id_access,
         email: email,
-      },
-      transaction
+      }
     })
 
-    await adrSiswa.update({
-      id_parent: null
-    }, {
-      where: {
-        id:id_siswa
-      },
-      transaction
-    })
-
-    await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
-    if (transaction) {
-      await transaction.rollback();
-    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/remove-access...', e);
   }
 }
