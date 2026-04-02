@@ -345,13 +345,14 @@ exports.getAbsensi = async function (req, res) {
   }
 }
 
-exports.ortuChangeEmail = async function (req, res) {
+exports.ortuRemoveAccess = async function (req, res) {
   try {
-    const account_id = req.body.account_id;
+    const id_access = req.body.id_access;
     const email = req.body.email;
 
     const checkData = await adrUserLogin.count({
       where: {
+        id_account: id_access,
         email: email,
         is_deleted: 0
       }
@@ -362,7 +363,12 @@ exports.ortuChangeEmail = async function (req, res) {
     }
 
     await adrUserLogin.update({
-
+      is_deleted: 1
+    }, {
+      where:{
+        id_account: id_access,
+        email: email,
+      }
     })
 
     return res.status(200).json(rsMsg('000000', {}))

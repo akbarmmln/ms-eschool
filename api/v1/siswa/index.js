@@ -11,6 +11,6 @@ router.post('/update', auth.verifyToken, controller.updateSiswa);
 router.get('/detail/:id', auth.verifyToken, controller.searchSiswa);
 
 router.post('/absensi', auth.verifyToken, controller.getAbsensi);
-router.post('/ortu/change-email', auth.verifyToken, controller.ortuChangeEmail);
+router.post('/ortu/remove-access', auth.verifyToken, controller.ortuRemoveAccess);
 
 module.exports = router;
