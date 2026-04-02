@@ -370,8 +370,8 @@ exports.ortuRemoveAccess = async function (req, res) {
       }
     })
 
-    if (checkData) {
-      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70004');
+    if (!checkData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
     }
 
     await adrUserLogin.update({
