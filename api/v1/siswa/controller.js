@@ -376,9 +376,7 @@ exports.ortuRemoveAccess = async function (req, res) {
     }
 
     await adrUserLogin.destroy({
-      is_deleted: 1
-    }, {
-      where:{
+      where: {
         id_account: id_access,
         email: email,
       },
