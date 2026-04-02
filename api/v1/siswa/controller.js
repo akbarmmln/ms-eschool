@@ -214,16 +214,6 @@ exports.updateSiswa = async function (req, res) {
     const image = req.body.image;
     const change_image = req.body.change_image;
 
-    const paylaodOrtuWillUpdate = {
-      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      modified_by: req.id,
-      nama_ayah: nama_ayah,
-      nama_ibu: nama_ibu,
-      email: email_aktif,
-      pekerjaan_ayah: ocup_ayah,
-      pekerjaan_ibu: ocup_ibu
-    }
-
     let paylaodSiswaWillUpdate = {
       modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       modified_by: req.id,
@@ -259,15 +249,41 @@ exports.updateSiswa = async function (req, res) {
       paylaodSiswaWillUpdate.image = urlImage;
     }
 
+    if (!isEmpty(id_parent)) {
+      const paylaodOrtuWillUpdate = {
+        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        modified_by: req.id,
+        nama_ayah: nama_ayah,
+        nama_ibu: nama_ibu,
+        email: email_aktif,
+        pekerjaan_ayah: ocup_ayah,
+        pekerjaan_ibu: ocup_ibu
+      }
+
+      await adrParents.update(paylaodOrtuWillUpdate, {
+        where: {
+          id: id_parent
+        }, transaction
+      })
+    } else {
+      const idParent = uuidv7()
+      paylaodSiswaWillUpdate.id_parent = idParent;
+      await adrParents.create({
+        id: idParent,
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        nama_ayah: nama_ayah,
+        nama_ibu: nama_ibu,
+        email: email_aktif,
+        pekerjaan_ayah: ocup_ayah,
+        pekerjaan_ibu: ocup_ibu
+      }, { transaction: transaction })
+    }
+
     await adrSiswa.update(paylaodSiswaWillUpdate, {
       where: {
         id: id_siswa
-      }, transaction
-    })
-
-    await adrParents.update(paylaodOrtuWillUpdate, {
-      where: {
-        id: id_parent
       }, transaction
     })
 
@@ -475,7 +491,7 @@ exports.unlink = async function (req, res) {
         id: id_siswa
       }
     })
-    
+
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/unlink...', e);
