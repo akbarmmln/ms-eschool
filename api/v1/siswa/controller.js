@@ -305,7 +305,15 @@ exports.searchSiswa = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
     }
 
-    return res.status(200).json(rsMsg('000000', data.length ? data[0] : {}));
+    const id_access = data[0].id_parent;
+    const access = await adrUserLogin.count({
+      where: {
+        id_account: id_access
+      }
+    })
+    data[0]['status_login'] = access;
+    
+    return res.status(200).json(rsMsg('000000', data[0]));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/search...', e);
   }
