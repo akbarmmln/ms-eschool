@@ -346,10 +346,15 @@ exports.getAbsensi = async function (req, res) {
 }
 
 exports.ortuRemoveAccess = async function (req, res) {
+  const transaction = await sequelize.transaction();
   try {
+    const id_siswa = req.body.id_siswa;
     const id_access = req.body.id_access;
     const email = req.body.email;
 
+    if (isEmpty(id_siswa)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70018');
+    }
     if (isEmpty(id_access)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70016');
     }
@@ -375,11 +380,16 @@ exports.ortuRemoveAccess = async function (req, res) {
       where:{
         id_account: id_access,
         email: email,
-      }
+      },
+      transaction
     })
 
+    await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/change-email...', e);
   }
 }

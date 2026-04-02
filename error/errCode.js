@@ -16,7 +16,8 @@ const errCode = {
   '70014': `Tanggal 'dari' tidak boleh lebih besar dari tanggal 'sampai'`,
   '70015': `password lama anda tidak sesuai`,
   '70016': `id access harus terisi`,
-  '70017': `email harus terisi`
+  '70017': `email harus terisi`,
+  '70018': `id siswa harus terisi`,
 };
 
 module.exports = errCode;
