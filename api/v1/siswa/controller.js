@@ -15,6 +15,7 @@ const adrUserLogin = require('../../../model/adr_user_login');
 const s3 = require('../../../config/oss').client;
 const otpGenerator = require('otp-generator');
 const bcrypt = require('bcryptjs');
+const { where } = require('sequelize');
 const saltRounds = 12;
 
 exports.getSiswa = async function (req, res) {
@@ -374,7 +375,7 @@ exports.ortuRemoveAccess = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
     }
 
-    await adrUserLogin.update({
+    await adrUserLogin.destroy({
       is_deleted: 1
     }, {
       where:{
@@ -392,7 +393,7 @@ exports.ortuRemoveAccess = async function (req, res) {
       },
       transaction
     })
-    
+
     await adrParents.destroy({
       where: {
         id: id_access
@@ -406,6 +407,56 @@ exports.ortuRemoveAccess = async function (req, res) {
     if (transaction) {
       await transaction.rollback();
     }
-    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/change-email...', e);
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/remove-access...', e);
+  }
+}
+
+exports.ortuAddAccess = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    let idParent;
+    const email = req.body.email;
+
+    const dataParent = await adrParents.findOne({
+      raw: true,
+      where: {
+        email: email
+      }
+    })
+    if (dataParent) {
+      idParent = dataParent.id
+    } else {
+      const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+      const encryptPin = await bcrypt.hash(pin, saltRounds);
+      idParent = uuidv7();
+
+      await adrParents.create({
+        id: idParent,
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        email: email,
+      }, { transaction: transaction })
+
+      await adrUserLogin.create({
+        id: uuidv7(),
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        id_account: idParent,
+        tipe_account: 'DS2',
+        password: encryptPin,
+        role: 2,
+        email: email
+      }, { transaction: transaction })
+    }
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/add-access...', e);
   }
 }

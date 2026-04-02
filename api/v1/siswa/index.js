@@ -12,5 +12,6 @@ router.get('/detail/:id', auth.verifyToken, controller.searchSiswa);
 
 router.post('/absensi', auth.verifyToken, controller.getAbsensi);
 router.post('/ortu/remove-access', auth.verifyToken, controller.ortuRemoveAccess);
+router.post('/ortu/add-access', auth.verifyToken, controller.ortuAddAccess);
 
 module.exports = router;
