@@ -481,8 +481,8 @@ exports.ortuResetAccess = async function (req, res) {
       where: {
         id_account: id_access
       }
-    })
-    
+    });
+
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/reset-access...', e);
