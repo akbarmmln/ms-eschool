@@ -398,7 +398,6 @@ exports.ortuRemoveAccess = async function (req, res) {
 exports.ortuAddAccess = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
-    let idParent;
     const id_siswa = req.body.id_siswa;
     const email = req.body.email;
 
@@ -408,36 +407,26 @@ exports.ortuAddAccess = async function (req, res) {
         email: email
       }
     })
-    if (dataParent) {
-      idParent = dataParent.id
-    } else {
-      const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
-      const encryptPin = await bcrypt.hash(pin, saltRounds);
-      idParent = uuidv7();
-
-      await adrParents.create({
-        id: idParent,
-        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-        created_by: req.id,
-        is_deleted: 0,
-        email: email,
-      }, { transaction: transaction })
-
-      await adrUserLogin.create({
-        id: uuidv7(),
-        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-        created_by: req.id,
-        is_deleted: 0,
-        id_account: idParent,
-        tipe_account: 'DS2',
-        password: encryptPin,
-        role: 2,
-        email: email
-      }, { transaction: transaction })
+    if (!dataParent) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
     }
 
+    const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+    const encryptPin = await bcrypt.hash(pin, saltRounds);
+    await adrUserLogin.create({
+      id: uuidv7(),
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by: req.id,
+      is_deleted: 0,
+      id_account: dataParent.id,
+      tipe_account: 'DS2',
+      password: encryptPin,
+      role: 2,
+      email: email
+    }, { transaction: transaction })
+    
     await adrSiswa.update({
-      id_parent: idParent
+      id_parent: dataParent.id,
     }, {
       where: {
         id: id_siswa
