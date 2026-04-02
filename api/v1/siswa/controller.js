@@ -463,3 +463,21 @@ exports.ortuResetAccess = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/reset-access...', e);
   }
 }
+
+exports.unlink = async function (req, res) {
+  try {
+    const id_siswa = req.body.id_siswa;
+
+    await adrSiswa.update({
+      id_parent: null
+    }, {
+      where: {
+        id: id_siswa
+      }
+    })
+    
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/unlink...', e);
+  }
+}

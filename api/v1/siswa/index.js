@@ -14,5 +14,6 @@ router.post('/absensi', auth.verifyToken, controller.getAbsensi);
 router.post('/ortu/remove-access', auth.verifyToken, controller.ortuRemoveAccess);
 router.post('/ortu/add-access', auth.verifyToken, controller.ortuAddAccess);
 router.post('/ortu/reset-access', auth.verifyToken, controller.ortuResetAccess);
+router.post('/ortu/unlink', auth.verifyToken, controller.unlink);
 
 module.exports = router;
