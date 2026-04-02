@@ -468,3 +468,23 @@ exports.ortuAddAccess = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/add-access...', e);
   }
 }
+
+exports.ortuResetAccess = async function (req, res) {
+  try {
+    const id_access = req.body.id_access;
+    const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+    const encryptPin = await bcrypt.hash(pin, saltRounds);
+
+    await adrUserLogin.update({
+      password: encryptPin
+    }, {
+      where: {
+        id_account: id_access
+      }
+    })
+    
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/reset-access...', e);
+  }
+}
