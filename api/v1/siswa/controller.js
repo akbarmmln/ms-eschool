@@ -415,6 +415,7 @@ exports.ortuAddAccess = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
     let idParent;
+    const id_siswa = req.body.id_siswa;
     const email = req.body.email;
 
     const dataParent = await adrParents.findOne({
@@ -450,6 +451,15 @@ exports.ortuAddAccess = async function (req, res) {
         email: email
       }, { transaction: transaction })
     }
+
+    await adrSiswa.update({
+      id_parent: idParent
+    }, {
+      where: {
+        id: id_siswa
+      },
+      transaction
+    })
 
     await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
