@@ -205,7 +205,7 @@ exports.updateSiswa = async function (req, res) {
     const kelurahan = req.body.kelurahan;
     const kecamatan = req.body.kecamatan;
     const id_kelas = req.body.id_kelas;
-    const id_parent = req.body.id_parent;
+    // const id_parent = req.body.id_parent;
     const nama_ayah = req.body.nama_ayah;
     const nama_ibu = req.body.nama_ibu;
     const email_aktif = req.body.email_aktif;
@@ -249,24 +249,16 @@ exports.updateSiswa = async function (req, res) {
       paylaodSiswaWillUpdate.image = urlImage;
     }
 
-    if (!isEmpty(id_parent)) {
-      const paylaodOrtuWillUpdate = {
-        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-        modified_by: req.id,
-        nama_ayah: nama_ayah,
-        nama_ibu: nama_ibu,
-        email: email_aktif,
-        pekerjaan_ayah: ocup_ayah,
-        pekerjaan_ibu: ocup_ibu
+    const dataParent = await adrParents.findOne({
+      raw: true,
+      where: {
+        email: email_aktif
       }
-
-      await adrParents.update(paylaodOrtuWillUpdate, {
-        where: {
-          id: id_parent
-        }, transaction
-      })
+    })
+    if (dataParent) {
+      paylaodSiswaWillUpdate.id_parent = dataParent.id;
     } else {
-      const idParent = uuidv7()
+      const idParent = uuidv7();
       paylaodSiswaWillUpdate.id_parent = idParent;
       await adrParents.create({
         id: idParent,
