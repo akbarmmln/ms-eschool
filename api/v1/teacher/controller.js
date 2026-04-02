@@ -124,7 +124,7 @@ exports.createTeacher = async function (req, res) {
     const niy = req.body.niy
     const nama = req.body.nama
     const email = req.body?.email?.toLowerCase();
-    const pin = otpGenerator.generate(12, { digits: false, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+    const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
     const encryptPin = await bcrypt.hash(pin, saltRounds);
 
     const cekEmail = await adrUserLogin.count({

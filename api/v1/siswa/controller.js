@@ -13,6 +13,9 @@ const adrParents = require('../../../model/adr_parents');
 const { isEmpty } = require('../../../config/format');
 const adrUserLogin = require('../../../model/adr_user_login');
 const s3 = require('../../../config/oss').client;
+const otpGenerator = require('otp-generator');
+const bcrypt = require('bcryptjs');
+const saltRounds = 12;
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -111,7 +114,7 @@ exports.createSiswa = async function (req, res) {
     if (dataParent) {
       idParent = dataParent.id
     } else {
-      const pin = otpGenerator.generate(12, { digits: false, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+      const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
       const encryptPin = await bcrypt.hash(pin, saltRounds);
       idParent = uuidv7();
 
@@ -339,5 +342,31 @@ exports.getAbsensi = async function (req, res) {
     return res.status(200).json(rsMsg('000000', data));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/absensi...', e);
+  }
+}
+
+exports.ortuChangeEmail = async function (req, res) {
+  try {
+    const account_id = req.body.account_id;
+    const email = req.body.email;
+
+    const checkData = await adrUserLogin.count({
+      where: {
+        email: email,
+        is_deleted: 0
+      }
+    })
+
+    if (checkData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70004');
+    }
+
+    await adrUserLogin.update({
+
+    })
+
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/change-email...', e);
   }
 }
