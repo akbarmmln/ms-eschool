@@ -4,8 +4,6 @@ const { v7: uuidv7 } = require('uuid');
 
 const moment = require('moment')
 const utils = require('../../../utils/utils');
-const Op = require('sequelize').Op;
-const logger = require('../../../config/logger')
 const sequelize = require('../../../config/db').Sequelize;
 const rsMsg = require('../../../response/rs');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
@@ -13,6 +11,7 @@ const HttpStatusCode = require("../../../error/httpStatusCode");
 const adrSiswa = require('../../../model/adr_siswa');
 const adrParents = require('../../../model/adr_parents');
 const { isEmpty } = require('../../../config/format');
+const adrUserLogin = require('../../../model/adr_user_login');
 const s3 = require('../../../config/oss').client;
 
 exports.getSiswa = async function (req, res) {
@@ -112,7 +111,10 @@ exports.createSiswa = async function (req, res) {
     if (dataParent) {
       idParent = dataParent.id
     } else {
+      const pin = otpGenerator.generate(12, { digits: false, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
+      const encryptPin = await bcrypt.hash(pin, saltRounds);
       idParent = uuidv7();
+
       await adrParents.create({
         id: idParent,
         created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -123,6 +125,18 @@ exports.createSiswa = async function (req, res) {
         email: email_aktif,
         pekerjaan_ayah: ocup_ayah,
         pekerjaan_ibu: ocup_ibu
+      }, { transaction: transaction })
+
+      await adrUserLogin.create({
+        id: uuidv7(),
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        id_account: idParent,
+        tipe_account: 'DS2',
+        password: encryptPin,
+        role: 2,
+        email: email_aktif
       }, { transaction: transaction })
     }
 
@@ -143,7 +157,6 @@ exports.createSiswa = async function (req, res) {
 
       urlImage = upload?.Location ?? null
     }
-
 
     await adrSiswa.create({
       id: idSiswa,
