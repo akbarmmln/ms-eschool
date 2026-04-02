@@ -350,6 +350,13 @@ exports.ortuRemoveAccess = async function (req, res) {
     const id_access = req.body.id_access;
     const email = req.body.email;
 
+    if (isEmpty(id_access)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70016');
+    }
+    if (isEmpty(email)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70017');
+    }
+
     const checkData = await adrUserLogin.count({
       where: {
         id_account: id_access,
