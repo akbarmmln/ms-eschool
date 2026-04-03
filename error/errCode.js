@@ -18,6 +18,7 @@ const errCode = {
   '70016': `id access harus terisi`,
   '70017': `email harus terisi`,
   '70018': `id siswa harus terisi`,
+  '70019': `user telah memiliki akses login`,
 };
 
 module.exports = errCode;

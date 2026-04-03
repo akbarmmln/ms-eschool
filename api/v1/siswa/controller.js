@@ -406,7 +406,6 @@ exports.ortuRemoveAccess = async function (req, res) {
 exports.ortuAddAccess = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
-    const id_siswa = req.body.id_siswa;
     const email = req.body.email;
 
     const dataParent = await adrParents.findOne({
@@ -417,6 +416,16 @@ exports.ortuAddAccess = async function (req, res) {
     })
     if (!dataParent) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    const cekData = await adrUserLogin.findOne({
+      raw: true,
+      where: {
+        id_account: dataParent.id
+      }
+    })
+    if (cekData) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70019');
     }
 
     const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
@@ -433,15 +442,6 @@ exports.ortuAddAccess = async function (req, res) {
       email: email
     }, { transaction: transaction })
     
-    await adrSiswa.update({
-      id_parent: dataParent.id,
-    }, {
-      where: {
-        id: id_siswa
-      },
-      transaction
-    })
-
     await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
