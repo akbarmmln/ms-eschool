@@ -13,6 +13,7 @@ const adrClassRoom = require('../../../model/adr_class_room');
 const adrTeacher = require('../../../model/adr_teacher');
 const bcrypt = require('bcryptjs');
 const adrUserLogin = require('../../../model/adr_user_login');
+const adrParents = require('../../../model/adr_parents');
 const saltRounds = 12;
 
 exports.profile = async function (req, res) {
@@ -37,6 +38,26 @@ exports.profile = async function (req, res) {
     const hasil = {
       ...profile,
       nama_kelas: detailWaliKelas?.nama_kelas
+    }
+    return res.status(200).json(rsMsg('000000', hasil))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/profile...', e);
+  }
+}
+
+exports.profileD2 = async function (req, res) {
+  try {
+    const id = req.id;
+    
+    const profile = await adrParents.findOne({
+      raw: true,
+      where: {
+        id: id
+      }
+    })
+
+    const hasil = {
+      ...profile,
     }
     return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
