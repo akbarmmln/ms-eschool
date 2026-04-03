@@ -14,6 +14,7 @@ const adrTeacher = require('../../../model/adr_teacher');
 const bcrypt = require('bcryptjs');
 const adrUserLogin = require('../../../model/adr_user_login');
 const adrParents = require('../../../model/adr_parents');
+const adrSiswa = require('../../../model/adr_siswa');
 const saltRounds = 12;
 
 exports.profile = async function (req, res) {
@@ -56,8 +57,16 @@ exports.profileD2 = async function (req, res) {
       }
     })
 
+    const child = await adrSiswa.findAll({
+      raw: true,
+      where: {
+        id_parent: profile.id
+      }
+    })
+    
     const hasil = {
       ...profile,
+      child
     }
     return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
