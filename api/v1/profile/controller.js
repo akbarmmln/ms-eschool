@@ -49,7 +49,13 @@ exports.profile = async function (req, res) {
 exports.profileD2 = async function (req, res) {
   try {
     const id = req.id;
-    
+    const attributes = [
+      'nama',
+      [
+        sequelize.literal(`(SELECT nama_kelas FROM adr_class_room where id = adr_siswa.id_kelas)`),
+        'nama_kelas',
+      ],
+    ];
     const profile = await adrParents.findOne({
       raw: true,
       where: {
@@ -59,11 +65,12 @@ exports.profileD2 = async function (req, res) {
 
     const child = await adrSiswa.findAll({
       raw: true,
+      attributes: attributes,
       where: {
         id_parent: profile.id
       }
     })
-    
+
     const hasil = {
       ...profile,
       child
