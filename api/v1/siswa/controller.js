@@ -17,6 +17,8 @@ const otpGenerator = require('otp-generator');
 const bcrypt = require('bcryptjs');
 const { where } = require('sequelize');
 const saltRounds = 12;
+const axios = require('axios');
+const csv = require('csvtojson');
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -487,5 +489,66 @@ exports.unlink = async function (req, res) {
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/unlink...', e);
+  }
+}
+
+exports.upload = async function (req, res) {
+  let transaction;
+  try {
+    const payloadSiswa = []; const payloadOrtu = [];
+    const headersCsv= ['nik','nama_siswa', 'id_kelas', 'email']
+    const csvResult = await axios.get('');
+    const jsonObj = await csv({
+      noheader: false,
+      delimiter: ["|", ",", ";"],
+      headers: headersCsv,
+    }).fromString(csvResult.data);
+
+    for (let i=0; i<jsonObj.length; i++) {
+      const id_siswa = uuidv7();
+      const id_parent = uuidv7();
+      const nik = jsonObj[i].nik;
+      const nama = jsonObj[i].nama_siswa;
+      const id_kelas = jsonObj[i].id_kelas;
+      const email = jsonObj[i].email;
+
+      payloadSiswa.push({
+        id: id_siswa,
+        created_dt: moment().format('YYYY-MM-DD H:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        nik: nik,
+        nama: nama,
+        id_kelas: id_kelas,
+        id_parent: id_parent
+      })
+
+      payloadOrtu.push({
+        id: id_parent,
+        created_dt: moment().format('YYYY-MM-DD H:mm:ss.SSS'),
+        created_by: req.id,
+        is_deleted: 0,
+        email: email
+      })
+    }
+
+    transaction = await sequelize.transaction();
+    // await adrSiswa.bulkCreate(payloadSiswa, {
+    //   transaction
+    // });
+    // await adrParents.bulkCreate(payloadOrtu, {
+    //   transaction
+    // });
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000', {
+      payloadSiswa,
+      payloadOrtu
+    }))
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/upload...', e);
   }
 }
