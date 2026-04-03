@@ -50,6 +50,7 @@ exports.profileD2 = async function (req, res) {
   try {
     const id = req.id;
     const attributes = [
+      'id',
       'nama',
       'jenis_kelamin',
       'tanggal_lahir',
