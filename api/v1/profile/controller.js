@@ -52,7 +52,7 @@ exports.profileD2 = async function (req, res) {
     const attributes = [
       'nama',
       'jenis_kelamin',
-      'tanggal_lahir'
+      'tanggal_lahir',
       [
         sequelize.literal(`(SELECT nama_kelas FROM adr_class_room where id = adr_siswa.id_kelas)`),
         'nama_kelas',
