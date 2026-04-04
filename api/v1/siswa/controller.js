@@ -493,6 +493,64 @@ exports.unlink = async function (req, res) {
   }
 }
 
+exports.siswaJurnal = async function (req, res) {
+  try {
+    const id_siswa = req.body.id_siswa;
+    const dari = req.body.dari
+    const sampai = req.body.sampai;
+    const page = parseInt(req.params.page);
+    const limit = 10;
+    const offset = limit * (page - 1);
+    
+    const dateDari = moment(dari, 'DD-MM-YYYY').format('YYYY-MM-DD');
+    const dateSampai = moment(sampai, 'DD-MM-YYYY').format('YYYY-MM-DD');
+
+    if (dateDari > dateSampai) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
+    }
+
+    const count = await sequelize.query(`SELECT COUNT(*) as count 
+      FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
+      ON ajm.id = ajmds.id_jurnal
+      WHERE DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND ajmds.id_siswa = :id_siswa_`,
+      { replacements: { id_siswa_: id_siswa, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+      {
+        raw: true
+      });
+
+    const data = await sequelize.query(`SELECT ajm.id, ajm.tanggal_jurnal, ajm.jam_mulai, ajm.jam_selesai, ajm.materi, 
+        ajm.refleksi, ajm.nama_kelas, ajm.nama_guru, ajmds.absensi
+        FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
+        ON ajm.id = ajmds.id_jurnal
+        WHERE DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_
+        AND ajmds.id_siswa = :id_siswa_ LIMIT ${offset}, ${limit})`,
+      { replacements: { id_siswa_: id_siswa, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+      {
+        raw: true
+      });
+
+    if (data.length > 0) {
+      const newRs = {
+        rows: data,
+        currentPage: page,
+        totalPage: Math.ceil(count[0].count / limit),
+        totalData: count[0].count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/jurnal...', e);
+  }
+}
+
 exports.upload = async function (req, res) {
   let transaction;
   try {
