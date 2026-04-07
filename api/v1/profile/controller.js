@@ -163,3 +163,34 @@ exports.ubahPassword = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/profile/change/password...', e);
   }
 }
+
+exports.updateEmail = async function (req, res) {
+  try {
+    const id = req.id;
+    const tipe_account = req.tipe_account;
+    const email_baru = req.body.email_baru;
+
+    if (formatter.isEmpty(email_baru)) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70017');
+    }
+
+    const dataCheck = await adrUserLogin.count({
+      where: {
+        email: email_baru
+      }
+    })
+    if (dataCheck) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70004');
+    }
+
+    if (tipe_account == 'DS1') {
+
+    } else {
+
+    }
+
+    return res.status(200).json(rsMsg('000000', {}))
+  }catch(e){
+    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/update-email...', e);
+  }
+}

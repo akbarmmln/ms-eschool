@@ -7,6 +7,7 @@ router.get('/', auth.verifyToken, controller.profile);
 router.get('/d2', auth.verifyToken, controller.profileD2);
 router.post('/ds1/update-personal', auth.verifyToken, controller.updatePersonal);
 router.post('/ds2/update-personal', auth.verifyToken, controller.updatePersonalDs2);
+router.post('/update-email', auth.verifyToken, controller.updateEmail);
 router.post('/change/password', auth.verifyToken, controller.ubahPassword);
 
 module.exports = router;
