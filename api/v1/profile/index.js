@@ -6,6 +6,7 @@ const auth = require('../auth/controller');
 router.get('/', auth.verifyToken, controller.profile);
 router.get('/d2', auth.verifyToken, controller.profileD2);
 router.post('/ds1/update-personal', auth.verifyToken, controller.updatePersonal);
+router.post('/ds2/update-personal', auth.verifyToken, controller.updatePersonalDs2);
 router.post('/change/password', auth.verifyToken, controller.ubahPassword);
 
 module.exports = router;

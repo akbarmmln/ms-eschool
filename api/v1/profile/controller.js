@@ -100,7 +100,27 @@ exports.updatePersonal = async function (req, res) {
     })
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/update-personal...', e);
+    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/ds1/update-personal...', e);
+  }
+}
+
+exports.updatePersonalDs2 = async function (req, res) {
+  try {
+    const id = req.id;
+    const object_update = req.body.object_update;
+
+    await adrParents.update({
+      ...object_update,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+    }, {
+      where: {
+        id: id
+      }
+    })
+    return res.status(200).json(rsMsg('000000', {}))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/profile/ds2/update-personal...', e);
   }
 }
 
