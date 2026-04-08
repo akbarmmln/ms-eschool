@@ -165,6 +165,7 @@ exports.ubahPassword = async function (req, res) {
 }
 
 exports.updateEmail = async function (req, res) {
+  const transaction = await sequelize.transaction();
   try {
     const id = req.id;
     const tipe_account = req.tipe_account;
@@ -184,13 +185,40 @@ exports.updateEmail = async function (req, res) {
     }
 
     if (tipe_account == 'DS1') {
-
+      await adrTeacher.update({
+        email: email_baru
+      }, {
+        where: {
+          id: id
+        },
+        transaction
+      })
     } else {
-
+      await adrParents.update({
+        email: email_baru
+      }, {
+        where: {
+          id: id
+        },
+        transaction
+      })
     }
 
+    await adrUserLogin.update({
+      email: email_baru
+    }, {
+      where: {
+        id_account: id
+      },
+      transaction
+    })
+    
+    await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   }catch(e){
+    if (transaction) {
+      await transaction.rollback();
+    }
     return utils.returnErrorFunction(res, 'error POST /api/v1/profile/update-email...', e);
   }
 }
