@@ -9,6 +9,7 @@ const HttpStatusCode = require("../error/httpStatusCode");
 const nodemailer = require('nodemailer');
 const puppeteer = require("puppeteer");
 const wkhtmltopdf = require('wkhtmltopdf');
+const { Resend } = require('resend');
 
 exports.returnErrorFunction = function (resObject, errorMessageLogger, errorObject) {
   logger.errorWithContext({ message: errorMessageLogger, error: errorObject });
@@ -136,10 +137,28 @@ exports.checkFiletipe = async function (buffer) {
   }
 }
 
-exports.sendGridMailer = async function (from, to, subject, body, attachments, bodyType = 'html') {
-
+exports.resendMailer = async function (from, to, subject, html, attachments) {
   try {
-    let transporter = nodemailer.createTransport({
+    const resend = new Resend(process.env.SMTP_PASSWORD);
+    let sendProps = {
+      from: from,
+      to: to,
+      subject: subject,
+      html: html,
+    };
+    if (attachments) {
+      sendProps.attachments = attachments
+    }
+    const info = await resend.emails.send(sendProps);
+    return info;
+  } catch (e) {
+    throw e;
+  }
+}
+
+exports.sendGridMailer = async function (from, to, subject, body, attachments, bodyType = 'html') {
+  try {
+    const payloadNodemailer = {
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
       secure: false,
@@ -147,7 +166,9 @@ exports.sendGridMailer = async function (from, to, subject, body, attachments, b
         user: process.env.SMTP_USERNAME,
         pass: process.env.SMTP_PASSWORD
       }
-    });
+    }
+    logger.infoWithContext(`payloadNodemailer nya ${JSON.stringify(payloadNodemailer)}`)
+    let transporter = nodemailer.createTransport(payloadNodemailer);
     let sendProps = {
       from: from,
       to: to,

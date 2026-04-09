@@ -47,7 +47,7 @@ exports.sendMail = async function (req, res) {
       subject: `Test Email`,
       html: `<b>Hello dari Nodemailer + Brevo 🚀</b>`
     };
-    await mailer.sendMailer(mailObject);
+    await mailer.resendMailer(mailObject);
 
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {

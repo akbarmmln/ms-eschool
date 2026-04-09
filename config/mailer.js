@@ -13,3 +13,13 @@ exports.sendMailer = async function (mailObject) {
     throw e;
   }
 }
+
+exports.resendMailer = async function (mailObject) {
+  try {
+    const response = await utils.resendMailer(mailObject.from, mailObject.to, mailObject.subject, mailObject.html, mailObject.attachments);
+    return response;
+  } catch (e) {
+    logger.errorWithContext({ message: 'failed to send email', error: e });
+    throw e;
+  }
+}
