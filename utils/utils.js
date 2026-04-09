@@ -150,6 +150,7 @@ exports.resendMailer = async function (from, to, subject, html, attachments) {
       sendProps.attachments = attachments
     }
     const info = await resend.emails.send(sendProps);
+    logger.infoWithContext(`success resendMailer ${info}`)
     return info;
   } catch (e) {
     throw e;
