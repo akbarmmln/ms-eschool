@@ -45,7 +45,13 @@ exports.sendMail = async function (req, res) {
       from: process.env.FROM_EMAIL,
       to: 'taufikfirman763@gmail.com',
       subject: `Test Email`,
-      html: `<b>Hello dari Nodemailer + Brevo 🚀</b>`
+      html: `<b>Hello dari Nodemailer + Brevo 🚀</b>`,
+      // attachments: [
+      //   {
+      //     filename: 'hahaha.pdf',
+      //     content: '// base64 format'
+      //   }
+      // ]
     };
     await mailer.resendMailer(mailObject);
 
