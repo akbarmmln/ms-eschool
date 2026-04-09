@@ -41,10 +41,11 @@ exports.getSetings = async function (req, res) {
 
 exports.sendMail = async function (req, res) {
   try {
+    const subject = req.body.subject;
     const mailObject = {
       from: process.env.FROM_EMAIL,
       to: 'taufikfirman763@gmail.com',
-      subject: `Test Email`,
+      subject: subject,
       html: `<b>Hello dari Nodemailer + Brevo 🚀</b>`,
       // attachments: [
       //   {
