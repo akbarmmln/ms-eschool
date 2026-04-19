@@ -186,7 +186,7 @@ exports.invForPass =  async function (req, res) {
     })
 
     return res.status(200).json(rsMsg('000000', {
-      jwt: data.token,
+      jwt: token,
       valid_until_dt: validUntil,
       next_sent: validUntil,
       counter: counter,
