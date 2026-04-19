@@ -137,7 +137,7 @@ exports.invForPass =  async function (req, res) {
     const email = req.body.email;
     const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
     const validUntil = moment().add(3, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-    const inSecond = validUntil.diff(moment(), 'seconds');
+    const inSecond = moment(validUntil, 'YYYY-MM-DD HH:mm:ss').diff(moment(), 'seconds');
     const counter = 3;
 
     if (formatter.isEmpty(email)) {
