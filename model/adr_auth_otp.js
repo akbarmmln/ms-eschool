@@ -8,7 +8,7 @@ const adrAuthOtp = dbConnection.define('adr_auth_otp', {
   },
   session: Sequelize.STRING,
   code: Sequelize.STRING,
-  counter: Sequelize.STRING,
+  counter: Sequelize.INTEGER,
   valid_until_dt: Sequelize.DATE,
   next_sent: Sequelize.DATE,
   otp_validate: Sequelize.INTEGER,
