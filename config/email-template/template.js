@@ -67,7 +67,7 @@ exports.createPinEmail = async function (data) {
                       <!-- Warning -->
                       <tr>
                         <td style="font-size:13px;color:#666;line-height:1.6;">
-                          Mohon untuk tidak memberikan informasi ini kepada siapapun
+                          Mohon untuk tidak memberikan informasi ini kepada siapapun dan dengan segera untuk melakukan perubahan password.
                         </td>
                       </tr>
 
