@@ -19,6 +19,8 @@ const errCode = {
   '70017': `email harus terisi`,
   '70018': `id siswa harus terisi`,
   '70019': `user telah memiliki akses login`,
+  '70020': `jwt auth tidak tervalidasi`,
+  '70021': `proses lupa password tidak bisa dilakukan`,
 };
 
 module.exports = errCode;

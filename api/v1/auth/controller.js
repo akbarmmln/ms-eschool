@@ -137,7 +137,6 @@ exports.invForPass =  async function (req, res) {
     const email = req.body.email;
     const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
     const validUntil = moment().add(3, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-    const inSecond = moment(validUntil, 'YYYY-MM-DD HH:mm:ss').diff(moment(), 'seconds');
     const counter = 3;
 
     if (formatter.isEmpty(email)) {
@@ -153,15 +152,8 @@ exports.invForPass =  async function (req, res) {
     })
 
     if (data) {
-      const valid_until_dt = moment(data.valid_until_dt);
-      const inSecond = valid_until_dt.diff(moment(), 'seconds');
       return res.status(200).json(rsMsg('000000', {
-        jwt: data.jwt,
-        valid_until_dt: data.valid_until_dt,
-        next_sent: data.next_sent,
-        counter: data.counter,
-        session: data.session,
-        inSecond: inSecond
+        jwt: data.jwt
       }))
     }
 
@@ -186,14 +178,49 @@ exports.invForPass =  async function (req, res) {
     })
 
     return res.status(200).json(rsMsg('000000', {
-      jwt: token,
-      valid_until_dt: validUntil,
-      next_sent: validUntil,
-      counter: counter,
-      session: session,
-      inSecond: inSecond
+      jwt: token
     }))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-passwword...', e);
+  }
+}
+
+exports.invalPage = async function (req, res) {
+  try {
+    const jwt = req.params.jwt;
+
+    if (formatter.isEmpty(jwt)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70020');
+    }
+
+    const verifyRes = await utils.verify(jwt);
+    const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
+    const session = decrypt.sessionLogin;
+
+    const data = await adrAuthOtp.findOne({
+      raw: true,
+      where: {
+        session: session
+      }
+    })
+
+    if (data && data.otp_validate == 0) {
+      const valid_until_dt = moment(data.valid_until_dt);
+      const inSecond = moment(valid_until_dt, 'YYYY-MM-DD HH:mm:ss').diff(moment(), 'seconds');
+      const hasil = {
+        jwt: data.jwt,
+        valid_until_dt: data.valid_until_dt,
+        next_sent: data.next_sent,
+        counter: data.counter,
+        session: data.session,
+        inSecond: inSecond
+      }
+
+      return res.status(200).json(rsMsg('000000', hasil))
+    } else {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70021');
+    }    
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/auth/invalidate-page...', e);
   }
 }
