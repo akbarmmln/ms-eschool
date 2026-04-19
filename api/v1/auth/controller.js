@@ -163,7 +163,7 @@ exports.invForPass =  async function (req, res) {
 
     const enkripsiForPass = {
       id: id,
-      session: session,
+      sessionLogin: session,
       email: email
     }
     const hash = await utils.enkrip(enkripsiForPass);        
