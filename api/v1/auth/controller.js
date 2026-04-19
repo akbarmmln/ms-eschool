@@ -146,20 +146,19 @@ exports.invForPass =  async function (req, res) {
     const data = await adrAuthOtp.findOne({
       raw: true,
       where: {
-        email: email,
-        otp_validate: 0
+        email: email
       }
     })
     
-    if ((data && moment().isSameOrAfter(data.next_sent)) || !data) {
-      const enkripsiForPass = {
-        id: id,
-        sessionLogin: session,
-        email: email
-      }
-      const hash = await utils.enkrip(enkripsiForPass);        
-      const token = await utils.signin(hash, 180);
+    const enkripsiForPass = {
+      id: id,
+      sessionLogin: session,
+      email: email
+    }
+    const hash = await utils.enkrip(enkripsiForPass);
+    const token = await utils.signin(hash, 180);
 
+    if (!data) {
       await adrAuthOtp.create({
         id: uuidv7(),
         session: session,
@@ -171,16 +170,32 @@ exports.invForPass =  async function (req, res) {
         jwt: token,
         email: email
       })
-
       return res.status(200).json(rsMsg('000000', {
         jwt: token
       }))
-    }
-
-    if (data) {
-      return res.status(200).json(rsMsg('000000', {
-        jwt: data.jwt
-      }))
+    } else {
+      if (data && moment().isSameOrAfter(data.next_sent)) {
+        await adrAuthOtp.update({
+          session: session,
+          code: otp,
+          counter: counter,
+          valid_until_dt: validUntil,
+          next_sent: validUntil,
+          otp_validate: 0,
+          jwt: token,
+        }, {
+          where: {
+            id: data.id
+          }
+        })
+        return res.status(200).json(rsMsg('000000', {
+          jwt: token
+        }))
+      } else {
+        return res.status(200).json(rsMsg('000000', {
+          jwt: data.jwt
+        }))
+      }
     }
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-passwword...', e);
