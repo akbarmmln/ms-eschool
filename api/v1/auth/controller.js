@@ -174,7 +174,7 @@ exports.invForPass =  async function (req, res) {
         jwt: token
       }))
     } else {
-      if (data && moment().isSameOrAfter(data.next_sent)) {
+      if (data && moment().isSameOrAfter(data.next_sent) || data.otp_validate == 1) {
         await adrAuthOtp.update({
           session: session,
           code: otp,
