@@ -1,4 +1,4 @@
-exports.createPinEmail = async function (pin) {
+exports.createPinEmail = async function (data) {
   return `
           <!DOCTYPE html>
           <html lang="id">
@@ -15,7 +15,7 @@ exports.createPinEmail = async function (pin) {
                     <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:8px;padding:30px;">
                       <tr>
                         <td style="font-size:20px;font-weight:bold;color:#333;">
-                          Hai
+                          Hai ${data.nama}
                         </td>
                       </tr>
 
@@ -55,7 +55,7 @@ exports.createPinEmail = async function (pin) {
                             letter-spacing:4px;
                             color:#333;
                             font-family:monospace;">
-                            ${pin}
+                            ${data.pin}
                           </div>
                         </td>
                       </tr>
@@ -86,8 +86,8 @@ exports.createPinEmail = async function (pin) {
                       <!-- Footer -->
                       <tr>
                         <td style="font-size:14px;color:#333;">
-                          Salam,<br><br>
-                          💙 <strong>Tim Development</strong>
+                          Salam,<br>
+                          <strong>Tim Development</strong>
                         </td>
                       </tr>
 

@@ -168,7 +168,10 @@ exports.createTeacher = async function (req, res) {
       from: process.env.FROM_EMAIL,
       to: email,
       subject: 'Akses Login',
-      html: await emailTemplate.createPinEmail(pin),
+      html: await emailTemplate.createPinEmail({
+        nama: nama,
+        pin: pin
+      }),
     };
     await mailer.resendMailer(mailObject);
 
