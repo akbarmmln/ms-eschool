@@ -16,6 +16,8 @@ const saltRounds = 12;
 const otpGenerator = require('otp-generator');
 const logger = require('../../../config/logger');
 const sequelize = require('../../../config/db').Sequelize;
+const emailTemplate = require('../../../config/email-template/template');
+const mailer = require('../../../config/mailer');
 
 exports.getTeacherList = async function (req, res) {
   try {
@@ -162,7 +164,14 @@ exports.createTeacher = async function (req, res) {
       jabatan: 'teacher'
     }, { transaction: transaction })
 
-    logger.infoWithContext(`password nya ${pin}`)
+    const mailObject = {
+      from: process.env.FROM_EMAIL,
+      to: email,
+      subject: 'Akses Login',
+      html: await emailTemplate.createPinEmail(pin),
+    };
+    await mailer.resendMailer(mailObject);
+
     await transaction.commit();
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {

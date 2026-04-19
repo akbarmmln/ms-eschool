@@ -153,6 +153,7 @@ exports.resendMailer = async function (from, to, subject, html, attachments) {
     logger.infoWithContext(`success resendMailer ${JSON.stringify(info)}`)
     return info;
   } catch (e) {
+    logger.errorWithContext({ error: e, message: `failed resendMailer ${e}`})
     throw e;
   }
 }

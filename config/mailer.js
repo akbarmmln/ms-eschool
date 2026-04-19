@@ -20,6 +20,6 @@ exports.resendMailer = async function (mailObject) {
     return response;
   } catch (e) {
     logger.errorWithContext({ message: 'failed to send email', error: e });
-    throw e;
+    return e
   }
 }
