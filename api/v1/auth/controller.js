@@ -163,7 +163,7 @@ exports.invForPass =  async function (req, res) {
       email: email
     }
     const hash = await utils.enkrip(enkripsiForPass);        
-    const token = await utils.signin(hash, 300);
+    const token = await utils.signin(hash, 180);
 
     await adrAuthOtp.create({
       id: uuidv7(),
