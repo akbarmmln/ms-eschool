@@ -21,6 +21,8 @@ const errCode = {
   '70019': `user telah memiliki akses login`,
   '70020': `jwt auth tidak tervalidasi`,
   '70021': `proses lupa password tidak bisa dilakukan`,
+  '70022': `otp tidak valid`,
+  '70023': `batas percobaan input otp/password sudah habis`,
 };
 
 module.exports = errCode;

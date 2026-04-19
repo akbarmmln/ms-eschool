@@ -8,5 +8,6 @@ router.get('/invalidate-page/:jwt', controller.invalPage);
 router.post('/verify-token', controller.verifyToken);
 
 router.post('/access', controller.access);
+router.post('/verify-otp', controller.verifyOTP);
 
 module.exports = router;

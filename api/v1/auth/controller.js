@@ -224,3 +224,50 @@ exports.invalPage = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/auth/invalidate-page...', e);
   }
 }
+
+exports.verifyOTP = async function (req, res) {
+  try {
+    const type = req.body.type;
+    const otp = req.body.otp;
+    const jwt = req.body.jwt
+
+    const verifyRes = await utils.verify(jwt);
+    const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
+    const session = decrypt.sessionLogin;
+
+    const data = await adrAuthOtp.findOne({
+      raw: true,
+      where: {
+        session: session,
+      }
+    })
+
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70020');
+    }
+
+    const id = data.id;
+    const counter = data.counter;
+    const otpIn = data.code;
+
+    if (counter == 0) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70023');
+    }
+
+    if (otp !== otpIn) {
+      const newCounter = counter - 1;
+      await adrAuthOtp.update({
+        counter: newCounter
+      }, {
+        where: {
+          id: id
+        }
+      })
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70022');
+    }
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/verify-otp...', e);
+  }
+}
