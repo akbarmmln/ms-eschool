@@ -230,8 +230,6 @@ exports.verifyOTP = async function (req, res) {
     const type = req.body.type;
     const otp = req.body.otp;
     const jwt = req.body.jwt
-    const hit = req.body.hit
-    console.log('sdsadsadsadasdasd', hit)
 
     const verifyRes = await utils.verify(jwt);
     const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
