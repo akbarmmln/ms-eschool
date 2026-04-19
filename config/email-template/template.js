@@ -61,10 +61,6 @@ exports.createPinEmail = async function (pin) {
                       </tr>
 
                       <tr>
-                        <td height="15"></td>
-                      </tr>
-
-                      <tr>
                         <td height="20"></td>
                       </tr>
 
@@ -76,7 +72,7 @@ exports.createPinEmail = async function (pin) {
                       </tr>
 
                       <tr>
-                        <td height="30"></td>
+                        <td height="20"></td>
                       </tr>
 
                       <tr>
