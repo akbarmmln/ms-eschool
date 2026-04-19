@@ -51,7 +51,7 @@ exports.enkrip = async function (payload) {
   }
 }
 
-exports.signin = async function (hash) {
+exports.signin = async function (hash, exp = 3600) {
   try {
     const secret = require('../setting').secret;
     const privateKey = process.env.PRIVATE_KEY_JWT;
@@ -59,7 +59,7 @@ exports.signin = async function (hash) {
     const options = {
       issuer: 'eschool',
       algorithm: 'RS256',
-      expiresIn: 3600,
+      expiresIn: exp,
     };
     const token = jwt.sign(
       hash,

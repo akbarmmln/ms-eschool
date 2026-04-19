@@ -6,13 +6,13 @@ const utils = require('../../../utils/utils');
 const formatter = require('../../../config/format');
 const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
-const adrTeacher = require('../../../model/adr_teacher');
-const adrClassRoom = require('../../../model/adr_class_room');
+const adrAuthOtp = require('../../../model/adr_auth_otp');
 const adrUserLogin = require('../../../model/adr_user_login');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
 const adrSettings = require('../../../model/adr_settings');
+const otpGenerator = require('otp-generator');
 
 exports.login = async function (req, res) {
   try {
@@ -127,5 +127,66 @@ exports.access = async function (req, res) {
     return res.status(200).json(rsMsg('000000', decrypt))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/access...', e);
+  }
+}
+
+exports.invForPass =  async function (req, res) {
+  try {
+    const id = uuidv7();
+    const session = id.replace(/-/g, "");
+    const email = req.body.email;
+    const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+    const validUntil = moment().add(3, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+    const counter = 3;
+
+    if (formatter.isEmpty(email)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70017');
+    }
+
+    const data = await adrAuthOtp.findOne({
+      raw: true,
+      where: {
+        email: email,
+        otp_validate: 0
+      }
+    })
+
+    if (data) {
+      return res.status(200).json(rsMsg('000000', {
+        jwt: data.jwt,
+        valid_until_dt: data.valid_until_dt,
+        next_sent: data.next_sent,
+        counter: data.counter,
+      }))
+    }
+
+    const enkripsiForPass = {
+      id: id,
+      session: session,
+      email: email
+    }
+    const hash = await utils.enkrip(enkripsiForPass);        
+    const token = await utils.signin(hash, 300);
+
+    await adrAuthOtp.create({
+      id: uuidv7(),
+      session: session,
+      code: otp,
+      counter: counter,
+      valid_until_dt: validUntil,
+      next_sent: validUntil,
+      otp_validate: 0,
+      jwt: token,
+      email: email
+    })
+
+    return res.status(200).json(rsMsg('000000', {
+      jwt: data.token,
+      valid_until_dt: validUntil,
+      next_sent: validUntil,
+      counter: counter
+    }))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-passwword...', e);
   }
 }
