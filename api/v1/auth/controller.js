@@ -268,7 +268,9 @@ exports.verifyOTP = async function (req, res) {
 
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70022');
       } else {
-        await adrAuthOtp.destroy({
+        await adrAuthOtp.update({
+          otp_validate: 1
+        }, {
           where: {
             id: id
           }
