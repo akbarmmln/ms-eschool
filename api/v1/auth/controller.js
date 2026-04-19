@@ -157,6 +157,7 @@ exports.invForPass =  async function (req, res) {
         valid_until_dt: data.valid_until_dt,
         next_sent: data.next_sent,
         counter: data.counter,
+        session: data.session,
       }))
     }
 
@@ -184,7 +185,8 @@ exports.invForPass =  async function (req, res) {
       jwt: data.token,
       valid_until_dt: validUntil,
       next_sent: validUntil,
-      counter: counter
+      counter: counter,
+      session: session,
     }))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-passwword...', e);
