@@ -250,22 +250,26 @@ exports.verifyOTP = async function (req, res) {
     let counter = data.counter;
     const otpIn = data.code;
 
-    if (otp !== otpIn) {
-      counter--;
-      
-      await adrAuthOtp.update({
-        counter: counter
-      }, {
-        where: {
-          id: id
+    if (counter > 0) {
+      if (otp !== otpIn) {
+        counter--;
+
+        await adrAuthOtp.update({
+          counter: counter
+        }, {
+          where: {
+            id: id
+          }
+        })
+
+        if (counter == 0) {
+          throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70023');
         }
-      })
 
-      if (counter == 0) {
-        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70023');
+        throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70022');
       }
-
-      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70022');
+    } else {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70023');
     }
 
     return res.status(200).json(rsMsg('000000'))
