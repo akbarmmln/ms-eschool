@@ -14,6 +14,7 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 12;
 const adrSettings = require('../../../model/adr_settings');
 const otpGenerator = require('otp-generator');
+const emailTemplate = require('../../../config/email-template/template');
 
 exports.login = async function (req, res) {
   try {
@@ -159,6 +160,16 @@ exports.invForPass =  async function (req, res) {
     const hash = await utils.enkrip(enkripsiForPass);
     const token = await utils.signin(hash, 180);
 
+    const mailObject = {
+      from: process.env.FROM_EMAIL,
+      to: email,
+      subject: 'OTP Perubahan Kata Sandi',
+      html: await emailTemplate.forgetPasswordEmail({
+        email: email,
+        otp: otp
+      }),
+    };
+
     if (!data) {
       await adrAuthOtp.create({
         id: uuidv7(),
@@ -171,6 +182,7 @@ exports.invForPass =  async function (req, res) {
         jwt: token,
         email: email
       })
+      await mailer.resendMailer(mailObject);
       return res.status(200).json(rsMsg('000000', {
         jwt: token
       }))
@@ -189,6 +201,7 @@ exports.invForPass =  async function (req, res) {
             id: data.id
           }
         })
+        await mailer.resendMailer(mailObject);
         return res.status(200).json(rsMsg('000000', {
           jwt: token
         }))
