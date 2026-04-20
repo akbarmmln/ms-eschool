@@ -298,7 +298,7 @@ exports.verifyOTP = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70023');
     }
 
-    return res.status(200).json(rsMsg('000000'))
+    return res.status(200).json(rsMsg('000000', session))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/verify-otp...', e);
   }
