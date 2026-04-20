@@ -15,6 +15,7 @@ const saltRounds = 12;
 const adrSettings = require('../../../model/adr_settings');
 const otpGenerator = require('otp-generator');
 const emailTemplate = require('../../../config/email-template/template');
+const mailer = require('../../../config/mailer');
 
 exports.login = async function (req, res) {
   try {
