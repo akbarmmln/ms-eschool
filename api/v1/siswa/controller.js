@@ -482,6 +482,17 @@ exports.ortuResetAccess = async function (req, res) {
       }
     });
 
+    const mailObject = {
+      from: process.env.FROM_EMAIL,
+      to: email,
+      subject: 'Akses Login',
+      html: await emailTemplate.createPinEmail({
+        nama: '',
+        pin: pin
+      }),
+    };
+    await mailer.resendMailer(mailObject);
+
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/ortu/reset-access...', e);
