@@ -19,6 +19,8 @@ const { where } = require('sequelize');
 const saltRounds = 12;
 const axios = require('axios');
 const csv = require('csvtojson');
+const emailTemplate = require('../../../config/email-template/template');
+const mailer = require('../../../config/mailer');
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -445,6 +447,17 @@ exports.ortuAddAccess = async function (req, res) {
       email: email
     }, { transaction: transaction })
     
+    const mailObject = {
+      from: process.env.FROM_EMAIL,
+      to: email,
+      subject: 'Akses Login',
+      html: await emailTemplate.createPinEmail({
+        nama: '',
+        pin: pin
+      }),
+    };
+    await mailer.resendMailer(mailObject);
+
     await transaction.commit();
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {

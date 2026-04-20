@@ -17,7 +17,7 @@ exports.createPinEmail = async function (data) {
                     <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:8px;padding:30px;">
                       <tr>
                         <td style="font-size:20px;font-weight:bold;color:#333;">
-                          Hai ${data.nama}
+                          Hai ${data.nama ?? ''}
                         </td>
                       </tr>
 
