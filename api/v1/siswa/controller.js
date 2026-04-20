@@ -474,6 +474,13 @@ exports.ortuResetAccess = async function (req, res) {
     const pin = otpGenerator.generate(8, { digits: true, lowerCaseAlphabets: true, upperCaseAlphabets: true, specialChars: true });
     const encryptPin = await bcrypt.hash(pin, saltRounds);
 
+    const data = await adrUserLogin.findOne({
+      raw: true,
+      where: {
+        id_account: id_access
+      }
+    })
+
     await adrUserLogin.update({
       password: encryptPin
     }, {
@@ -484,7 +491,7 @@ exports.ortuResetAccess = async function (req, res) {
 
     const mailObject = {
       from: process.env.FROM_EMAIL,
-      to: email,
+      to: data?.email,
       subject: 'Akses Login',
       html: await emailTemplate.createPinEmail({
         nama: '',
