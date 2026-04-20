@@ -11,6 +11,7 @@ const adrUserLogin = require('../../../model/adr_user_login');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
+const saltRounds = 12;
 const adrSettings = require('../../../model/adr_settings');
 const otpGenerator = require('otp-generator');
 
@@ -198,7 +199,7 @@ exports.invForPass =  async function (req, res) {
       }
     }
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-passwword...', e);
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate-forgot-password...', e);
   }
 }
 
@@ -300,5 +301,41 @@ exports.verifyOTP = async function (req, res) {
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/verify-otp...', e);
+  }
+}
+
+exports.invPassword = async function (req, res) {
+  try {
+    const password = req.body.password;
+    const session = req.body.session;
+
+    const data = await adrAuthOtp.findOne({
+      raw: true,
+      where: {
+        session: session,
+        otp_validate: 1
+      }
+    })
+
+    if (!data) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70024');
+    }
+
+    const encryptPin = await bcrypt.hash(password, saltRounds);
+    const email = data.email;
+
+    await adrUserLogin.update({
+      password: encryptPin,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: 'FORGOT-PASSWORD'
+    }, {
+      where: {
+        email: email
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate/password...', e);
   }
 }

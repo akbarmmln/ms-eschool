@@ -14,4 +14,6 @@ router.post('/access', controller.access);
 
 router.post('/verify-otp', controller.verifyOTP);
 
+router.post('/invalidate/password', controller.invPassword);
+
 module.exports = router;

@@ -23,6 +23,7 @@ const errCode = {
   '70021': `proses lupa password tidak bisa dilakukan`,
   '70022': `otp tidak valid`,
   '70023': `batas percobaan input otp/password sudah habis`,
+  '70024': `transaksi tidak diijinkan`,
 };
 
 module.exports = errCode;
