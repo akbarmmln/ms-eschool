@@ -159,13 +159,13 @@ exports.forgetPasswordEmail = async function (data) {
                       </tr>
 
                       <tr>
-                        <td style="font-size:13px;color:#666;line-height:3;white-space:nowrap;">
+                        <td style="font-size:13px;color:#666;padding-bottom:10px;">
                           Kode OTP berlaku selama 3 menit sejak email ini dikirimkan.
                         </td>
                       </tr>
                       <!-- Warning -->
                       <tr>
-                        <td style="font-size:13px;color:#666;line-height:1.6;">
+                        <td style="font-size:13px;color:#666;">
                           Mohon untuk tidak memberikan informasi ini kepada siapapun.
                         </td>
                       </tr>
