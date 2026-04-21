@@ -17,6 +17,8 @@ router.post('/ortu/reset-access', auth.verifyToken, controller.ortuResetAccess);
 router.post('/ortu/unlink', auth.verifyToken, controller.unlink);
 
 router.post('/jurnal/:page', auth.verifyToken, controller.siswaJurnal);
+router.get('/jurnal/detail/:idjurnal/:idsiswa', auth.verifyToken, controller.siswaJurnalDetail);
+
 router.post('/upload', auth.verifyToken, controller.upload);
 
 module.exports = router;

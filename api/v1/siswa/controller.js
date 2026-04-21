@@ -21,6 +21,9 @@ const axios = require('axios');
 const csv = require('csvtojson');
 const emailTemplate = require('../../../config/email-template/template');
 const mailer = require('../../../config/mailer');
+const adrJurnalMengajar = require('../../../model/adr_jurnal_mengajar');
+const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar_detail_siswa');
+const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
 
 exports.getSiswa = async function (req, res) {
   try {
@@ -640,5 +643,52 @@ exports.upload = async function (req, res) {
       await transaction.rollback();
     }
     return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/upload...', e);
+  }
+}
+
+exports.siswaJurnalDetail = async function (req, res) {
+  try {
+    const id_jurnal = req.params.idjurnal
+    const id_siswa = req.params.idsiswa
+    
+    const parent = await adrJurnalMengajar.findOne({
+      raw: true,
+      attributes: ['id', 'tanggal_jurnal', 'jam_mulai', 'jam_selesai', 'materi', 'refleksi', 'nama_kelas', 'nama_guru'],
+      where: {
+        id: id_jurnal
+      }
+    })
+
+    const subParent = await adrJurnalMengajarDetailSiswa.findOne({
+      raw: true,
+      attributes: ['id', 'id_siswa', 'nama_siswa', 'absensi'],
+      where: {
+        id_jurnal: id_jurnal,
+        id_siswa: id_siswa
+      }
+    })
+
+    if (!subParent) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+    const id_detail_diajar = subParent.id;
+
+    const child = await adrJurnalMengajarDetailSilabus.findAll({
+      raw: true,
+      attributes: ['id', 'id_silabus', 'title_silabus', 'item_silabus', 'nilai', 'keterangan'],
+      where: {
+        id_jurnal: id_jurnal,
+        id_detail_diajar: id_detail_diajar
+      }
+    })
+
+
+    return res.status(200).json(rsMsg('000000', {
+      parent: parent,
+      subParent: subParent,
+      child: child
+    }))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/jurnal/detail...', e);
   }
 }
