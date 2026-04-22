@@ -51,7 +51,7 @@ exports.enkrip = async function (payload) {
   }
 }
 
-exports.signin = async function (hash, exp = 30) {
+exports.signin = async function (hash, exp = 3600) {
   try {
     const secret = require('../setting').secret;
     const privateKey = process.env.PRIVATE_KEY_JWT;
