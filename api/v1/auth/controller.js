@@ -8,6 +8,7 @@ const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrAuthOtp = require('../../../model/adr_auth_otp');
 const adrUserLogin = require('../../../model/adr_user_login');
+const adrTeacher = require('../../../model/adr_teacher');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
@@ -351,5 +352,56 @@ exports.invPassword = async function (req, res) {
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/invalidate/password...', e);
+  }
+}
+
+exports.roleList = async function (req, res) {
+  try {
+    const limit = 20;
+    const page = parseInt(req.params.page);
+    const offset = limit * (page - 1);
+
+    adrUserLogin.belongsTo(adrTeacher, { foreignKey: 'id_account' })
+
+    let payload = {
+      attributes: ['id', 'tipe_account', 'role', 'email'],
+      include: [{
+        model: adrTeacher,
+        required: true,
+        attributes: ['id', 'created_dt', 'niy', 'nama', 'email', 'jabatan'],
+        where: {
+          is_deleted: '0'
+        },
+        order: [['created_dt', 'DESC']]
+      }],
+      where: {
+        tipe_account: 'DS1'
+      }
+    }
+    const count = await adrUserLogin.count(payload);
+    
+    payload.limit = limit;
+    payload.offset = offset;
+    const data = await adrUserLogin.findAll(payload)
+
+    if (data.length > 0) {
+      const newRs = {
+        rows: data,
+        currentPage: page,
+        totalPage: Math.ceil(count / limit),
+        totalData: count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
+ } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/list...', e);
   }
 }

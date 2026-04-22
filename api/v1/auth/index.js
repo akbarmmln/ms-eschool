@@ -16,4 +16,6 @@ router.post('/verify-otp', controller.verifyOTP);
 
 router.post('/invalidate/password', controller.invPassword);
 
+router.get('/role/list/:page', controller.roleList);
+
 module.exports = router;
