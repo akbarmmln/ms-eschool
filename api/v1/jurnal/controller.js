@@ -678,6 +678,24 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
   }
 }
 
+exports.deleteJurnal = async function (req, res) {
+  try {
+    const id = req.body.id;
+
+    await adrJurnalMengajar.update({
+      is_deleted: 1
+    }, {
+      where: {
+        id: id
+      }
+    })
+    
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/delete...', e);
+  }
+}
+
 function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_id) {
   const rows = [];
   const id_silabus = uuidv7();
