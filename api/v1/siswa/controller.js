@@ -692,3 +692,21 @@ exports.siswaJurnalDetail = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/jurnal/detail...', e);
   }
 }
+
+exports.deleteSiswa = async function (req, res) {
+  try {
+    const id = req.body.id;
+
+    await adrSiswa.update({
+      is_deleted: 1
+    }, {
+      where: {
+        id: id
+      }
+    })
+    
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/jurnal/delete...', e);
+  }
+}

@@ -8,6 +8,7 @@ router.get('/list/:page/:search', auth.verifyToken, controller.getSiswa);
 
 router.post('/create', auth.verifyToken, controller.createSiswa);
 router.post('/update', auth.verifyToken, controller.updateSiswa);
+router.post('/delete', auth.verifyToken, controller.deleteSiswa);
 router.get('/detail/:id', auth.verifyToken, controller.searchSiswa);
 
 router.post('/absensi', auth.verifyToken, controller.getAbsensi);
