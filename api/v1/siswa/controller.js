@@ -546,7 +546,7 @@ exports.siswaJurnal = async function (req, res) {
     const count = await sequelize.query(`SELECT COUNT(*) as count 
       FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
       ON ajm.id = ajmds.id_jurnal
-      WHERE DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND ajmds.id_siswa = :id_siswa_`,
+      WHERE DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND ajmds.id_siswa = :id_siswa_ AND ajm.is_deleted = '0'`,
       { replacements: { id_siswa_: id_siswa, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
       {
         raw: true
@@ -557,7 +557,7 @@ exports.siswaJurnal = async function (req, res) {
         FROM adr_jurnal_mengajar ajm JOIN adr_jurnal_mengajar_detail_siswa ajmds
         ON ajm.id = ajmds.id_jurnal
         WHERE DATE(ajm.tanggal_jurnal) BETWEEN :dari_ AND :sampai_
-        AND ajmds.id_siswa = :id_siswa_ LIMIT ${offset}, ${limit}`,
+        AND ajmds.id_siswa = :id_siswa_ AND ajm.is_deleted = '0' LIMIT ${offset}, ${limit}`,
       { replacements: { id_siswa_: id_siswa, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
       {
         raw: true
@@ -704,7 +704,7 @@ exports.deleteSiswa = async function (req, res) {
         id: id
       }
     })
-    
+
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/siswa/jurnal/delete...', e);
