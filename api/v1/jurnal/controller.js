@@ -515,7 +515,7 @@ exports.updatePenilaian = async function (req, res) {
       )
     );
 
-    for (i = 0; i > files.length; i++) {
+    for (let i = 0; i > files.length; i++) {
       try {
         const image = files[0];
         const buf = Buffer.from(image, 'base64')
