@@ -38,7 +38,7 @@ exports.getListJurnal = async function (req, res) {
       }
 
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
-        WHERE id_guru = :id_guru_ AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_`,
+        WHERE id_guru = :id_guru_ AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
@@ -47,7 +47,7 @@ exports.getListJurnal = async function (req, res) {
       data = await sequelize.query(`SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
         jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
         d.id as id_diajar, d.nama_siswa, d.absensi
-        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ 
+        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND is_deleted = '0'
         AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
         LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`,
         { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
@@ -56,7 +56,7 @@ exports.getListJurnal = async function (req, res) {
         });
     } else {
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
-        WHERE id_guru = :id_guru_`,
+        WHERE id_guru = :id_guru_ AND is_deleted = '0'`,
         { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
@@ -65,7 +65,7 @@ exports.getListJurnal = async function (req, res) {
       data = await sequelize.query(`SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
         jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
         d.id as id_diajar, d.nama_siswa, d.absensi
-        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ LIMIT ${offset}, ${limit} ) jm
+        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND is_deleted = '0' LIMIT ${offset}, ${limit} ) jm
         LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal
         ORDER BY jm.tanggal_jurnal ASC`,
         { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
