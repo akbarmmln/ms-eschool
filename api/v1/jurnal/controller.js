@@ -16,8 +16,11 @@ const adrTeacher = require('../../../model/adr_teacher');
 const adrClassLevelSilabus = require('../../../model/adr_class_level_silabus');
 const adrJurnalMengajarDetailSiswa = require('../../../model/adr_jurnal_mengajar_detail_siswa');
 const adrJurnalMengajarDetailSilabus = require('../../../model/adr_jurnal_mengajar_detail_silabus');
+const adrJurnalImgAsses = require('../../../model/adr_jurnal_images_assesment');
 const adrSilabus = require('../../../model/adr_silabus');
-const templateHtml = require('./template')
+const templateHtml = require('./template');
+const logger = require('../../../config/logger');
+const s3 = require('../../../config/oss').client;
 
 exports.getListJurnal = async function (req, res) {
   try {
@@ -489,7 +492,11 @@ exports.inisiasiPenilaian = async function (req, res) {
 
 exports.updatePenilaian = async function (req, res) {
   try {
+    const id_jurnal = req.body.id_jurnal;
+    const id_siswa = req.body.id_siswa;
     const data = req.body.data;
+    const files = req.body.files;
+
     if (formatter.isEmpty(data) || typeof data !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
     }
@@ -508,6 +515,37 @@ exports.updatePenilaian = async function (req, res) {
       )
     );
 
+    for (i = 0; i > files.length; i++) {
+      try {
+        const image = files[0];
+        const buf = Buffer.from(image, 'base64')
+        const filetype = await utils.checkFiletipe(buf);
+        const ext = filetype.ext;
+        const mime = filetype.mime;
+
+        const upload = await s3.upload({
+          ACL: 'public-read',
+          Bucket: 'bucket-sit',
+          Key: `assessment-images/${uuidv7()}.${ext}`,
+          Body: buf,
+          ContentEncoding: 'base64',
+          ContentType: mime,
+        }).promise();
+        const url_image = upload?.Location ?? null
+
+        await adrJurnalImgAsses.create({
+          id: uuidv7(),
+          created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+          created_by: req.id,
+          is_deleted: 0,
+          id_jurnal: id_jurnal,
+          id_siswa: id_siswa,
+          url_image: url_image
+        })
+      } catch (e) {
+        logger.errorWithContext({ error: e, message: 'error while processing url image' })
+      }
+    }
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-penilaian...', e);
