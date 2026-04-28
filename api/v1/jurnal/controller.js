@@ -510,6 +510,7 @@ exports.updatePenilaian = async function (req, res) {
     const id_siswa = req.body.id_siswa;
     const data = req.body.data;
     const files = req.body.files;
+    const filesDeleted = req.body.filesDeleted
 
     if (formatter.isEmpty(data) || typeof data !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
@@ -560,6 +561,15 @@ exports.updatePenilaian = async function (req, res) {
         logger.errorWithContext({ error: e, message: 'error while processing url image' })
       }
     }
+
+    await adrJurnalImgAsses.update({
+      is_deleted: 1
+    }, {
+      where: {
+        id: filesDeleted
+      }
+    })
+    
     return res.status(200).json(rsMsg('000000', {}))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-penilaian...', e);
