@@ -465,6 +465,7 @@ exports.updateAbsensi = async function (req, res) {
 exports.inisiasiPenilaian = async function (req, res) {
   try {
     const id_jurnal = req.body.id_jurnal;
+    const id_siswa = req.body.id_siswa;
     const id_diajar = req.body.id_diajar;
 
     const detailSilabus = await adrJurnalMengajarDetailSilabus.findAll({
@@ -484,7 +485,20 @@ exports.inisiasiPenilaian = async function (req, res) {
       }, {})
     );
 
-    return res.status(200).json(rsMsg('000000', grouped))
+    const images = await adrJurnalImgAsses.findAll({
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal,
+        id_siswa: id_siswa,
+        is_deleted: 0
+      }
+    })
+
+    const hasil = {
+      silabus: grouped,
+      attachments: images
+    }
+    return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/inisiasi-penilaian...', e);
   }
