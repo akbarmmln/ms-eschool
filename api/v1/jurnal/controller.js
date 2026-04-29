@@ -532,7 +532,8 @@ exports.updatePenilaian = async function (req, res) {
 
     for (let i = 0; i < files.length; i++) {
       try {
-        const image = files[i];
+        const image = files[i].file;
+        const caption = files[i].caption;
         const buf = Buffer.from(image, 'base64')
         const filetype = await utils.checkFiletipe(buf);
         const ext = filetype.ext;
@@ -555,7 +556,8 @@ exports.updatePenilaian = async function (req, res) {
           is_deleted: 0,
           id_jurnal: id_jurnal,
           id_siswa: id_siswa,
-          url_image: url_image
+          url_image: url_image,
+          caption: caption
         })
       } catch (e) {
         logger.errorWithContext({ error: e, message: 'error while processing url image' })

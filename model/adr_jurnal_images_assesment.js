@@ -14,6 +14,7 @@ const adrJurnalImgAsses = dbConnection.define('adr_jurnal_images_assesment', {
   id_jurnal: Sequelize.STRING,
   id_siswa: Sequelize.STRING,
   url_image: Sequelize.STRING,
+  caption: Sequelize.STRING,
 }, {
   freezeTableName: true,
   timestamps: false,
