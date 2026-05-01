@@ -673,8 +673,7 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
       }
     })
     hasil[0].file = lampiranKegiatan;
-
-    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
+    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil, 1)
     const pdf = await utils.pdfPupeeter(htmlRender);
     const buf = Buffer.from(pdf, 'base64');
     const base64 = buf.toString("base64");
@@ -741,7 +740,7 @@ exports.downloadBulkPenilaianHarian = async function (req, res) {
       hasil.push(data)
     }
 
-    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
+    const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil, 0)
     
     const pdf = await utils.pdfPupeeter(htmlRender);
     // const pdf = await utils.pdfWkhtml(htmlRender);

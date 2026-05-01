@@ -4,7 +4,7 @@ const logger = require('../../../config/logger');
 const format = require('../../../config/format');
 const moment = require('moment');
 
-exports.htmlSinglePenilaianHarian = async function (data) {
+exports.htmlSinglePenilaianHarian = async function (data, state) {
     return `
         <html>
             <head>
@@ -228,21 +228,23 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                             </div>
                         </div>
                     </div>
-                    <div class='page'>
-                        <h3>Dokumentasi Kegiatan Belajar</h3>
-                        <div class='gallery'>
-                            ${siswa.file && siswa.file.length > 0 ? siswa.file.map(img => `
-                                <div class='gallery-item'>
-                                    <div class='image-box'>
-                                        <img src="${img.url_image}">
+                    ${state ? `
+                        <div class='page'>
+                            <h3>Dokumentasi Kegiatan Belajar</h3>
+                            <div class='gallery'>
+                                ${siswa.file && siswa.file.length > 0 ? siswa.file.map(img => `
+                                    <div class='gallery-item'>
+                                        <div class='image-box'>
+                                            <img src="${img.url_image}">
+                                        </div>
+                                        <div class='caption'>
+                                            ${img.caption || ''}
+                                        </div>
                                     </div>
-                                    <div class='caption'>
-                                        ${img.caption || ''}
-                                    </div>
-                                </div>
-                            `).join("") : `<p>Tidak ada dokumentasi</p>`}
+                                `).join("") : `<p>Tidak ada dokumentasi</p>`}
+                            </div>
                         </div>
-                    </div>
+                    `: ``}
                 `).join("")}
             </body>
         </html>
