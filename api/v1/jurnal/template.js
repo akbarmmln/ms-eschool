@@ -123,12 +123,8 @@ exports.htmlSinglePenilaianHarian = async function (data, state) {
                         border: 1px solid #ddd;
                         border-radius: 8px;
                         overflow: hidden;
-
                         display: flex;
-                        align-items: center;
-                        justify-content: center;
-
-                        background: #f3f4f6; /* 🔥 isi ruang kosong biar gak jelek */
+                        background: #f3f4f6;
                     }
                     .image-box img {
                         position: relative;
