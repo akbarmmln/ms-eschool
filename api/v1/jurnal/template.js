@@ -113,25 +113,28 @@ exports.htmlSinglePenilaianHarian = async function (data, state) {
                         gap: 10px;
                     }
 
-                    .gallery-item {
-                        width: 30%;
+                    .item {
+                        flex: 0 0 calc(50% - 5px);
                         page-break-inside: avoid;
                     }
 
                     .image-box {
-                        width: 100%;
-                        height: 150px;
-                        border: 1px solid #ccc;
-                        border-radius: 6px;
+                        position: relative;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
                         overflow: hidden;
+
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                    }
 
+                        background: #f3f4f6; /* 🔥 isi ruang kosong biar gak jelek */
+                    }
                     .image-box img {
-                        width: 100%;
-                        height: 100%;
+                        position: relative;
+                        z-index: 1;
+                        max-width: 100%;
+                        max-height: 100%;
                         object-fit: contain;
                     }
 
@@ -140,6 +143,13 @@ exports.htmlSinglePenilaianHarian = async function (data, state) {
                         margin-top: 4px;
                         text-align: center;
                         word-break: break-word;
+                    }
+
+                    /* supaya tidak kepotong di page */
+                    @media print {
+                        .item {
+                            page-break-inside: avoid;
+                        }
                     }
                 </style>
             </head>
@@ -233,7 +243,7 @@ exports.htmlSinglePenilaianHarian = async function (data, state) {
                             <h3>Dokumentasi Kegiatan Belajar</h3>
                             <div class='gallery'>
                                 ${siswa.file && siswa.file.length > 0 ? siswa.file.map(img => `
-                                    <div class='gallery-item'>
+                                    <div class="item">
                                         <div class='image-box'>
                                             <img src="${img.url_image}">
                                         </div>
