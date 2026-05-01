@@ -364,7 +364,6 @@ exports.roleList = async function (req, res) {
     adrUserLogin.belongsTo(adrTeacher, { foreignKey: 'id_account' })
 
     let payload = {
-      attributes: ['id', 'tipe_account', 'role', 'email'],
       include: [{
         model: adrTeacher,
         required: true,
@@ -382,7 +381,10 @@ exports.roleList = async function (req, res) {
     
     payload.limit = limit;
     payload.offset = offset;
-    const data = await adrUserLogin.findAll(payload)
+    const data = await adrUserLogin.findAll({
+      attributes: ['id', 'tipe_account', 'role', 'email'],
+      ...payload
+    })
 
     if (data.length > 0) {
       const newRs = {
