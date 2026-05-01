@@ -608,6 +608,7 @@ exports.submitItemPenilaian = async function (req, res) {
 exports.downloadSinglePenilaianHarian = async function (req, res) {
   try {
     const id_jurnal = req.body.id_jurnal;
+    const id_siswa = req.body.id_siswa;
     const id_detail_diajar = req.body.id_detail_diajar;
     const nama_siswa = req.body.nama_siswa;
 
@@ -661,6 +662,17 @@ exports.downloadSinglePenilaianHarian = async function (req, res) {
     hasil[0].materi = data.materi;
     hasil[0].refleksi = data.refleksi;
     hasil[0].items = items;
+
+    const lampiranKegiatan = await adrJurnalImgAsses.findAll({
+      attributes: ['url_image', 'caption'],
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal,
+        id_siswa: id_siswa,
+        is_deleted: 0
+      }
+    })
+    hasil[0].file = lampiranKegiatan;
 
     const htmlRender = await templateHtml.htmlSinglePenilaianHarian(hasil)
     const pdf = await utils.pdfPupeeter(htmlRender);

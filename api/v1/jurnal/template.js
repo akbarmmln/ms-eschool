@@ -10,12 +10,18 @@ exports.htmlSinglePenilaianHarian = async function (data) {
             <head>
                 <style>
                     body {
-                        font-family: "Times New Roman", Times, serif;
+                        font-family: Arial, sans-serif;
                         font-size: 14px;
                     }
 
                     h2 {
                         margin-bottom: 10px;
+                    }
+
+                    h3 {
+                        text-align: center;
+                        margin-bottom: 20px;
+                        font-size: 20px;
                     }
 
                     table {
@@ -99,6 +105,41 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                     .underline-text {
                         text-decoration: underline;
                         text-underline-offset: 3px;
+                    }
+
+                    .gallery {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                    }
+
+                    .gallery-item {
+                        width: 30%;
+                        page-break-inside: avoid;
+                    }
+
+                    .image-box {
+                        width: 100%;
+                        height: 150px;
+                        border: 1px solid #ccc;
+                        border-radius: 6px;
+                        overflow: hidden;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .image-box img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .caption {
+                        font-size: 11px;
+                        margin-top: 4px;
+                        text-align: center;
+                        word-break: break-word;
                     }
                 </style>
             </head>
@@ -188,39 +229,18 @@ exports.htmlSinglePenilaianHarian = async function (data) {
                         </div>
                     </div>
                     <div class='page'>
-                        <div class="grid">
-                            <div class="card">
-                                <div class="card-header">
-                                <small>COMPUTATIONAL THINKING</small>
-                                <h3>algoritma</h3>
-                                </div>
-
-                                <div class="section">
-                                <label>Achievement Level</label>
-                                <div class="achievement">
-                                    <div class="badge">BB</div>
-                                    <div class="badge">MB</div>
-                                    <div class="badge active blue">BSH</div>
-                                    <div class="badge">BSB</div>
-                                </div>
-                                </div>
-
-                                <div class="section">
-                                <label>Upload Foto Tugas (Attachments)</label>
-                                <div class="upload-row">
-                                    <div class="preview">
-                                    <img src="https://via.placeholder.com/100">
+                        <h3>Dokumentasi Kegiatan Belajar</h3>
+                        <div class='gallery'>
+                            ${siswa.file && siswa.file.length > 0 ? siswa.file.map(img => `
+                                <div class='gallery-item'>
+                                    <div class='image-box'>
+                                        <img src="${img.url_image}">
                                     </div>
-
-                                    <div class="upload-box">+</div>
+                                    <div class='caption'>
+                                        ${img.caption || ''}
+                                    </div>
                                 </div>
-                                </div>
-
-                                <div class="section">
-                                <label>Keterangan (Notes)</label>
-                                <textarea placeholder="Tambah catatan perkembangan khusus..."></textarea>
-                                </div>
-                            </div>
+                            `).join("") : `<p>Tidak ada dokumentasi</p>`}
                         </div>
                     </div>
                 `).join("")}
