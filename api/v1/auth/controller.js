@@ -71,9 +71,6 @@ exports.login = async function (req, res) {
 exports.verifyToken = async function (req, res, next) {
   try {
     const token = req.headers['authorization'];
-    let sessionLogin = uuidv7();
-    sessionLogin = sessionLogin.replace(/-/g, "");
-
     if (!token) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70006');
     }
@@ -85,7 +82,7 @@ exports.verifyToken = async function (req, res, next) {
       id_account: decrypt.id_account,
       role: decrypt.role,
       tipe_account: decrypt.tipe_account,
-      sessionLogin: sessionLogin
+      sessionLogin: decrypt.sessionLogin
     }
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const new_token = await utils.signin(hash);
@@ -106,9 +103,6 @@ exports.verifyToken = async function (req, res, next) {
 exports.access = async function (req, res) {
   try {
     const token = req.body.authorization;
-    let sessionLogin = uuidv7();
-    sessionLogin = sessionLogin.replace(/-/g, "");
-
     if (!token) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70006');
     }
@@ -120,7 +114,7 @@ exports.access = async function (req, res) {
       id_account: decrypt.id_account,
       role: decrypt.role,
       tipe_account: decrypt.tipe_account,
-      sessionLogin: sessionLogin
+      sessionLogin: decrypt.sessionLogin
     }
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const new_token = await utils.signin(hash);
@@ -357,7 +351,7 @@ exports.invPassword = async function (req, res) {
 
 exports.roleList = async function (req, res) {
   try {
-    const limit = 20;
+    const limit = 50;
     const page = parseInt(req.params.page);
     const offset = limit * (page - 1);
 
