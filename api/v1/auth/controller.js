@@ -8,6 +8,7 @@ const Op = require('sequelize').Op;
 const rsMsg = require('../../../response/rs');
 const adrAuthOtp = require('../../../model/adr_auth_otp');
 const adrUserLogin = require('../../../model/adr_user_login');
+const adrSessLogin = require('../../../model/adr_session_login');
 const adrTeacher = require('../../../model/adr_teacher');
 const adrACL = require('../../../model/adr_acl');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
@@ -59,6 +60,15 @@ exports.login = async function (req, res) {
     }
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const token = await utils.signin(hash);
+
+    await adrSessLogin.create({
+      id: uuidv7(),
+      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      created_by:  data.id_account,
+      is_deleted: 0,
+      account_id: data.id_account,
+      session: sessionLogin
+    })
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', token);
@@ -117,6 +127,19 @@ exports.access = async function (req, res) {
       tipe_account: decrypt.tipe_account,
       sessionLogin: decrypt.sessionLogin
     }
+
+    const validate = await adrSessLogin.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        session: decrypt.sessionLogin
+      }
+    })
+
+    if (!validate) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70024');
+    }
+
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const new_token = await utils.signin(hash);
 
