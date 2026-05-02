@@ -97,6 +97,21 @@ exports.login = async function (req, res) {
   }
 }
 
+exports.logout = async function (req, res) {
+  try {
+    const id = req.id;
+
+    await adrSessLogin.destroy({
+      where: {
+        account_id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/logout...', e);
+  }
+}
 exports.verifyToken = async function (req, res, next) {
   try {
     const token = req.headers['authorization'];
