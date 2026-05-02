@@ -437,7 +437,8 @@ exports.roleAclUpdate = async function (req, res) {
     const dataAccess = await adrUserLogin.findOne({
       raw: true,
       where: {
-        id_account: dataUser.id
+        id_account: dataUser.id,
+        is_deleted: 0
       }
     })
     if (!dataAccess) {
