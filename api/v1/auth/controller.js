@@ -417,3 +417,43 @@ exports.roleAclList = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/list...', e);
   }
 }
+
+exports.roleAclUpdate = async function (req, res) {
+  try {
+    const niy = req.body.niy;
+    const role_code = req.body.role_code;
+
+    const dataUser = await adrTeacher.findOne({
+      raw: true,
+      where: {
+        niy: niy,
+        is_deleted: 0
+      }
+    })
+    if (!dataUser) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    const dataAccess = await adrUserLogin.findOne({
+      raw: true,
+      where: {
+        id_account: dataUser.id
+      }
+    })
+    if (!dataAccess) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+
+    await adrUserLogin.update({
+      role: role_code
+    }, {
+      where: {
+        id: dataAccess.id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/update...', e);
+  }
+}
