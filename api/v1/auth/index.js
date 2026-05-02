@@ -3,7 +3,6 @@ const router = express.Router();
 const controller = require('./controller');
 
 router.post('/login', controller.login);
-router.get('/logout', controller.verifyToken, controller.logout);
 
 router.post('/invalidate-forgot-password', controller.invForPass);
 
