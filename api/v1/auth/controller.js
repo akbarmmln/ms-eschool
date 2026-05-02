@@ -509,6 +509,12 @@ exports.roleAclUpdate = async function (req, res) {
       }
     })
 
+    await adrSessLogin.destroy({
+      where: {
+        account_id: dataUser.id
+      }
+    })
+    
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/update...', e);
