@@ -19,6 +19,7 @@ const adrSettings = require('../../../model/adr_settings');
 const otpGenerator = require('otp-generator');
 const emailTemplate = require('../../../config/email-template/template');
 const mailer = require('../../../config/mailer');
+const adrJabatan = require('../../../model/adr_jabatan');
 
 exports.login = async function (req, res) {
   try {
@@ -456,6 +457,21 @@ exports.roleAclList = async function (req, res) {
     return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/list...', e);
+  }
+}
+
+exports.roleJabatanList = async function (req, res) {
+  try {
+    const data = await adrJabatan.findAll({
+      raw: true,
+      where: {
+        is_deleted: 0
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', data))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/jabatan/list...', e);
   }
 }
 

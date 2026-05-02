@@ -18,6 +18,8 @@ router.post('/invalidate/password', controller.invPassword);
 
 router.get('/role/list/:page', controller.verifyToken, controller.roleList);
 router.get('/role/acl/list', controller.verifyToken, controller.roleAclList);
+router.get('/role/jabatan/list', controller.verifyToken, controller.roleJabatanList);
+
 router.post('/role/acl/update', controller.verifyToken, controller.roleAclUpdate);
 
 module.exports = router;
