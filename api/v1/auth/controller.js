@@ -61,14 +61,32 @@ exports.login = async function (req, res) {
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const token = await utils.signin(hash);
 
-    await adrSessLogin.create({
-      id: uuidv7(),
-      created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-      created_by:  data.id_account,
-      is_deleted: 0,
-      account_id: data.id_account,
-      session: sessionLogin
+    const dataSession = await adrSessLogin.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        account_id: data.id_account
+      }
     })
+    if (!dataSession) {
+      await adrSessLogin.create({
+        id: uuidv7(),
+        created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        created_by: data.id_account,
+        is_deleted: 0,
+        account_id: data.id_account,
+        session: sessionLogin
+      })
+    } else {
+      await adrSessLogin.update({
+        account_id: data.id_account,
+        session: sessionLogin
+      }, {
+        where: {
+          id: dataSession
+        }
+      })
+    }
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', token);
