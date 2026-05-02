@@ -9,6 +9,7 @@ const rsMsg = require('../../../response/rs');
 const adrAuthOtp = require('../../../model/adr_auth_otp');
 const adrUserLogin = require('../../../model/adr_user_login');
 const adrTeacher = require('../../../model/adr_teacher');
+const adrACL = require('../../../model/adr_acl');
 const ApiErrorMsg = require('../../../error/apiErrorMsg');
 const HttpStatusCode = require("../../../error/httpStatusCode");
 const bcrypt = require('bcryptjs');
@@ -399,5 +400,20 @@ exports.roleList = async function (req, res) {
     }
  } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/list...', e);
+  }
+}
+
+exports.roleAclList = async function (req, res) {
+  try {
+    const data = await adrACL.findAll({
+      raw: true,
+      where: {
+        is_deleted: 0
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', data))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/list...', e);
   }
 }
