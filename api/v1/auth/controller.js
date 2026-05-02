@@ -83,7 +83,7 @@ exports.login = async function (req, res) {
         session: sessionLogin
       }, {
         where: {
-          id: dataSession
+          id: dataSession.id
         }
       })
     }
