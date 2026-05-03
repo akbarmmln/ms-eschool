@@ -7,6 +7,7 @@ router.get('/list/:page', auth.verifyToken, controller.getListJurnal);
 router.get('/list/:page/:dari/:sampai', auth.verifyToken, controller.getListJurnal);
 
 router.post('/create', auth.verifyToken, controller.createJurnalMengajar);
+router.post('/update', auth.verifyToken, controller.updateJurnalMengajar);
 router.post('/create-new', auth.verifyToken, controller.createNewJurnalMengajar);
 router.post('/delete', auth.verifyToken, controller.deleteJurnal);
 router.post('/update-absensi', auth.verifyToken, controller.updateAbsensi);

@@ -289,6 +289,33 @@ exports.createJurnalMengajar = async function (req, res) {
   }
 }
 
+exports.updateJurnalMengajar = async function (req, res) {
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const mulai = req.body.mulai;
+    const selesai = req.body.selesai;
+    const materi = req.body.materi;
+    const refleksi = req.body.refleksi;
+
+    await adrJurnalMengajar.update({
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id,
+      jam_mulai: mulai,
+      jam_selesai: selesai,
+      materi: materi,
+      refleksi: refleksi
+    }, {
+      where: {
+        id: id_jurnal
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'));
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update...', e);
+  }
+}
+
 exports.createNewJurnalMengajar = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
