@@ -694,19 +694,14 @@ exports.updateItemPenilaian = async function (req, res) {
           await adrJurnalMengajarDetailSilabus.bulkCreate(bulkData, { transaction });
         }
       } else {
-        await Promise.all(
-          updated
-            .filter(x => x.id)
-            .map(item =>
-              adrJurnalMengajarDetailSilabus.update(
-                { item_silabus: item.value },
-                {
-                  where: { id_item_silabus: item.id },
-                  transaction
-                }
-              )
-            )
-        );
+        await adrJurnalMengajarDetailSilabus.update({
+          item_silabus: item.value
+        }, {
+          where: {
+            id_item_silabus: item.id
+          },
+          transaction: transaction
+        })
       }
     }
 
