@@ -15,6 +15,7 @@ const adrJurnalMengajarDetailSilabus = dbConnection.define('adr_jurnal_mengajar_
   id_detail_diajar: Sequelize.STRING,
   id_silabus: Sequelize.STRING,
   title_silabus: Sequelize.STRING,
+  id_item_silabus: Sequelize.STRING,
   item_silabus: Sequelize.STRING,
   nilai: Sequelize.STRING,
   keterangan: Sequelize.STRING,
