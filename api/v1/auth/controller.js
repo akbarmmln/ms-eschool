@@ -441,7 +441,7 @@ exports.roleList = async function (req, res) {
       return res.status(200).json(rsMsg('000000', newRs));
     }
  } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/list...', e);
+    return utils.returnErrorFunction(res, 'error GET /api/v1/auth/role/list...', e);
   }
 }
 
@@ -456,7 +456,7 @@ exports.roleAclList = async function (req, res) {
 
     return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/list...', e);
+    return utils.returnErrorFunction(res, 'error GET /api/v1/auth/role/acl/list...', e);
   }
 }
 
@@ -471,7 +471,7 @@ exports.roleJabatanList = async function (req, res) {
 
     return res.status(200).json(rsMsg('000000', data))
   } catch (e) {
-    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/jabatan/list...', e);
+    return utils.returnErrorFunction(res, 'error GET /api/v1/auth/role/jabatan/list...', e);
   }
 }
 

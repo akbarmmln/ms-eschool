@@ -18,4 +18,6 @@ router.post('/submit-item-penilaian', auth.verifyToken, controller.submitItemPen
 router.post('/download-single-penilaian-harian', auth.verifyToken, controller.downloadSinglePenilaianHarian);
 router.post('/download-bulk-penilaian-harian', auth.verifyToken, controller.downloadBulkPenilaianHarian);
 
+router.get('/item/nilai/:id', auth.verifyToken, controller.itemNilaiJurnal);
+
 module.exports = router;

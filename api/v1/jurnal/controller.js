@@ -827,3 +827,40 @@ function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_
   }
   return rows;
 }
+
+exports.itemNilaiJurnal = async function (req, res) {
+  try {
+    const id_jurnal = req.params.id;
+
+    const data = await adrJurnalMengajarDetailSilabus.findAll({
+      attributes: ['id', 'id_jurnal', 'id_silabus', 'title_silabus', 'id_item_silabus', 'item_silabus'],
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal,
+        is_deleted: 0
+      }
+    })
+
+    const map = new Map();
+    if (data.length > 0) {
+      data.forEach(item => {
+        if (!map.has(item.id_item_silabus)) {
+          map.set(item.id_item_silabus, {
+            id_item_silabus: item.id_item_silabus,
+            item_silabus: item.item_silabus
+          });
+        }
+      });
+      const hasil = {
+        id_jurnal: data[0].id_jurnal,
+        title_silabus: data[0].title_silabus,
+        items: Array.from(map.values())
+      };
+      return res.status(200).json(rsMsg('000000', hasil))
+    } else {
+      return res.status(200).json(rsMsg('000000', {}))
+    }
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/item/nilai...', e);
+  }
+}
