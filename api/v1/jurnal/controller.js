@@ -651,8 +651,7 @@ exports.updateItemPenilaian = async function (req, res) {
       attributes: ['id_silabus'],
       raw: true,
       where: {
-        id_jurnal: id_jurnal,
-        is_deleted: 0
+        id_jurnal: id_jurnal
       }
     })
 
@@ -664,43 +663,50 @@ exports.updateItemPenilaian = async function (req, res) {
       }
     })
 
-    for (let k=0; k<deleted_id_item_silabus.length; k++) {
-      await adrJurnalMengajarDetailSilabus.update({
-        is_deleted: 1
-      }, {
-        where: {
-          id_item_silabus: deleted_id_item_silabus[k]
-        },
-        transaction: transaction
-      })
-    }
+    await adrJurnalMengajarDetailSilabus.update({
+      is_deleted: 1
+    }, {
+      where: {
+        id_item_silabus: deleted_id_item_silabus
+      },
+      transaction
+    });
 
-    for (let j=0; j<updated.length; j++) {
-      if (formatter.isEmpty(updated[j].id)) {
+    const bulkData = [];
+    for (const item of updated) {
+      if (formatter.isEmpty(item.id)) {
         const id_item_silabus = uuidv7();
-        for (let z=0; z<siswaSilabus.length; z++) {
-          await adrJurnalMengajarDetailSilabus.create({
+        for (const siswa of siswaSilabus) {
+          bulkData.push({
             id: uuidv7(),
             created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
             created_by: req.id,
             is_deleted: 0,
-            id_jurnal: id_jurnal,
-            id_detail_diajar: siswaSilabus[z].id,
+            id_jurnal,
+            id_detail_diajar: siswa.id,
             id_silabus: replicateSilabus.id_silabus,
             title_silabus: judul,
-            id_item_silabus: id_item_silabus,
-            item_silabus: updated[j].value,
-          }, { transaction: transaction })
+            id_item_silabus,
+            item_silabus: item.value,
+          });
+        }
+        if (bulkData.length) {
+          await adrJurnalMengajarDetailSilabus.bulkCreate(bulkData, { transaction });
         }
       } else {
-        await adrJurnalMengajarDetailSilabus.update({
-          item_silabus: updated[j].value
-        }, {
-          where: {
-            id_item_silabus: updated[j].id
-          },
-          transaction: transaction
-        })
+        await Promise.all(
+          updated
+            .filter(x => x.id)
+            .map(item =>
+              adrJurnalMengajarDetailSilabus.update(
+                { item_silabus: item.value },
+                {
+                  where: { id_item_silabus: item.id },
+                  transaction
+                }
+              )
+            )
+        );
       }
     }
 

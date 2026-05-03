@@ -15,7 +15,7 @@ router.get('/detail/:id', auth.verifyToken, controller.getDetailJurnalMengajar);
 router.post('/inisiasi-penilaian', auth.verifyToken, controller.inisiasiPenilaian);
 router.post('/update-penilaian', auth.verifyToken, controller.updatePenilaian);
 router.post('/submit-item-penilaian', auth.verifyToken, controller.submitItemPenilaian);
-router.post('/update-item-penilaian', controller.updateItemPenilaian);
+router.post('/update-item-penilaian', auth.verifyToken, controller.updateItemPenilaian);
 router.post('/download-single-penilaian-harian', auth.verifyToken, controller.downloadSinglePenilaianHarian);
 router.post('/download-bulk-penilaian-harian', auth.verifyToken, controller.downloadBulkPenilaianHarian);
 
