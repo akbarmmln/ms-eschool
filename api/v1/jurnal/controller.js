@@ -801,8 +801,14 @@ exports.deleteJurnal = async function (req, res) {
 function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_id) {
   const rows = [];
   const id_silabus = uuidv7();
+
+  const itemPenilaianWithId = item_penilaian.map(item => ({
+    id_item_silabus: uuidv7(),
+    nama: item
+  }));
+
   for (const idDiajar of id_diajar) {
-    for (const itemPenilaian of item_penilaian) {
+    for (const item of itemPenilaianWithId) {
       rows.push({
         id: uuidv7(),
         created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
@@ -812,7 +818,8 @@ function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_
         id_detail_diajar: idDiajar,
         id_silabus: id_silabus,
         title_silabus: judul,
-        item_silabus: itemPenilaian,
+        id_item_silabus: item.id_item_silabus,
+        item_silabus: item.nama,
         nilai: null,
         keterangan: null,
       });
