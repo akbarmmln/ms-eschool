@@ -672,9 +672,9 @@ exports.updateItemPenilaian = async function (req, res) {
       transaction
     });
 
-    const bulkData = [];
     for (const item of updated) {
       if (formatter.isEmpty(item.id)) {
+        const bulkData = [];
         const id_item_silabus = uuidv7();
         for (const siswa of siswaSilabus) {
           bulkData.push({
