@@ -632,6 +632,88 @@ exports.submitItemPenilaian = async function (req, res) {
   }
 }
 
+exports.updateItemPenilaian = async function (req, res) {
+  const transaction = await sequelize.transaction();
+  try {
+    const id_jurnal = req.body.id_jurnal;
+    const judul = req.body.judul;
+    const deleted_id_item_silabus = req.body.deleted_id_item_silabus;
+    const updated = req.body.updated;
+
+    const siswaSilabus = await adrJurnalMengajarDetailSiswa.findAll({
+      attributes: ['id'],
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal
+      }
+    })
+    const replicateSilabus = await adrJurnalMengajarDetailSilabus.findOne({
+      attributes: ['id_silabus'],
+      raw: true,
+      where: {
+        id_jurnal: id_jurnal,
+        is_deleted: 0
+      }
+    })
+
+    await adrJurnalMengajarDetailSilabus.update({
+      title_silabus: judul
+    }, {
+      where: {
+        id_jurnal: id_jurnal
+      }
+    })
+
+    for (let k=0; k<deleted_id_item_silabus.length; k++) {
+      await adrJurnalMengajarDetailSilabus.update({
+        is_deleted: 1
+      }, {
+        where: {
+          id_item_silabus: deleted_id_item_silabus[k]
+        },
+        transaction: transaction
+      })
+    }
+
+    for (let j=0; j<updated.length; j++) {
+      if (formatter.isEmpty(updated[j].id)) {
+        const id_item_silabus = uuidv7();
+        for (let z=0; z<siswaSilabus.length; z++) {
+          await adrJurnalMengajarDetailSilabus.create({
+            id: uuidv7(),
+            created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+            created_by: req.id,
+            is_deleted: 0,
+            id_jurnal: id_jurnal,
+            id_detail_diajar: siswaSilabus[z].id,
+            id_silabus: replicateSilabus.id_silabus,
+            title_silabus: judul,
+            id_item_silabus: id_item_silabus,
+            item_silabus: updated[j].value,
+          }, { transaction: transaction })
+        }
+      } else {
+        await adrJurnalMengajarDetailSilabus.update({
+          item_silabus: updated[j].value
+        }, {
+          where: {
+            id_item_silabus: updated[j].id
+          },
+          transaction: transaction
+        })
+      }
+    }
+
+    await transaction.commit();
+    return res.status(200).json(rsMsg('000000'));
+  } catch (e) {
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return utils.returnErrorFunction(res, 'error POST /api/v1/jurnal/update-item-penilaian...', e);
+  }
+}
+
 exports.downloadSinglePenilaianHarian = async function (req, res) {
   try {
     const id_jurnal = req.body.id_jurnal;
