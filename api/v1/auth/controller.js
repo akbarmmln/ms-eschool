@@ -114,7 +114,7 @@ exports.verifyToken = async function (req, res, next) {
       tipe_account: decrypt.tipe_account,
       sessionLogin: decrypt.sessionLogin
     }
-    const hash = await utils.enkrip(payloadEnkripsiLogin);        
+    const hash = await utils.enkrip(payloadEnkripsiLogin);
     const new_token = await utils.signin(hash);
 
     req.id = payloadEnkripsiLogin.id_account
