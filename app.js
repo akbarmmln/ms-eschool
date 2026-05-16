@@ -14,7 +14,7 @@ app.use(bodyParser.json({ type: 'application/json', limit: '100mb', parameterLim
 app.use(bodyParser.urlencoded({ limit: '100mb', parameterLimit: 100000, extended: true }));
 app.use(bodyParser.text());
 app.use(helmet());
-const cors = require('cors')
+
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
         return res.json({
@@ -24,6 +24,7 @@ app.use((err, req, res, next) => {
     }
     next();
 });
+
 app.use(cors({
   origin: '*',
   methods: [
@@ -42,7 +43,9 @@ app.use(cors({
     'Authorization'
   ]
 }))
+
 app.use('/', require('./routes'));
+
 app.use((req, res, next) => {
     const err = new Error('Route Not Found');
     res.status(err.status || 404);
