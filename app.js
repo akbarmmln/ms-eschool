@@ -24,8 +24,6 @@ app.use((err, req, res, next) => {
     }
     next();
 });
-
-app.use('/', require('./routes'));
 app.use(cors({
   origin: '*',
   methods: [
@@ -44,6 +42,7 @@ app.use(cors({
     'Authorization'
   ]
 }))
+app.use('/', require('./routes'));
 app.use((req, res, next) => {
     const err = new Error('Route Not Found');
     res.status(err.status || 404);
