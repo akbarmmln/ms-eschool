@@ -1,30 +1,12 @@
 require('dotenv').config();
 const express = require('express')
-const app = express();
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const {asyncLocalStorage, integrationGenerateContext} = require('./config/context');
 const {integrationAttachResponseBody, integrationAttachContext, httpLogger} = require('./config/httpLogger');
+
+const app = express();
 const cors = require('cors')
-
-app.use(integrationAttachResponseBody);
-app.use(integrationGenerateContext);
-app.use(integrationAttachContext);
-app.use(bodyParser.json({ type: 'application/json', limit: '100mb', parameterLimit: 100000, extended: true }));
-app.use(bodyParser.urlencoded({ limit: '100mb', parameterLimit: 100000, extended: true }));
-app.use(bodyParser.text());
-app.use(helmet());
-
-app.use((err, req, res, next) => {
-    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-        return res.json({
-            message: "request not permitted",
-            error: true,
-        });
-    }
-    next();
-});
-
 app.use(cors({
   origin: '*',
   methods: [
@@ -43,6 +25,24 @@ app.use(cors({
     'Authorization'
   ]
 }))
+
+app.use(integrationAttachResponseBody);
+app.use(integrationGenerateContext);
+app.use(integrationAttachContext);
+app.use(bodyParser.json({ type: 'application/json', limit: '100mb', parameterLimit: 100000, extended: true }));
+app.use(bodyParser.urlencoded({ limit: '100mb', parameterLimit: 100000, extended: true }));
+app.use(bodyParser.text());
+app.use(helmet());
+
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+        return res.json({
+            message: "request not permitted",
+            error: true,
+        });
+    }
+    next();
+});
 
 app.use('/', require('./routes'));
 
