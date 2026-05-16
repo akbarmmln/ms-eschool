@@ -522,7 +522,7 @@ exports.roleAclUpdate = async function (req, res) {
   }
 }
 
-exports.userMenus = async function (params) {
+exports.userMenus = async function (req, res) {
   try {
     const menus = [
       {
