@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const {asyncLocalStorage, integrationGenerateContext} = require('./config/context');
 const {integrationAttachResponseBody, integrationAttachContext, httpLogger} = require('./config/httpLogger');
+const cors = require('cors')
 
 app.use(integrationAttachResponseBody);
 app.use(integrationGenerateContext);
@@ -13,7 +14,7 @@ app.use(bodyParser.json({ type: 'application/json', limit: '100mb', parameterLim
 app.use(bodyParser.urlencoded({ limit: '100mb', parameterLimit: 100000, extended: true }));
 app.use(bodyParser.text());
 app.use(helmet());
-
+const cors = require('cors')
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
         return res.json({
@@ -25,7 +26,24 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/', require('./routes'));
-
+app.use(cors({
+  origin: '*',
+  methods: [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+  ],
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Authorization'
+  ]
+}))
 app.use((req, res, next) => {
     const err = new Error('Route Not Found');
     res.status(err.status || 404);
