@@ -521,3 +521,43 @@ exports.roleAclUpdate = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/role/acl/update...', e);
   }
 }
+
+exports.userMenus = async function (params) {
+  try {
+    const menus = [
+      {
+        name: 'Beranda',
+        icon: 'menu-icon icon-base ri ri-home-smile-line',
+        href: '/akademik/dashboard',
+      },
+      {
+        name: 'Siswa',
+        icon: 'menu-icon icon-base ri ri-graduation-cap-line',
+        href: '/akademik/siswa',
+      },
+      {
+        name: 'Guru',
+        icon: 'menu-icon icon-base ri ri-group-line',
+        href: '/akademik/guru',
+      },
+      {
+        name: 'Tingkat Kelas',
+        icon: 'menu-icon icon-base ri ri-star-line',
+        href: '/akademik/tingkat-kelas',
+      },
+      {
+        name: 'Kelas',
+        icon: 'menu-icon icon-base ri ri-building-line',
+        href: '/akademik/kelas',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+    ]
+    return res.status(200).json(rsMsg('000000', menus))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/auth/user/menus...', e);
+  }
+}

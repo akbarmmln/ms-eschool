@@ -21,5 +21,6 @@ router.get('/role/acl/list', controller.verifyToken, controller.roleAclList);
 router.get('/role/jabatan/list', controller.verifyToken, controller.roleJabatanList);
 
 router.post('/role/acl/update', controller.verifyToken, controller.roleAclUpdate);
+router.post('/user/menus', controller.userMenus);
 
 module.exports = router;
