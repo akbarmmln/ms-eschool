@@ -555,6 +555,83 @@ exports.userMenus = async function (req, res) {
         icon: 'menu-icon icon-base ri ri-shield-user-line',
         href: '/akademik/role-akses',
       },
+
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+      {
+        name: 'Role Akses',
+        icon: 'menu-icon icon-base ri ri-shield-user-line',
+        href: '/akademik/role-akses',
+      },
+
     ]
     return res.status(200).json(rsMsg('000000', menus))
   } catch (e) {
