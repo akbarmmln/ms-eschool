@@ -29,7 +29,7 @@ exports.getListJurnal = async function (req, res) {
     const dari = req.params.dari
     const sampai = req.params.sampai;
     const page = parseInt(req.params.page);
-    const limit = 9;
+    const limit = 1;
     const offset = limit * (page - 1);
 
     if (dari && sampai) {
