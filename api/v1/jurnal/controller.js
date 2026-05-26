@@ -613,7 +613,21 @@ exports.submitItemPenilaian = async function (req, res) {
     const judul = req.body.judul;
     const item_penilaian = req.body.item_penilaian;
 
-    const insertData = generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, req.id);
+    let new_id_diajar;
+    if (id_diajar.length == 0) {
+      const getIdDJurnalDiajar = await adrJurnalMengajarDetailSiswa.findAll({
+        raw: true,
+        attributes: ['id'],
+        where: {
+          id_jurnal: id_jurnal
+        }
+      })
+      new_id_diajar = getIdDJurnalDiajar.map((item) => item.id);
+    } else {
+      new_id_diajar = id_diajar
+    }
+
+    const insertData = generatePenilaian(id_jurnal, new_id_diajar, judul, item_penilaian, req.id);
     await adrJurnalMengajarDetailSilabus.bulkCreate(insertData, { transaction })
     await adrJurnalMengajar.update({
       initiate_nilai: 1
