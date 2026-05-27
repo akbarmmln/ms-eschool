@@ -899,13 +899,24 @@ function generatePenilaian(id_jurnal, id_diajar, judul, item_penilaian, account_
   const rows = [];
   const id_silabus = uuidv7();
 
-  const itemPenilaianWithId = item_penilaian.map(item => ({
-    id_item_silabus: uuidv7(),
-    nama: item
-  }));
+  const jenis_field_item_penilaian = Array.isArray(item_penilaian) && typeof item_penilaian[0] === "object";
+  let tampung;
+  if (jenis_field_item_penilaian) {
+    const itemPenilaianWithId = item_penilaian.map((item) => ({
+      id_item_silabus: item.id ?? uuidv7(),
+      nama: item.value,
+    }));
+    tampung = itemPenilaianWithId
+  } else {
+    const itemPenilaianWithId = item_penilaian.map(item => ({
+      id_item_silabus: uuidv7(),
+      nama: item
+    }));
+    tampung = itemPenilaianWithId
+  }
 
   for (const idDiajar of id_diajar) {
-    for (const item of itemPenilaianWithId) {
+    for (const item of tampung) {
       rows.push({
         id: uuidv7(),
         created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
