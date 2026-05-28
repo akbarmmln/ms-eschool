@@ -538,6 +538,7 @@ exports.updatePenilaian = async function (req, res) {
     const data = req.body.data;
     const files = req.body.files;
     const filesDeleted = req.body.filesDeleted
+    const folerAssessment = moment().format('YYYYMMDD');
 
     if (formatter.isEmpty(data) || typeof data !== 'object') {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70011');
@@ -569,7 +570,7 @@ exports.updatePenilaian = async function (req, res) {
         const upload = await s3.upload({
           ACL: 'public-read',
           Bucket: 'bucket-sit',
-          Key: `assessment-images/${uuidv7()}.${ext}`,
+          Key: `assessment-images/${folerAssessment}/${uuidv7()}.${ext}`,
           Body: buf,
           ContentEncoding: 'base64',
           ContentType: mime,
