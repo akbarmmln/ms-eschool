@@ -172,7 +172,7 @@ exports.updateEmail = async function (req, res) {
     const email_baru = req.body.email_baru;
 
     if (formatter.isEmpty(email_baru)) {
-      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70017');
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70017');
     }
 
     const dataCheck = await adrUserLogin.count({
@@ -181,7 +181,7 @@ exports.updateEmail = async function (req, res) {
       }
     })
     if (dataCheck) {
-      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70004');
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70004');
     }
 
     if (tipe_account == 'DS1') {
