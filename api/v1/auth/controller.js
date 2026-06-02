@@ -524,38 +524,79 @@ exports.roleAclUpdate = async function (req, res) {
 
 exports.userMenus = async function (req, res) {
   try {
-    const menus = [
-      {
-        name: 'Beranda',
-        icon: 'menu-icon icon-base ri ri-home-smile-line',
-        href: '/akademik/dashboard',
-      },
-      {
-        name: 'Siswa',
-        icon: 'menu-icon icon-base ri ri-graduation-cap-line',
-        href: '/akademik/siswa',
-      },
-      {
-        name: 'Guru',
-        icon: 'menu-icon icon-base ri ri-group-line',
-        href: '/akademik/guru',
-      },
-      {
-        name: 'Tingkat Kelas',
-        icon: 'menu-icon icon-base ri ri-star-line',
-        href: '/akademik/tingkat-kelas',
-      },
-      {
-        name: 'Kelas',
-        icon: 'menu-icon icon-base ri ri-building-line',
-        href: '/akademik/kelas',
-      },
-      {
-        name: 'Role Akses',
-        icon: 'menu-icon icon-base ri ri-shield-user-line',
-        href: '/akademik/role-akses',
-      },
-    ]
+    const role = req.role
+    const tipe_account = req.tipe_account
+    let menu;
+    if (tipe_account == 'DS1' && role == '0') {
+      menus = [
+        {
+          name: 'Beranda',
+          icon: 'menu-icon icon-base ri ri-home-smile-line',
+          href: '/akademik/dashboard',
+        },
+        {
+          name: 'Siswa',
+          icon: 'menu-icon icon-base ri ri-graduation-cap-line',
+          href: '/akademik/siswa',
+        },
+        {
+          name: 'Guru',
+          icon: 'menu-icon icon-base ri ri-group-line',
+          href: '/akademik/guru',
+        },
+        {
+          name: 'Tingkat Kelas',
+          icon: 'menu-icon icon-base ri ri-star-line',
+          href: '/akademik/tingkat-kelas',
+        },
+        {
+          name: 'Kelas',
+          icon: 'menu-icon icon-base ri ri-building-line',
+          href: '/akademik/kelas',
+        },
+        {
+          name: 'Role Akses',
+          icon: 'menu-icon icon-base ri ri-shield-user-line',
+          href: '/akademik/role-akses',
+        },
+      ]
+    } else if (tipe_account == 'DS1' && role == '1') {
+      menus = [
+        {
+          name: 'Beranda',
+          icon: 'menu-icon icon-base ri ri-home-smile-line',
+          href: '/akademik/dashboard',
+        },
+        {
+          name: 'Siswa',
+          icon: 'menu-icon icon-base ri ri-graduation-cap-line',
+          href: '/akademik/siswa',
+        },
+        {
+          name: 'Guru',
+          icon: 'menu-icon icon-base ri ri-group-line',
+          href: '/akademik/guru',
+        },
+        {
+          name: 'Tingkat Kelas',
+          icon: 'menu-icon icon-base ri ri-star-line',
+          href: '/akademik/tingkat-kelas',
+        },
+        {
+          name: 'Kelas',
+          icon: 'menu-icon icon-base ri ri-building-line',
+          href: '/akademik/kelas',
+        }
+      ]
+    } else if (tipe_account == 'DS2' && role == '2') {
+      menus = [
+        {
+          name: 'Beranda',
+          icon: 'menu-icon icon-base ri ri-home-smile-line',
+          href: '/akademik/dashboard',
+        }
+      ]
+    }
     return res.status(200).json(rsMsg('000000', menus))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/user/menus...', e);
