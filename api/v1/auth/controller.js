@@ -526,7 +526,7 @@ exports.userMenus = async function (req, res) {
   try {
     const role = req.role
     const tipe_account = req.tipe_account
-    let menu;
+    let menus;
     if (tipe_account == 'DS1' && role == '0') {
       menus = [
         {
