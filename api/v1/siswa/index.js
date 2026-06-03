@@ -16,6 +16,7 @@ router.post('/ortu/remove-access', auth.verifyToken, controller.ortuRemoveAccess
 router.post('/ortu/add-access', auth.verifyToken, controller.ortuAddAccess);
 router.post('/ortu/reset-access', auth.verifyToken, controller.ortuResetAccess);
 router.post('/ortu/unlink', auth.verifyToken, controller.unlink);
+router.post('/ortu/search-email', auth.verifyToken, controller.ortuSearchEmail);
 
 router.post('/jurnal/:page', auth.verifyToken, controller.siswaJurnal);
 router.get('/jurnal/detail/:idjurnal/:idsiswa', auth.verifyToken, controller.siswaJurnalDetail);

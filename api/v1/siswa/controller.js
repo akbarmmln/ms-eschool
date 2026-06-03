@@ -527,6 +527,24 @@ exports.unlink = async function (req, res) {
   }
 }
 
+exports.ortuSearchEmail = async function (req, res) {
+  try {
+    const keysearch = req.params.search
+
+    const data = await adrParents.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        email: keysearch
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', data))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/siswa/ortu/search...', e);
+  }
+}
+
 exports.siswaJurnal = async function (req, res) {
   try {
     const id_siswa = req.body.id_siswa;
