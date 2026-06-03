@@ -529,7 +529,7 @@ exports.unlink = async function (req, res) {
 
 exports.ortuSearchEmail = async function (req, res) {
   try {
-    const keysearch = req.params.search
+    const keysearch = req.body.search
 
     const data = await adrParents.findOne({
       raw: true,
