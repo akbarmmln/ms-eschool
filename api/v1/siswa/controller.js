@@ -36,7 +36,8 @@ exports.getSiswa = async function (req, res) {
     if (search) {
       count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
-        adr_siswa.is_deleted = :is_del_ AND adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_`,
+        adr_siswa.is_deleted = :is_del_ AND 
+        (adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_)`,
         { replacements: { is_del_: '0', nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%`, nama_guru_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
@@ -45,7 +46,9 @@ exports.getSiswa = async function (req, res) {
       data = await sequelize.query(`SELECT adr_siswa.created_dt, adr_siswa.id, adr_siswa.nik, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
         adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id WHERE 
-        adr_siswa.is_deleted = :is_del_ AND adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_ ORDER BY adr_siswa.created_dt DESC LIMIT ${offset}, ${limit}`,
+        adr_siswa.is_deleted = :is_del_ AND 
+        (adr_siswa.nik LIKE :nik_ OR adr_siswa.nama LIKE :nama_ OR adr_class_room.nama_kelas LIKE :nama_kelas_ OR adr_teacher.nama LIKE :nama_guru_)
+        ORDER BY adr_siswa.created_dt DESC LIMIT ${offset}, ${limit}`,
         { replacements: { is_del_: '0', nik_: `%${search}%`, nama_: `%${search}%`, nama_kelas_: `%${search}%`, nama_guru_: `%${search}%` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
@@ -63,7 +66,7 @@ exports.getSiswa = async function (req, res) {
         adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id 
         WHERE adr_siswa.is_deleted = :is_del_ 
-        ORDER BY adr_siswa.created_dt DESC  LIMIT ${offset}, ${limit}`,
+        ORDER BY adr_siswa.created_dt DESC LIMIT ${offset}, ${limit}`,
         { replacements: { is_del_: '0' }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
