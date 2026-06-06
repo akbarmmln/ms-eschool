@@ -59,7 +59,7 @@ exports.getSiswa = async function (req, res) {
           raw: true
         });
 
-      data = await sequelize.query(`SELECT adr_siswa.id, adr_siswa.nik, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
+      data = await sequelize.query(`SELECT adr_siswa.created_dt, adr_siswa.id, adr_siswa.nik, adr_siswa.nama as nama_siswa, adr_class_room.nama_kelas,
         adr_teacher.nama as nama_guru FROM adr_siswa JOIN adr_class_room ON adr_siswa.id_kelas = adr_class_room.id
         LEFT JOIN adr_teacher ON adr_class_room.id_wakil_wali_kelas = adr_teacher.id 
         WHERE adr_siswa.is_deleted = :is_del_ 
