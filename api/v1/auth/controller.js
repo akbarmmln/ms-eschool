@@ -108,6 +108,17 @@ exports.verifyToken = async function (req, res, next) {
     const verifyRes = await utils.verify(token);
     const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
 
+    const validate = await adrSessLogin.findOne({
+      raw: true,
+      where: {
+        is_deleted: 0,
+        session: decrypt.sessionLogin
+      }
+    })
+    if (!validate) {
+      throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70024');
+    }
+
     const payloadEnkripsiLogin = {
       id_account: decrypt.id_account,
       role: decrypt.role,
