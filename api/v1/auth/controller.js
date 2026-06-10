@@ -274,8 +274,12 @@ exports.invalPage = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70020');
     }
 
-    const verifyRes = await utils.verify(jwt);
-    const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer);
+    const verifyRes = await utils.verify(jwt).catch((e) => {
+      throw new ApiErrorMsg(HttpStatusCode.INTERNAL_SERVER, '10000');
+    });
+    const decrypt = await utils.dekrip(verifyRes.masterKey, verifyRes.buffer).catch((e) => {
+      throw new ApiErrorMsg(HttpStatusCode.INTERNAL_SERVER, '10000');
+    });
     const session = decrypt.sessionLogin;
 
     const data = await adrAuthOtp.findOne({
