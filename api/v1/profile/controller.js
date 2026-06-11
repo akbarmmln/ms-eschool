@@ -70,7 +70,8 @@ exports.profileD2 = async function (req, res) {
       raw: true,
       attributes: attributes,
       where: {
-        id_parent: profile.id
+        id_parent: profile.id,
+        is_deleted: 0
       }
     })
 
