@@ -377,7 +377,7 @@ exports.createNewJurnalMengajar = async function (req, res) {
       created_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
       created_by: req.id,
       is_deleted: 0,
-      tanggal_jurnal: moment(tanggal, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+      tanggal_jurnal: moment(tanggal).format('YYYY-MM-DD'),
       jam_mulai: mulai,
       jam_selesai: selesai,
       materi: materi,
