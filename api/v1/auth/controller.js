@@ -546,33 +546,38 @@ exports.userMenus = async function (req, res) {
       menus = [
         {
           name: 'Beranda',
-          icon: 'menu-icon icon-base ri ri-home-smile-line',
+          icon: 'ri ri-home-smile-line',
           href: '/akademik/dashboard',
         },
         {
           name: 'Siswa',
-          icon: 'menu-icon icon-base ri ri-graduation-cap-line',
+          icon: 'ri ri-graduation-cap-line',
           href: '/akademik/siswa',
         },
         {
           name: 'Guru',
-          icon: 'menu-icon icon-base ri ri-group-line',
+          icon: 'ri ri-group-line',
           href: '/akademik/guru',
         },
         {
           name: 'Tingkat Kelas',
-          icon: 'menu-icon icon-base ri ri-star-line',
+          icon: 'ri ri-star-line',
           href: '/akademik/tingkat-kelas',
         },
         {
           name: 'Kelas',
-          icon: 'menu-icon icon-base ri ri-building-line',
+          icon: 'ri ri-building-line',
           href: '/akademik/kelas',
         },
         {
           name: 'Role Akses',
-          icon: 'menu-icon icon-base ri ri-shield-user-line',
+          icon: 'ri ri-shield-user-line',
           href: '/akademik/role-akses',
+        },
+        {
+          name: 'Pengaturan',
+          icon: 'ri ri-settings-5-line',
+          href: '/akademik/pengaturan-website',
         },
       ]
     } else if (tipe_account == 'DS1' && role == '1') {
