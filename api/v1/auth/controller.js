@@ -192,7 +192,7 @@ exports.access = async function (req, res) {
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', new_token);
 
-    return res.status(200).json(rsMsg('000000', hasil))
+    return res.status(200).json(rsMsg('000000', hasil));
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/access...', e);
   }
