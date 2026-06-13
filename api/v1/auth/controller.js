@@ -438,14 +438,14 @@ exports.roleList = async function (req, res) {
         attributes: ['id', 'created_dt', 'niy', 'nama', 'email', 'jabatan'],
         where: {
           is_deleted: '0',
-          role: {
-            [Op.notIn]: ['9']
-          }
         },
         order: [['created_dt', 'DESC']]
       }],
       where: {
-        tipe_account: 'DS1'
+        tipe_account: 'DS1',
+        role: {
+          [Op.notIn]: ['9']
+        }
       }
     }
     const count = await adrUserLogin.count(payload);
