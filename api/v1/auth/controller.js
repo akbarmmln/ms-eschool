@@ -573,7 +573,7 @@ exports.userMenus = async function (req, res) {
           id: id
         }
       })
-      menus.push([
+      menus.push(...[
         {
           name: 'Siswa',
           icon: 'ri ri-graduation-cap-line',
@@ -597,7 +597,7 @@ exports.userMenus = async function (req, res) {
       ])
 
       if (role === '0') {
-        menus.push([
+        menus.push(...[
           {
             name: 'Role Akses',
             icon: 'ri ri-shield-user-line',
@@ -606,11 +606,13 @@ exports.userMenus = async function (req, res) {
         ])
       }
       if (role == '9'|| user.jabatan == 'principal') {
-        menus.push({
-          name: 'Pengaturan',
-          icon: 'ri ri-settings-5-line',
-          href: '/akademik/pengaturan-website',
-        })
+        menus.push(...[
+          {
+            name: 'Pengaturan',
+            icon: 'ri ri-settings-5-line',
+            href: '/akademik/pengaturan-website',
+          }
+        ])
       }
     }
 
