@@ -437,7 +437,10 @@ exports.roleList = async function (req, res) {
         required: true,
         attributes: ['id', 'created_dt', 'niy', 'nama', 'email', 'jabatan'],
         where: {
-          is_deleted: '0'
+          is_deleted: '0',
+          role: {
+            [Op.notIn]: ['9']
+          }
         },
         order: [['created_dt', 'DESC']]
       }],
