@@ -61,3 +61,29 @@ exports.sendMail = async function (req, res) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/settings/send-email...', e);
   }
 }
+
+exports.alamatKodepos = async function (req, res) {
+  try {
+    const kodepos = req.params.kodepos;
+
+    const dataWilayah = await sequelize.query(`SELECT mst_provinsi.nama AS nama_provinsi, mst_kota_kabupaten.nama AS kota_kabupaten,
+      mst_kecamatan.nama AS kecamatan, mst_kelurahan.id AS id_kelurahan, mst_kelurahan.nama AS kelurahan, mst_kodepos.kodepos
+      FROM mst_provinsi JOIN mst_kota_kabupaten
+      ON mst_provinsi.id = mst_kota_kabupaten.id_provinsi
+      JOIN mst_kecamatan
+      ON mst_kota_kabupaten.id = mst_kecamatan.id_kabupaten
+      JOIN mst_kelurahan
+      ON mst_kecamatan.id = mst_kelurahan.id_kecamatan
+      JOIN mst_kodepos
+      ON mst_kelurahan.id = mst_kodepos.kode_kelurahan
+      WHERE mst_kodepos.kodepos = :kodepos_`, {
+      replacements: { kodepos_: kodepos },
+      type: sequelize.QueryTypes.SELECT,
+      raw: true
+    });
+
+    return res.status(200).json(rsMsg('000000', dataWilayah))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/settings/alamat/kodepos/:kodepos...', e);
+  }
+}
