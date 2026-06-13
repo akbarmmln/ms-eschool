@@ -170,24 +170,27 @@ exports.access = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70024');
     }
 
-    const user = adrTeacher.findOne({
-      raw: true,
-      attributes: ['jabatan'],
-      where: {
-        id: decrypt.id_account
-      }
-    })
+    let hasil = {
+      ...decrypt
+    }
+
+    if (decrypt.tipe_account == 'DS1') {
+      const user = adrTeacher.findOne({
+        raw: true,
+        attributes: ['jabatan'],
+        where: {
+          id: decrypt.id_account
+        }
+      })
+      hasil.jabatan = user
+    }
+
 
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const new_token = await utils.signin(hash);
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', new_token);
-
-    const hasil = {
-      ...decrypt,
-      jabatan: user.jabatan
-    }
 
     return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
