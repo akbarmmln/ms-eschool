@@ -170,13 +170,26 @@ exports.access = async function (req, res) {
       throw new ApiErrorMsg(HttpStatusCode.UNAUTHORIZED, '70024');
     }
 
+    const user = adrTeacher.findOne({
+      raw: true,
+      attributes: ['jabatan'],
+      where: {
+        id: decrypt.id_account
+      }
+    })
+
     const hash = await utils.enkrip(payloadEnkripsiLogin);        
     const new_token = await utils.signin(hash);
 
     res.setHeader('Access-Control-Expose-Headers', 'Authorization');
     res.header('Authorization', new_token);
 
-    return res.status(200).json(rsMsg('000000', decrypt))
+    const hasil = {
+      ...decrypt,
+      jabatan: user.jabatan
+    }
+
+    return res.status(200).json(rsMsg('000000', hasil))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/access...', e);
   }
