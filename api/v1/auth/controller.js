@@ -555,16 +555,25 @@ exports.roleAclUpdate = async function (req, res) {
 
 exports.userMenus = async function (req, res) {
   try {
+    const id = req.id
     const role = req.role
     const tipe_account = req.tipe_account
-    let menus;
-    if (tipe_account == 'DS1' && role == '0') {
-      menus = [
-        {
-          name: 'Beranda',
-          icon: 'ri ri-home-smile-line',
-          href: '/akademik/dashboard',
-        },
+    let menus = [
+      {
+        name: 'Beranda',
+        icon: 'ri ri-home-smile-line',
+        href: '/akademik/dashboard',
+      }
+    ]
+    if (tipe_account == 'DS1') {
+      const user = await adrTeacher.findOne({
+        raw: true,
+        attributes: ['jabatan'],
+        where: {
+          id: id
+        }
+      })
+      menus.push([
         {
           name: 'Siswa',
           icon: 'ri ri-graduation-cap-line',
@@ -584,55 +593,27 @@ exports.userMenus = async function (req, res) {
           name: 'Kelas',
           icon: 'ri ri-building-line',
           href: '/akademik/kelas',
-        },
-        {
-          name: 'Role Akses',
-          icon: 'ri ri-shield-user-line',
-          href: '/akademik/role-akses',
-        },
-        {
+        }
+      ])
+
+      if (role === '0') {
+        menus.push([
+          {
+            name: 'Role Akses',
+            icon: 'ri ri-shield-user-line',
+            href: '/akademik/role-akses',
+          }
+        ])
+      }
+      if (role == '9'|| user.jabatan == 'principal') {
+        menus.push({
           name: 'Pengaturan',
           icon: 'ri ri-settings-5-line',
           href: '/akademik/pengaturan-website',
-        },
-      ]
-    } else if (tipe_account == 'DS1' && role == '1') {
-      menus = [
-        {
-          name: 'Beranda',
-          icon: 'menu-icon icon-base ri ri-home-smile-line',
-          href: '/akademik/dashboard',
-        },
-        {
-          name: 'Siswa',
-          icon: 'menu-icon icon-base ri ri-graduation-cap-line',
-          href: '/akademik/siswa',
-        },
-        {
-          name: 'Guru',
-          icon: 'menu-icon icon-base ri ri-group-line',
-          href: '/akademik/guru',
-        },
-        {
-          name: 'Tingkat Kelas',
-          icon: 'menu-icon icon-base ri ri-star-line',
-          href: '/akademik/tingkat-kelas',
-        },
-        {
-          name: 'Kelas',
-          icon: 'menu-icon icon-base ri ri-building-line',
-          href: '/akademik/kelas',
-        }
-      ]
-    } else if (tipe_account == 'DS2' && role == '2') {
-      menus = [
-        {
-          name: 'Beranda',
-          icon: 'menu-icon icon-base ri ri-home-smile-line',
-          href: '/akademik/dashboard',
-        }
-      ]
+        })
+      }
     }
+
     return res.status(200).json(rsMsg('000000', menus))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/auth/user/menus...', e);
