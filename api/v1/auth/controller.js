@@ -175,14 +175,14 @@ exports.access = async function (req, res) {
     }
 
     if (decrypt.tipe_account == 'DS1') {
-      const user = adrTeacher.findOne({
+      const user = await adrTeacher.findOne({
         raw: true,
         attributes: ['jabatan'],
         where: {
           id: decrypt.id_account
         }
       })
-      hasil.jabatan = user
+      hasil.jabatan = user.jabatan
     }
 
 
