@@ -596,7 +596,7 @@ exports.userMenus = async function (req, res) {
         }
       ])
 
-      if (role == '0') {
+      if (role == '0' || role == '9') {
         menus.push(...[
           {
             name: 'Role Akses',
