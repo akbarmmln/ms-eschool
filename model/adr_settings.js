@@ -21,6 +21,8 @@ const adrSettings = dbConnection.define('adr_settings', {
   kota_kab: Sequelize.STRING,
   kode_pos: Sequelize.STRING,
   image: Sequelize.STRING,
+  kecamatan: Sequelize.STRING,
+  kelurahan: Sequelize.STRING,
 }, {
   freezeTableName: true,
   timestamps: false,
