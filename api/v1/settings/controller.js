@@ -15,7 +15,7 @@ const adrTeacher = require('../../../model/adr_teacher');
 const mailer = require('../../../config/mailer');
 
 exports.getSetings = async function (req, res) {
-  try {    
+  try {
     const settings = await adrSettings.findOne({
       raw: true,
       where: {
@@ -23,16 +23,16 @@ exports.getSetings = async function (req, res) {
       }
     })
     const teacher = await adrTeacher.findOne({
-        raw: true,
-        where: {
-            jabatan: 'principal',
-            is_deleted: 0
-        }
+      raw: true,
+      where: {
+        jabatan: 'principal',
+        is_deleted: 0
+      }
     })
-    
+
     return res.status(200).json(rsMsg('000000', {
-        settings,
-        teacher
+      settings,
+      teacher
     }))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/settings...', e);
