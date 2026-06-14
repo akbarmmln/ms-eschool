@@ -7,5 +7,6 @@ router.get('/', auth.verifyToken, controller.getSetings);
 router.post('/send-mail', controller.sendMail);
 
 router.get('/alamat/kodepos/:kodepos', controller.alamatKodepos);
+router.post('/update/lembaga', auth.verifyToken, controller.updateLembaga);
 
 module.exports = router;

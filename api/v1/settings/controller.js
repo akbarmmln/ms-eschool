@@ -87,3 +87,20 @@ exports.alamatKodepos = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/settings/alamat/kodepos/:kodepos...', e);
   }
 }
+
+exports.updateLembaga = async function (req, res) {
+  try {
+    const id = req.body.id;
+    const objectUpdate = req.body.objectUpdate
+
+    await adrSettings.update(...objectUpdate, {
+      where: {
+        id: id
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000'))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/settings/update/lembaga...', e);
+  }
+}
