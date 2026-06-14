@@ -93,7 +93,11 @@ exports.updateLembaga = async function (req, res) {
     const id = req.body.id;
     const objectUpdate = req.body.objectUpdate
 
-    await adrSettings.update(...objectUpdate, {
+    await adrSettings.update({
+      ...objectUpdate,
+      modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+      modified_by: req.id
+    }, {
       where: {
         id: id
       }
