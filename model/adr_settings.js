@@ -23,6 +23,8 @@ const adrSettings = dbConnection.define('adr_settings', {
   image: Sequelize.STRING,
   kecamatan: Sequelize.STRING,
   kelurahan: Sequelize.STRING,
+  visi: Sequelize.STRING,
+  misi: Sequelize.STRING,
 }, {
   freezeTableName: true,
   timestamps: false,
