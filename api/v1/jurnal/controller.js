@@ -130,6 +130,84 @@ exports.getListJurnal = async function (req, res) {
   }
 }
 
+exports.getNewListJurnal = async function (req, res) {
+  try {
+    const id_guru = req.id;
+    const page = parseInt(req.params.page);
+    const limit = 9;
+    const offset = limit * (page - 1);
+
+    const count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
+        WHERE id_guru = :id_guru_ AND is_deleted = '0'`,
+      { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
+      {
+        raw: true
+      });
+
+    const data = await sequelize.query(`SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
+        jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
+        d.id as id_diajar, d.nama_siswa, d.absensi
+        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND is_deleted = '0' LIMIT ${offset}, ${limit} ) jm
+        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal
+        ORDER BY jm.tanggal_jurnal ASC`,
+      { replacements: { id_guru_: id_guru }, type: sequelize.QueryTypes.SELECT },
+      {
+        raw: true
+      });
+
+    if (data.length > 0) {
+      const grouped = Object.values(
+        data.reduce((acc, row) => {
+
+          if (!acc[row.id]) {
+            acc[row.id] = {
+              id: row.id,
+              tanggal_jurnal: row.tanggal_jurnal,
+              jam_mulai: row.jam_mulai,
+              jam_selesai: row.jam_selesai,
+              materi: row.materi,
+              refleksi: row.refleksi,
+              id_kelas: row.id_kelas,
+              nama_kelas: row.nama_kelas,
+              id_guru: row.id_guru,
+              nama_guru: row.nama_guru,
+              initiate_nilai: row.initiate_nilai,
+              detail_siswa: []
+            };
+          }
+
+          acc[row.id].detail_siswa.push({
+            id_diajar: row.id_diajar,
+            nama_siswa: row.nama_siswa,
+            absensi: row.absensi
+          });
+
+          return acc;
+
+        }, {})
+      );
+
+      const newRs = {
+        rows: grouped,
+        currentPage: page,
+        totalPage: Math.ceil(count[0].count / limit),
+        totalData: count[0].count,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    } else {
+      const newRs = {
+        rows: [],
+        currentPage: 1,
+        totalPage: 1,
+        totalData: 0,
+      };
+      return res.status(200).json(rsMsg('000000', newRs));
+    }
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/list-new/:page...', e);
+  }
+}
+
 exports.createJurnalMengajar = async function (req, res) {
   const transaction = await sequelize.transaction();
   try {
@@ -971,5 +1049,17 @@ exports.itemNilaiJurnal = async function (req, res) {
     }
   } catch (e) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/item/nilai...', e);
+  }
+}
+
+exports.getListKontribusi = async function (req, res) {
+  try {
+    const dataGuru = await adrTeacher.findAll({
+      raw: true
+    })
+
+    return res.status(200).json(rsMsg('000000', dataGuru))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/kontribusi...', e);
   }
 }

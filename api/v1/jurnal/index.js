@@ -6,6 +6,8 @@ const auth = require('../auth/controller');
 router.get('/list/:page', auth.verifyToken, controller.getListJurnal);
 router.get('/list/:page/:dari/:sampai', auth.verifyToken, controller.getListJurnal);
 
+router.get('/list-new/:page', auth.verifyToken, controller.getNewListJurnal);
+
 router.post('/create', auth.verifyToken, controller.createJurnalMengajar);
 router.post('/update', auth.verifyToken, controller.updateJurnalMengajar);
 router.post('/create-new', auth.verifyToken, controller.createNewJurnalMengajar);
@@ -20,5 +22,6 @@ router.post('/download-single-penilaian-harian', auth.verifyToken, controller.do
 router.post('/download-bulk-penilaian-harian', auth.verifyToken, controller.downloadBulkPenilaianHarian);
 
 router.get('/item/nilai/:id', auth.verifyToken, controller.itemNilaiJurnal);
+router.get('/kontribusi', auth.verifyToken, controller.getListKontribusi);
 
 module.exports = router;
