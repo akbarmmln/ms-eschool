@@ -119,7 +119,7 @@ exports.uploadImagesSitus = async function (req, res) {
     const upload = await s3.upload({
       ACL: 'public-read',
       Bucket: 'bucket-sit',
-      Key: `/profile-situs/${name}`,
+      Key: `profile-situs/${name}`,
       Body: bufferImage,
       ContentEncoding: 'base64',
       ContentType: 'image/png',
