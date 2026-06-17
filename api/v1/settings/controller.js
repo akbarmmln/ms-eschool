@@ -112,9 +112,9 @@ exports.updateLembaga = async function (req, res) {
 
 exports.uploadImagesSitus = async function (req, res) {
   try {
-    const name = req.body.name
-    const fileImage = req.body.fileImage
-    const bufferImage = Buffer.from(fileImage, 'base64')
+    const name = req.body.name;
+    const fileImage = req.body.fileImage;
+    const bufferImage = Buffer.from(fileImage, 'base64');
 
     const upload = await s3.upload({
       ACL: 'public-read',
