@@ -13,6 +13,7 @@ const adrClassRoom = require('../../../model/adr_class_room');
 const adrSettings = require('../../../model/adr_settings');
 const adrTeacher = require('../../../model/adr_teacher');
 const mailer = require('../../../config/mailer');
+const s3 = require('../../../config/oss').client;
 
 exports.getSetings = async function (req, res) {
   try {
@@ -106,5 +107,28 @@ exports.updateLembaga = async function (req, res) {
     return res.status(200).json(rsMsg('000000'))
   } catch (e) {
     return utils.returnErrorFunction(res, 'error POST /api/v1/settings/update/lembaga...', e);
+  }
+}
+
+exports.uploadImagesSitus = async function (req, res) {
+  try {
+    const name = req.body.name
+    const fileImage = req.body.fileImage
+    const bufferImage = Buffer.from(fileImage, 'base64')
+
+    const upload = await s3.upload({
+      ACL: 'public-read',
+      Bucket: 'bucket-sit',
+      Key: `/profile-situs/${name}`,
+      Body: bufferImage,
+      ContentEncoding: 'base64',
+      ContentType: 'image/png',
+      CacheControl: 'no-cache'
+    }).promise();
+
+    const url_image = upload?.Location ?? null
+    return res.status(200).json(rsMsg('000000', url_image))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error POST /api/v1/settings/situs-upload/images...', e);
   }
 }

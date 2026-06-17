@@ -8,5 +8,6 @@ router.post('/send-mail', controller.sendMail);
 
 router.get('/alamat/kodepos/:kodepos', controller.alamatKodepos);
 router.post('/update/lembaga', auth.verifyToken, controller.updateLembaga);
+router.post('/situs-upload/images', auth.verifyToken, controller.uploadImagesSitus);
 
 module.exports = router;
