@@ -116,6 +116,8 @@ exports.uploadImagesSitus = async function (req, res) {
     const name = req.body.name;
     const fileImage = req.body.fileImage;
     const bufferImage = Buffer.from(fileImage, 'base64');
+    const filetype = await utils.checkFiletipe(bufferImage);
+    const mime = filetype.mime;
 
     const uploadPayload = {
       ACL: 'public-read',
@@ -123,7 +125,7 @@ exports.uploadImagesSitus = async function (req, res) {
       Key: `profile-situs/${name}`,
       Body: bufferImage,
       ContentEncoding: 'base64',
-      ContentType: 'image/png',
+      ContentType: mime,
       CacheControl: 'no-cache'
     }
     let upload;
