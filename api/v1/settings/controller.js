@@ -112,11 +112,12 @@ exports.updateLembaga = async function (req, res) {
 
 exports.uploadImagesSitus = async function (req, res) {
   try {
+    const id = req.body.id;
     const name = req.body.name;
     const fileImage = req.body.fileImage;
     const bufferImage = Buffer.from(fileImage, 'base64');
 
-    const upload = await s3.upload({
+    const uploadPayload = {
       ACL: 'public-read',
       Bucket: 'bucket-sit',
       Key: `profile-situs/${name}`,
@@ -124,8 +125,20 @@ exports.uploadImagesSitus = async function (req, res) {
       ContentEncoding: 'base64',
       ContentType: 'image/png',
       CacheControl: 'no-cache'
-    }).promise();
+    }
+    let upload;
 
+    if (name === 'logo') {
+      upload = await s3.upload(uploadPayload).promise();
+      await adrSettings.update({
+        logo: upload?.Location ?? null
+      }, {
+        where: {
+          id: id
+        }
+      })
+    }
+    
     const url_image = upload?.Location ?? null
     return res.status(200).json(rsMsg('000000', url_image))
   } catch (e) {
