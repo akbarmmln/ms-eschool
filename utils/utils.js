@@ -123,19 +123,36 @@ exports.dekrip = async function (masterkey, data) {
   }
 }
 
-exports.checkFiletipe = async function (buffer) {
+exports.checkFileTipe = async function (buffer) {
   try {
     const { fileTypeFromBuffer } = await import('file-type');
+
     const type = await fileTypeFromBuffer(buffer);
 
-    return type
+    if (type) {
+      return type;
+    }
+
+    const text = buffer.toString('utf8', 0, 500).trim();
+
+    if (text.startsWith('<svg') || text.includes('<svg')) {
+      return {
+        ext: 'svg',
+        mime: 'image/svg+xml'
+      };
+    }
+
+    return {
+      ext: null,
+      mime: null
+    };
   } catch (e) {
     return {
       ext: null,
       mime: null
-    }
+    };
   }
-}
+};
 
 exports.resendMailer = async function (from, to, subject, html, attachments) {
   try {
