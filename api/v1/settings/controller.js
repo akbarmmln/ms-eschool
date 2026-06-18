@@ -133,6 +133,8 @@ exports.uploadImagesSitus = async function (req, res) {
     if (name === 'logo') {
       upload = await s3.upload(uploadPayload).promise();
       await adrSettings.update({
+        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        modified_by: req.id,
         logo: upload?.Location ?? null
       }, {
         where: {
