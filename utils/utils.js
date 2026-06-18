@@ -123,7 +123,7 @@ exports.dekrip = async function (masterkey, data) {
   }
 }
 
-exports.checkFileTipe = async function (buffer) {
+exports.checkFiletipe = async function (buffer) {
   try {
     const { fileTypeFromBuffer } = await import('file-type');
 
@@ -152,7 +152,7 @@ exports.checkFileTipe = async function (buffer) {
       mime: null
     };
   }
-};
+}
 
 exports.resendMailer = async function (from, to, subject, html, attachments) {
   try {
