@@ -141,6 +141,17 @@ exports.uploadImagesSitus = async function (req, res) {
           id: id
         }
       })
+    } else if (name === 'logo_expand') {
+      upload = await s3.upload(uploadPayload).promise();
+      await adrSettings.update({
+        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        modified_by: req.id,
+        logo_panjang: upload?.Location ?? null
+      }, {
+        where: {
+          id: id
+        }
+      })
     }
     
     const url_image = upload?.Location ?? null
