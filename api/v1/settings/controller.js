@@ -152,6 +152,17 @@ exports.uploadImagesSitus = async function (req, res) {
           id: id
         }
       })
+    } else if (name === 'background') {
+      upload = await s3.upload(uploadPayload).promise();
+      await adrSettings.update({
+        modified_dt: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+        modified_by: req.id,
+        background_image: upload?.Location ?? null
+      }, {
+        where: {
+          id: id
+        }
+      })
     }
     
     const url_image = upload?.Location ?? null
