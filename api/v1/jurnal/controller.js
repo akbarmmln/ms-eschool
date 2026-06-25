@@ -35,25 +35,43 @@ exports.getListJurnal = async function (req, res) {
     if (dari && sampai) {
       const dateDari = moment(dari, 'DD-MM-YYYY').format('YYYY-MM-DD');
       const dateSampai = moment(sampai, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const keySearch = req.query.keySearch ? req.query.keySearch.split(',') : [];
 
+      console.log('keySearch', keySearch.length)
       if (dateDari > dateSampai) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
       }
 
-      count = await sequelize.query(`SELECT COUNT(*) as count FROM adr_jurnal_mengajar
-        WHERE id_guru = :id_guru_ AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`,
-        { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
-        {
-          raw: true
-        });
+      let queryCount = `SELECT COUNT(*) as count FROM adr_jurnal_mengajar
+        WHERE id_guru = :id_guru_ AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`
 
-      data = await sequelize.query(`SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
+      let queryData = `SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
         jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
         d.id as id_diajar, d.nama_siswa, d.absensi
         FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND is_deleted = '0'
         AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
-        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`,
-        { replacements: { id_guru_: id_guru, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`
+
+      if (keySearch.length > 0) {
+        queryCount = `SELECT COUNT(*) as count FROM adr_jurnal_mengajar
+          WHERE id_guru in (:id_guru_in_) AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`
+
+        queryData = `SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
+          jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
+          d.id as id_diajar, d.nama_siswa, d.absensi
+          FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru in (:id_guru_in_) AND is_deleted = '0'
+          AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
+          LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`
+      }
+
+      count = await sequelize.query(queryCount,
+        { replacements: { id_guru_: id_guru, id_guru_in_: keySearch, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+        {
+          raw: true
+        });
+
+      data = await sequelize.query(queryData,
+        { replacements: { id_guru_: id_guru, id_guru_in_: keySearch, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
         {
           raw: true
         });
