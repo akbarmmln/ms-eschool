@@ -153,7 +153,14 @@ exports.getNewListJurnal = async function (req, res) {
     const dari = req.params.dari
     const sampai = req.params.sampai;
     const page = parseInt(req.params.page);
+    const keySearch = req.query.keySearch ? req.query.keySearch.split(',') : [];
     const limit = 9;
+    let replacements = {
+      id_guru_: id_guru,
+      id_guru_in_: keySearch,
+      dari_: null,
+      sampai_: null,
+    }
     const offset = limit * (page - 1);
 
     let queryCount = `SELECT COUNT(*) as count FROM adr_jurnal_mengajar WHERE id_guru = :id_guru_ AND is_deleted = '0'`
@@ -167,31 +174,34 @@ exports.getNewListJurnal = async function (req, res) {
     if (dari && sampai) {
       const dateDari = moment(dari, 'DD-MM-YYYY').format('YYYY-MM-DD');
       const dateSampai = moment(sampai, 'DD-MM-YYYY').format('YYYY-MM-DD');
-      const keySearch = req.query.keySearch ? req.query.keySearch.split(',') : [];
 
       if (dateDari > dateSampai) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
       }
 
-      queryCount = `SELECT COUNT(*) as count FROM adr_jurnal_mengajar
-        WHERE id_guru in (:id_guru_in_) AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`
+      if (keySearch.length > 0) {
+        queryCount = `SELECT COUNT(*) as count FROM adr_jurnal_mengajar
+          WHERE id_guru in (:id_guru_in_) AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ AND is_deleted = '0'`
 
-      queryData = `SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
-        jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
-        d.id as id_diajar, d.nama_siswa, d.absensi
-        FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru in (:id_guru_in_) AND is_deleted = '0'
-        AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
-        LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`
+        queryData = `SELECT jm.id, jm.tanggal_jurnal, jm.jam_mulai, jm.jam_selesai, jm.materi,
+          jm.refleksi, jm.id_kelas, jm.nama_kelas, jm.id_guru, jm.nama_guru, jm.initiate_nilai,
+          d.id as id_diajar, d.nama_siswa, d.absensi
+          FROM (SELECT * FROM adr_jurnal_mengajar WHERE id_guru in (:id_guru_in_) AND is_deleted = '0'
+          AND DATE(tanggal_jurnal) BETWEEN :dari_ AND :sampai_ LIMIT ${offset}, ${limit}) jm
+          LEFT JOIN adr_jurnal_mengajar_detail_siswa d ON jm.id = d.id_jurnal`
+      }
+      replacements.dari_ = `${dateDari}`;
+      replacements.sampai_ = `${dateSampai}`;
     }
 
     const count = await sequelize.query(queryCount,
-      { replacements: { id_guru_: id_guru, id_guru_in_: keySearch, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+      { replacements: { ...replacements }, type: sequelize.QueryTypes.SELECT },
       {
         raw: true
       });
 
     const data = await sequelize.query(queryData,
-      { replacements: { id_guru_: id_guru, id_guru_in_: keySearch, dari_: `${dateDari}`, sampai_: `${dateSampai}` }, type: sequelize.QueryTypes.SELECT },
+      { replacements: { ...replacements }, type: sequelize.QueryTypes.SELECT },
       {
         raw: true
       });
