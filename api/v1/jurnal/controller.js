@@ -172,8 +172,8 @@ exports.getNewListJurnal = async function (req, res) {
         ORDER BY jm.tanggal_jurnal DESC`
 
     if (dari && sampai) {
-      const dateDari = moment(dari, 'DD-MM-YYYY').format('YYYY-MM-DD');
-      const dateSampai = moment(sampai, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const dateDari = moment(dari).format('YYYY-MM-DD');
+      const dateSampai = moment(sampai).format('YYYY-MM-DD');
 
       if (dateDari > dateSampai) {
         throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70014');
