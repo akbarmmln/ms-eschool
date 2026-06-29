@@ -1129,8 +1129,19 @@ exports.getListKontribusi = async function (req, res) {
 
 exports.previewJurnal = async function (req, res) {
   try {
-    const id_jurnal = req.params.idjurnal
-    const id_siswa = req.params.idsiswa
+    const idDiajar = req.params.idDiajar
+
+    const subParent = await adrJurnalMengajarDetailSiswa.findOne({
+      raw: true,
+      attributes: ['id', 'id_jurnal', 'id_siswa', 'nama_siswa', 'absensi'],
+      where: {
+        id: idDiajar
+      }
+    })
+    if (!subParent) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+    const id_jurnal = subParent.id_jurnal;
 
     const dataJurnal = await adrJurnalMengajar.findOne({
       raw: true,
@@ -1144,19 +1155,6 @@ exports.previewJurnal = async function (req, res) {
     if (dataJurnal && (dataJurnal?.initiate_absensi == 0 || dataJurnal?.initiate_nilai == 0)) {
       throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70025');
     }
-
-    const subParent = await adrJurnalMengajarDetailSiswa.findOne({
-      raw: true,
-      attributes: ['id', 'id_siswa', 'nama_siswa', 'absensi'],
-      where: {
-        id_jurnal: id_jurnal,
-        id_siswa: id_siswa
-      }
-    })
-    if (!subParent) {
-      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
-    }
-    const id_detail_diajar = subParent.id;
 
     const child = await adrJurnalMengajarDetailSilabus.findAll({
       raw: true,

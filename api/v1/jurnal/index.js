@@ -23,7 +23,7 @@ router.post('/download-single-penilaian-harian', auth.verifyToken, controller.do
 router.post('/download-bulk-penilaian-harian', auth.verifyToken, controller.downloadBulkPenilaianHarian);
 
 router.get('/item/nilai/:id', auth.verifyToken, controller.itemNilaiJurnal);
-router.get('/preview/:idjurnal/:idsiswa', auth.verifyToken, controller.previewJurnal);
+router.get('/preview/:idDiajar', auth.verifyToken, controller.previewJurnal);
 router.get('/kontribusi', auth.verifyToken, controller.getListKontribusi);
 
 module.exports = router;
