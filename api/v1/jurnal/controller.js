@@ -1169,7 +1169,7 @@ exports.previewJurnal = async function (req, res) {
     })
 
     return res.status(200).json(rsMsg('000000', {
-      parent: parent,
+      parent: dataJurnal,
       subParent: subParent,
       child: child
     }))
