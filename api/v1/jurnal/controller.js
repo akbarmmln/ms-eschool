@@ -1126,3 +1126,54 @@ exports.getListKontribusi = async function (req, res) {
     return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/kontribusi...', e);
   }
 }
+
+exports.previewJurnal = async function (req, res) {
+  try {
+    const id_jurnal = req.params.idjurnal
+    const id_siswa = req.params.idsiswa
+
+    const dataJurnal = await adrJurnalMengajar.findOne({
+      raw: true,
+      where: {
+        id: id_jurnal
+      }
+    })
+    if (!dataJurnal) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+    if (dataJurnal && (dataJurnal?.initiate_absensi == 0 || dataJurnal?.initiate_nilai == 0)) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70025');
+    }
+
+    const subParent = await adrJurnalMengajarDetailSiswa.findOne({
+      raw: true,
+      attributes: ['id', 'id_siswa', 'nama_siswa', 'absensi'],
+      where: {
+        id_jurnal: id_jurnal,
+        id_siswa: id_siswa
+      }
+    })
+    if (!subParent) {
+      throw new ApiErrorMsg(HttpStatusCode.BAD_REQUEST, '70008');
+    }
+    const id_detail_diajar = subParent.id;
+
+    const child = await adrJurnalMengajarDetailSilabus.findAll({
+      raw: true,
+      attributes: ['id', 'id_silabus', 'title_silabus', 'item_silabus', 'nilai', 'keterangan'],
+      where: {
+        id_jurnal: id_jurnal,
+        id_detail_diajar: id_detail_diajar,
+        is_deleted: 0
+      }
+    })
+
+    return res.status(200).json(rsMsg('000000', {
+      parent: parent,
+      subParent: subParent,
+      child: child
+    }))
+  } catch (e) {
+    return utils.returnErrorFunction(res, 'error GET /api/v1/jurnal/preview...', e);
+  }
+}

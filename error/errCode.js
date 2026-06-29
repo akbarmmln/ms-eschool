@@ -24,6 +24,7 @@ const errCode = {
   '70022': `otp tidak valid`,
   '70023': `batas percobaan input otp/password sudah habis`,
   '70024': `transaksi tidak diijinkan`,
+  '70025': `guru belum melakukan absensi atau input nilai`,
 };
 
 module.exports = errCode;

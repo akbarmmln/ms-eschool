@@ -705,7 +705,6 @@ exports.siswaJurnalDetail = async function (req, res) {
       }
     })
 
-
     return res.status(200).json(rsMsg('000000', {
       parent: parent,
       subParent: subParent,
