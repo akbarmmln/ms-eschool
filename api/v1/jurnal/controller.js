@@ -1161,7 +1161,7 @@ exports.previewJurnal = async function (req, res) {
       attributes: ['id', 'id_silabus', 'title_silabus', 'item_silabus', 'nilai', 'keterangan'],
       where: {
         id_jurnal: id_jurnal,
-        id_detail_diajar: id_detail_diajar,
+        id_detail_diajar: idDiajar,
         is_deleted: 0
       }
     })
